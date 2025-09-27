@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threego.algo.coding.query.dao.CodingProblemMapper">
+
+    <!-- 문제 목록 조회 (회원용) -->
+    <select id="selectProblemsList" resultType="com.threego.algo.coding.query.dto.CodingProblemSummaryDTO">
+        SELECT
+        A.ID          AS problemId,
+        B.ID          AS memberId,
+        B.NICKNAME    AS nickname,
+        A.TITLE       AS problemTitle,
+        A.PLATFORM    AS platform,
+        A.DIFFICULTY  AS difficulty,
+        A.POST_COUNT  AS postCount,
+        A.CREATED_AT  AS createdAt,
+        A.VISIBILITY  AS visibility
+        FROM CODING_PROBLEM A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        <where>
+            A.VISIBILITY = 'Y'
+            <!-- keyword 조건 -->
+            <if test="keyword != null and keyword != ''">
+                AND (
+                A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR B.NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY A.ID ASC
+    </select>
+
+    <!-- 문제 목록 조회 (난이도/플랫폼 기준 정렬) -->
+    <select id="selectProblemsByDifficulty" resultType="com.threego.algo.coding.query.dto.CodingProblemSummaryDTO">
+        SELECT
+        A.ID          AS problemId,
+        B.ID          AS memberId,
+        B.NICKNAME    AS nickname,
+        A.TITLE       AS problemTitle,
+        A.PLATFORM    AS platform,
+        A.DIFFICULTY  AS difficulty,
+        A.POST_COUNT  AS postCount,
+        A.CREATED_AT  AS createdAt,
+        A.VISIBILITY  AS visibility
+        FROM CODING_PROBLEM A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        WHERE A.VISIBILITY = 'Y'
+        ORDER BY
+        CASE A.PLATFORM
+        WHEN 'PGS' THEN 1
+        WHEN 'BOJ' THEN 2
+        WHEN 'ETC' THEN 3
+        ELSE 9
+        END,
+        CASE
+        WHEN A.PLATFORM = 'PGS' THEN
+        CASE REPLACE(A.DIFFICULTY,' ','')
+        WHEN 'LV.0' THEN 0
+        WHEN 'LV.1' THEN 1
+        WHEN 'LV.2' THEN 2
+        WHEN 'LV.3' THEN 3
+        WHEN 'LV.4' THEN 4
+        WHEN 'LV.5' THEN 5
+        ELSE 99
+        END
+        WHEN A.PLATFORM = 'BOJ' THEN
+        CASE
+        WHEN A.DIFFICULTY LIKE '브론즈%'   THEN 10 + (6 - CAST(REGEXP_SUBSTR(A.DIFFICULTY,'[0-9]+') AS UNSIGNED))
+        WHEN A.DIFFICULTY LIKE '실버%'     THEN 20 + (6 - CAST(REGEXP_SUBSTR(A.DIFFICULTY,'[0-9]+') AS UNSIGNED))
+        WHEN A.DIFFICULTY LIKE '골드%'     THEN 30 + (6 - CAST(REGEXP_SUBSTR(A.DIFFICULTY,'[0-9]+') AS UNSIGNED))
+        WHEN A.DIFFICULTY LIKE '플래티넘%' THEN 40 + (6 - CAST(REGEXP_SUBSTR(A.DIFFICULTY,'[0-9]+') AS UNSIGNED))
+        WHEN A.DIFFICULTY LIKE '다이아%'   THEN 50 + (6 - CAST(REGEXP_SUBSTR(A.DIFFICULTY,'[0-9]+') AS UNSIGNED))
+        WHEN A.DIFFICULTY LIKE '루비%'     THEN 60 + (6 - CAST(REGEXP_SUBSTR(A.DIFFICULTY,'[0-9]+') AS UNSIGNED))
+        ELSE 999
+        END
+        WHEN A.PLATFORM = 'ETC' THEN
+        CASE A.DIFFICULTY
+        WHEN 'EASY'   THEN 1
+        WHEN 'MEDIUM' THEN 2
+        WHEN 'HARD'   THEN 3
+        ELSE 9
+        END
+        ELSE 999
+        END,
+        A.TITLE ASC
+    </select>
+
+    <!-- 문제 상세 조회 (회원용) -->
+    <select id="selectProblemDetail" parameterType="int" resultType="com.threego.algo.coding.query.dto.CodingProblemDetailDTO">
+        SELECT
+        A.ID          AS problemId,
+        A.TITLE       AS problemTitle,
+        A.CONTENT     AS problemContent,
+        A.PLATFORM    AS platform,
+        A.DIFFICULTY  AS difficulty,
+        A.INPUT       AS input,
+        A.OUTPUT      AS output,
+        A.PROBLEM_URL AS problemUrl,
+        A.CONSTRAINTS AS constraints,
+        A.POST_COUNT  AS postCount,
+        A.CREATED_AT  AS createdAt,
+        B.ID          AS memberId,
+        B.NICKNAME    AS nickname,
+        A.VISIBILITY AS visibility
+        FROM CODING_PROBLEM A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        WHERE A.ID = #{problemId}
+        AND A.VISIBILITY = 'Y'
+    </select>
+
+    <!-- 관리자용 문제 전체 목록 조회 -->
+    <select id="selectAdminProblemsList" resultType="com.threego.algo.coding.query.dto.CodingProblemSummaryDTO">
+        SELECT
+        A.ID          AS problemId,
+        B.ID          AS memberId,
+        B.NICKNAME    AS nickname,
+        A.TITLE       AS problemTitle,
+        A.PLATFORM    AS platform,
+        A.DIFFICULTY  AS difficulty,
+        A.POST_COUNT  AS postCount,
+        A.CREATED_AT  AS createdAt,
+        A.VISIBILITY  AS visibility
+        FROM CODING_PROBLEM A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        <where>
+            <!-- visibility 조건 -->
+            <if test="visibility != null and visibility != '' and visibility != 'ALL'">
+                A.VISIBILITY = #{visibility}
+            </if>
+
+            <!-- keyword 조건 -->
+            <if test="keyword != null and keyword != ''">
+                AND (
+                A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR B.NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY A.ID ASC
+    </select>
+
+    <!-- 관리자용 문제 상세 조회 -->
+    <select id="selectAdminProblemDetail" parameterType="int" resultType="com.threego.algo.coding.query.dto.CodingProblemDetailDTO">
+        SELECT
+        A.ID          AS problemId,
+        A.TITLE       AS problemTitle,
+        A.CONTENT     AS problemContent,
+        A.PLATFORM    AS platform,
+        A.DIFFICULTY  AS difficulty,
+        A.INPUT       AS input,
+        A.OUTPUT      AS output,
+        A.PROBLEM_URL AS problemUrl,
+        A.CONSTRAINTS AS constraints,
+        A.POST_COUNT  AS postCount,
+        A.CREATED_AT  AS createdAt,
+        B.ID          AS memberId,
+        B.NICKNAME    AS nickname,
+        A.VISIBILITY AS visibility
+        FROM CODING_PROBLEM A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        WHERE A.ID = #{problemId}
+    </select>
+
+    <!-- post_count 동기화 -->
+    <update id="syncPostCount">
+        UPDATE CODING_PROBLEM p
+        SET POST_COUNT = (
+        SELECT COUNT(*)
+        FROM CODING_POST c
+        WHERE c.PROBLEM_ID = p.ID
+        AND c.VISIBILITY = 'Y'
+        )
+        WHERE p.ID IS NOT NULL
+    </update>
+
+</mapper>

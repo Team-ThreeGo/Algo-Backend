@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.threego.algo.coding.query.dao.CodingPostMapper">
+    <resultMap id="CodingPostDetailMap" type="com.threego.algo.coding.query.dto.CodingPostDetailDTO">
+        <id property="postId" column="postId"/>
+        <result property="problemTitle" column="problemTitle"/>
+        <result property="problemPlatform" column="problemPlatform"/>
+        <result property="problemDifficulty" column="problemDifficulty"/>
+        <result property="postTitle" column="postTitle"/>
+        <result property="postContent" column="postContent"/>
+        <result property="aiBigO" column="aiBigO"/>
+        <result property="aiGood" column="aiGood"/>
+        <result property="aiBad" column="aiBad"/>
+        <result property="aiPlan" column="aiPlan"/>
+        <result property="commentCount" column="commentCount"/>
+        <result property="likeCount" column="likeCount"/>
+        <result property="memberId" column="memberId"/>
+        <result property="nickname" column="nickname"/>
+        <result property="memberRank" column="memberRank"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+        <result property="visibility" column="visibility"/>
+
+        <!-- 이미지 리스트 매핑 -->
+        <collection property="imageUrls" ofType="string" column="postId"
+                    select="findImagesByPostId"/>
+    </resultMap>
+
+    <!-- 풀이 게시물 목록 조회 (최신순) -->
+    <select id="selectPostList" resultType="com.threego.algo.coding.query.dto.CodingPostSummaryDTO">
+        SELECT
+        A.ID AS postId,
+        A.TITLE AS postTitle,
+        A.CONTENT AS postContent,
+        B.ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS memberRank,
+        D.TITLE AS problemTitle,
+        A.COMMENT_COUNT AS commentCount,
+        A.LIKE_COUNT AS likeCount,
+        A.CREATED_AT AS createdAt,
+        A.UPDATED_AT AS updatedAt,
+        A.VISIBILITY AS visibility
+        FROM CODING_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        JOIN CODING_PROBLEM D ON A.PROBLEM_ID = D.ID
+        <where>
+            A.VISIBILITY = 'Y'
+            <!-- keyword 조건 -->
+            <if test="keyword != null and keyword != ''">
+                AND (
+                A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR A.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+                OR B.NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY A.ID DESC
+    </select>
+
+    <!-- 풀이 게시물 목록 조회 (추천순) -->
+    <select id="selectPostByProblemIdOrderByLike" resultType="com.threego.algo.coding.query.dto.CodingPostSummaryDTO">
+        SELECT
+        A.ID AS postId,
+        A.TITLE AS postTitle,
+        A.CONTENT AS postContent,
+        B.ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS memberRank,
+        D.TITLE AS problemTitle,
+        A.COMMENT_COUNT AS commentCount,
+        A.LIKE_COUNT AS likeCount,
+        A.CREATED_AT AS createdAt,
+        A.UPDATED_AT AS updatedAt,
+        A.VISIBILITY AS visibility
+        FROM CODING_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        JOIN CODING_PROBLEM D ON A.PROBLEM_ID = D.ID
+        WHERE A.VISIBILITY = 'Y'
+        AND A.PROBLEM_ID = #{problemId}
+        ORDER BY A.LIKE_COUNT DESC
+    </select>
+
+    <!-- 풀이 게시물 상세 조회 -->
+    <select id="selectPostDetail" resultMap="CodingPostDetailMap">
+        SELECT
+        A.ID AS postId,
+        D.TITLE AS problemTitle,
+        D.PLATFORM AS problemPlatform,
+        D.DIFFICULTY AS problemDifficulty,
+        A.TITLE AS postTitle,
+        A.CONTENT AS postContent,
+        A.AI_BIG_O AS aiBigO,
+        A.AI_GOOD AS aiGood,
+        A.AI_BAD AS aiBad,
+        A.AI_PLAN AS aiPlan,
+        A.COMMENT_COUNT AS commentCount,
+        A.LIKE_COUNT AS likeCount,
+        B.ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS memberRank,
+        A.CREATED_AT AS createdAt,
+        A.UPDATED_AT AS updatedAt,
+        A.VISIBILITY AS visibility
+        FROM CODING_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        JOIN CODING_PROBLEM D ON A.PROBLEM_ID = D.ID
+        WHERE A.ID = #{postId}
+    </select>
+
+    <select id="findImagesByPostId" resultType="string">
+        SELECT IMAGE_URL
+        FROM CODING_POST_IMAGE
+        WHERE POST_ID = #{postId}
+    </select>
+
+    <!-- 특정 게시물 댓글 목록 조회 (사용자용) -->
+    <select id="selectCommentsByPostId" resultType="com.threego.algo.coding.query.dto.CodingPostCommentDTO">
+        SELECT
+        A.POST_ID AS postId,
+        A.ID AS commentId,
+        A.PARENT_ID AS parentId,
+        B.ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS memberRank,
+        A.CONTENT AS content,
+        A.CREATED_AT AS createdAt,
+        A.UPDATED_AT AS updatedAt,
+        A.VISIBILITY AS visibility
+        FROM CODING_COMMENT A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        JOIN CODING_POST D ON A.POST_ID = D.ID
+        WHERE A.POST_ID = #{postId}
+        ORDER BY
+        CASE WHEN A.PARENT_ID IS NULL THEN A.ID ELSE A.PARENT_ID END ASC,
+        A.ID ASC
+    </select>
+
+    <!-- 관리자용 전체 목록 조회 -->
+    <select id="selectAdminPostList" parameterType="map" resultType="com.threego.algo.coding.query.dto.CodingPostSummaryDTO">
+        SELECT
+        A.ID AS postId,
+        A.TITLE AS postTitle,
+        A.CONTENT AS postContent,
+        B.ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS memberRank,
+        D.TITLE AS problemTitle,
+        A.COMMENT_COUNT AS commentCount,
+        A.LIKE_COUNT AS likeCount,
+        A.CREATED_AT AS createdAt,
+        A.UPDATED_AT AS updatedAt,
+        A.VISIBILITY AS visibility
+        FROM CODING_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        JOIN CODING_PROBLEM D ON A.PROBLEM_ID = D.ID
+        <where>
+            <!-- visibility 조건 -->
+            <if test="visibility != null and visibility != '' and visibility != 'ALL'">
+                A.VISIBILITY = #{visibility}
+            </if>
+
+            <!-- keyword 조건 -->
+            <if test="keyword != null and keyword != ''">
+                AND (
+                A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR A.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+                OR B.NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY A.ID ASC
+    </select>
+
+    <!-- 관리자용 게시물 상세 조회 -->
+    <select id="selectAdminPostDetail" resultMap="CodingPostDetailMap">
+        SELECT
+        A.ID AS postId,
+        D.TITLE AS problemTitle,
+        D.PLATFORM AS problemPlatform,
+        D.DIFFICULTY AS problemDifficulty,
+        A.TITLE AS postTitle,
+        A.CONTENT AS postContent,
+        A.AI_BIG_O AS aiBigO,
+        A.AI_GOOD AS aiGood,
+        A.AI_BAD AS aiBad,
+        A.AI_PLAN AS aiPlan,
+        A.COMMENT_COUNT AS commentCount,
+        A.LIKE_COUNT AS likeCount,
+        B.ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS memberRank,
+        A.CREATED_AT AS createdAt,
+        A.UPDATED_AT AS updatedAt,
+        A.VISIBILITY AS visibility
+        FROM CODING_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        JOIN CODING_PROBLEM D ON A.PROBLEM_ID = D.ID
+        WHERE A.ID = #{postId}
+    </select>
+
+    <!-- 전체 댓글 조회 (관리자용) -->
+    <select id="selectAdminComments" resultType="com.threego.algo.coding.query.dto.CodingPostCommentDTO">
+        SELECT
+        A.POST_ID AS postId,
+        A.ID AS commentId,
+        A.PARENT_ID AS parentId,
+        B.ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS memberRank,
+        A.CONTENT AS content,
+        A.CREATED_AT AS createdAt,
+        A.UPDATED_AT AS updatedAt,
+        A.VISIBILITY AS visibility
+        FROM CODING_COMMENT A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        JOIN CODING_POST D ON A.POST_ID = D.ID
+        ORDER BY
+        CASE WHEN A.PARENT_ID IS NULL THEN A.ID ELSE A.PARENT_ID END ASC,
+        A.ID ASC
+    </select>
+</mapper>
