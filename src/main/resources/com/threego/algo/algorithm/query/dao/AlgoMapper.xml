@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.threego.algo.algorithm.query.dao.AlgoMapper">
+    <resultMap id="AlgoRoadmapResultMap" type="com.threego.algo.algorithm.command.domain.aggregate.AlgoRoadmap">
+        <id property="id" column="ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="order" column="ORDER"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="questionCount" column="QUESTION_COUNT"/>
+    </resultMap>
+
+    <resultMap id="AlgoPostResultMap" type="com.threego.algo.algorithm.query.dto.AlgoPostSummaryResponseDTO">
+        <id property="postId" column="ID"/>
+        <result property="roadmapId" column="ROADMAP_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="nickname" column="NICKNAME"/>
+        <result property="title" column="TITLE"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="likeCount" column="LIKE_COUNT"/>
+        <result property="commentCount" column="COMMENT_COUNT"/>
+        <result property="visibility" column="VISIBILITY"/>
+        <result property="isLiked" column="IS_LIKED"/>
+
+        <collection property="quizIds" ofType="java.lang.Integer">
+            <id column="ALGO_QUIZ_QUESTION_ID"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="AlgoPostDetailResultMap" type="com.threego.algo.algorithm.query.dto.AlgoPostDetailResponseDTO">
+        <id property="postId" column="ID"/>
+        <result property="roadmapId" column="ROADMAP_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="nickname" column="NICKNAME"/>
+        <result property="title" column="TITLE"/>
+        <result property="content" column="CONTENT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="likeCount" column="LIKE_COUNT"/>
+        <result property="commentCount" column="COMMENT_COUNT"/>
+        <result property="visibility" column="VISIBILITY"/>
+        <result property="isLiked" column="IS_LIKED"/>
+
+        <collection property="quizIds" ofType="java.lang.Integer">
+            <id column="ALGO_QUIZ_QUESTION_ID"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="AlgoQuizResultMap" type="com.threego.algo.algorithm.query.dto.AlgoQuizResponseDTO">
+        <id property="id" column="QUESTION_ID"/>
+        <result property="question" column="QUESTION"/>
+        <result property="type" column="TYPE"/>
+
+        <collection property="options" ofType="com.threego.algo.algorithm.query.dto.AlgoQuizOptionResponseDTO">
+            <id property="id" column="OPTION_ID"/>
+            <result property="optionText" column="OPTION_TEXT"/>
+            <result property="isCorrect" column="IS_CORRECT"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllAlgoRoadmaps" resultMap="AlgoRoadmapResultMap">
+        SELECT
+               A.ID
+             , A.TITLE
+             , A.DESCRIPTION
+             , A.`ORDER`
+             , A.CREATED_AT
+             , A.UPDATED_AT
+             , A.QUESTION_COUNT
+          FROM ALGO_ROADMAP A
+         ORDER BY A.`ORDER`;
+    </select>
+
+    <select id="selectAlgoPosts" resultMap="AlgoPostResultMap">
+        SELECT
+               A.ID
+             , A.ROADMAP_ID
+             , A.MEMBER_ID
+             , B.NICKNAME
+             , A.TITLE
+             , A.CREATED_AT
+             , A.UPDATED_AT
+             , A.LIKE_COUNT
+             , A.COMMENT_COUNT
+             , A.VISIBILITY
+        <if test="memberId != null">
+             , EXISTS (SELECT 1
+                         FROM LIKES B
+                        WHERE B.ALGO_POST_ID = A.ID
+                          AND B.MEMBER_ID = #{memberId}
+                      ) AS IS_LIKED
+        </if>
+             , C.ID AS ALGO_QUIZ_QUESTION_ID
+          FROM ALGO_POST A
+          JOIN MEMBER B
+            ON A.MEMBER_ID = B.ID
+          LEFT JOIN ALGO_QUIZ_QUESTION C
+            ON C.ALGO_POST_ID = A.ID
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (A.TITLE LIKE CONCAT('%', #{keyword}, '%') OR A.CONTENT LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="roadmapId != null">
+                AND A.ROADMAP_ID = #{roadmapId}
+            </if>
+            <if test="visibility != null and visibility != ''">
+                AND A.VISIBILITY = #{visibility}
+            </if>
+        </where>
+         ORDER BY A.ID ASC;
+    </select>
+
+    <select id="selectAlgoPostByPostId" parameterType="_int"
+            resultMap="AlgoPostDetailResultMap">
+        SELECT
+               A.ID
+             , A.ROADMAP_ID
+             , A.MEMBER_ID
+             , B.NICKNAME
+             , A.TITLE
+             , A.CONTENT
+             , A.CREATED_AT
+             , A.UPDATED_AT
+             , A.LIKE_COUNT
+             , A.COMMENT_COUNT
+             , A.VISIBILITY
+        <if test="memberId != null">
+             , EXISTS (SELECT 1
+                         FROM LIKES B
+                        WHERE B.ALGO_POST_ID = A.ID
+                          AND B.MEMBER_ID = #{memberId}
+                      ) AS IS_LIKED
+        </if>
+            , C.ID AS ALGO_QUIZ_QUESTION_ID
+         FROM ALGO_POST A
+         JOIN MEMBER B
+           ON A.MEMBER_ID = B.ID
+         LEFT JOIN ALGO_QUIZ_QUESTION C
+           ON C.ALGO_POST_ID = A.ID
+        WHERE A.ID = #{postId}
+        ORDER BY A.ID ASC;
+    </select>
+
+    <select id="selectSolvedQuizzesByMemberIdAndRoadmapIds"
+            resultType="com.threego.algo.algorithm.query.dto.AlgoMemberSolvedQuizResponseDTO">
+        SELECT
+               B.ALGO_POST_ID AS algoPostId
+             , A.ALGO_QUIZ_QUESTION_ID AS algoQuizQuestionId
+             , C.ROADMAP_ID AS algoRoadmapId
+          FROM MEMBER_ALGO_CORRECT_QUIZ_HISTORY A
+          JOIN ALGO_QUIZ_QUESTION B
+            ON B.ID = A.ALGO_QUIZ_QUESTION_ID
+          JOIN ALGO_POST C
+            ON C.ID = B.ALGO_POST_ID
+         WHERE A.MEMBER_ID = #{memberId}
+           AND C.ROADMAP_ID = #{roadmapId}
+        ORDER BY B.ALGO_POST_ID, A.ALGO_QUIZ_QUESTION_ID;
+    </select>
+
+    <select id="selectCommentsByPostId" parameterType="_int"
+            resultType="com.threego.algo.algorithm.query.dto.AlgoPostCommentDTO">
+        SELECT
+                A.ID                    AS id
+              , A.PARENT_ID             AS parentCommentId
+              , A.MEMBER_ID             AS memberId
+              , B.NICKNAME              AS memberNickname
+              , C.NAME                  AS memberRank
+              , A.CONTENT               AS content
+              , A.CREATED_AT            AS createdAt
+              , A.UPDATED_AT            AS updatedAt
+              , A.VISIBILITY            AS visibility
+           FROM ALGO_COMMENT A
+           JOIN MEMBER B
+             ON A.MEMBER_ID = B.ID
+           JOIN MEMBER_RANK C
+             ON B.RANK_ID = C.ID
+          WHERE A.POST_ID = #{postId}
+          ORDER BY CASE WHEN A.PARENT_ID IS NULL THEN A.ID
+                        ELSE A.PARENT_ID END ASC,
+                   A.ID;
+    </select>
+
+    <select id="selectAlgoImagesByPostId" parameterType="_int" resultType="string">
+        SELECT
+                A.IMAGE_URL
+           FROM ALGO_POST_IMAGE A
+          WHERE A.POST_ID = #{postId}
+          ORDER BY A.ID;
+    </select>
+
+    <select id="selectQuizQuestionAndOptionByPostId" parameterType="_int"
+            resultMap="AlgoQuizResultMap">
+        SELECT
+                A.ID AS QUESTION_ID
+              , A.QUESTION
+              , A.TYPE
+              , B.ID AS OPTION_ID
+              , B.OPTION_TEXT
+              , B.IS_CORRECT
+           FROM ALGO_QUIZ_QUESTION A
+           LEFT JOIN ALGO_QUIZ_OPTION B
+             ON A.ID = B.QUESTION_ID
+          WHERE A.ALGO_POST_ID = #{postId}
+          ORDER BY A.ID;
+    </select>
+</mapper>
