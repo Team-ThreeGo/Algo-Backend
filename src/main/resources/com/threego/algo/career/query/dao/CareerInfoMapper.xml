@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threego.algo.career.query.dao.CareerInfoMapper">
+    
+    <select id="selectPostList" resultType="com.threego.algo.career.query.dto.PostSummaryResponseDto">
+        SELECT
+               A.ID AS id
+             , A.TITLE AS title
+             , A.MEMBER_ID AS memberId
+             , B.NICKNAME AS nickname
+             , C.NAME AS rankName
+             , A.CREATED_AT AS createdAt
+             , A.STATUS AS status
+             , A.LIKE_COUNT AS likeCount
+             , A.COMMENT_COUNT AS commentCount
+          FROM CAREER_INFO_POST A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        <where>
+            <if test="visibility != null">
+                A.VISIBILITY = #{visibility}
+            </if>
+            <if test="status != null">
+                AND A.STATUS = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+         ORDER BY A.ID DESC
+    </select>
+    
+    <select id="selectPost" resultType="com.threego.algo.career.query.dto.PostDetailResponseDto">
+        SELECT
+               A.ID            AS id
+             , A.TITLE         AS title
+             , A.CONTENT       AS content
+             , A.IMAGE_URL     AS imageUrl
+             , A.MEMBER_ID     AS memberId
+             , B.NICKNAME      AS nickname
+             , C.NAME          AS rankName
+             , A.CREATED_AT    AS createdAt
+             , A.VISIBILITY    AS visibility
+             , A.STATUS        AS status
+             , A.REJECT_REASON AS rejectReason
+             , A.LIKE_COUNT    AS likeCount
+             , A.COMMENT_COUNT AS commentCount
+          FROM CAREER_INFO_POST A
+          JOIN MEMBER B
+            ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C
+            ON B.RANK_ID = C.ID
+         WHERE A.ID = #{postId}
+        <if test="visibility != null">
+            AND A.VISIBILITY = #{visibility}
+        </if>
+    </select>
+
+    <select id="selectCommentsByPostId"
+            parameterType="map"
+            resultType="com.threego.algo.career.query.dto.CommentResponseDto">
+        SELECT
+               A.ID          AS commentId
+             , A.PARENT_ID   AS parentId
+             , A.POST_ID     AS postId
+             , A.MEMBER_ID   AS memberId
+             , B.NICKNAME    AS nickname
+             , C.NAME        AS rankName
+             , A.CONTENT     AS content
+             , A.CREATED_AT  AS createdAt
+             , A.UPDATED_AT  AS updatedAt
+             , A.VISIBILITY  AS visibility
+          FROM CAREER_INFO_COMMENT A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+         WHERE A.POST_ID = #{postId}
+         ORDER BY CASE WHEN A.PARENT_ID IS NULL THEN A.ID
+                       ELSE A.PARENT_ID END ASC,
+                  A.ID ASC
+    </select>
+
+    <select id="selectComments" resultType="com.threego.algo.career.query.dto.CommentResponseDto">
+        SELECT
+               A.ID          AS commentId
+               , A.PARENT_ID   AS parentId
+               , A.POST_ID     AS postId
+               , A.MEMBER_ID   AS memberId
+               , B.NICKNAME    AS nickname
+               , C.NAME        AS rankName
+               , A.CONTENT     AS content
+               , A.CREATED_AT  AS createdAt
+               , A.UPDATED_AT  AS updatedAt
+               , A.VISIBILITY  AS visibility
+            FROM CAREER_INFO_COMMENT A
+            JOIN MEMBER B
+              ON A.MEMBER_ID = B.ID
+            JOIN MEMBER_RANK C
+              ON B.RANK_ID = C.ID
+           ORDER BY A.ID DESC;
+    </select>
+</mapper>
