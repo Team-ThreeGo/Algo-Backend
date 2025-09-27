@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threego.algo.studyrecruit.query.dao.StudyRecruitPostMapper">
+
+    <!-- 결과 매핑 -->
+    <resultMap id="StudyRecruitListMap" type="com.threego.algo.studyrecruit.query.dto.StudyRecruitPostDTO">
+        <id property="id" column="POST_ID"/>
+        <result property="title" column="POST_TITLE"/>
+        <result property="memberNickname" column="MEMBER_NICKNAME"/>
+        <result property="rankName" column="RANK_NAME"/>
+        <result property="status" column="STATUS"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="expiresAt" column="EXPIRES_AT"/>
+        <result property="capacity" column="CAPACITY"/>
+        <result property="participantCount" column="PARTICIPANT_COUNT"/>
+        <result property="commentCount" column="COMMENT_COUNT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+    </resultMap>
+
+    <!-- 상세 조회용 결과 매핑 -->
+    <resultMap id="StudyRecruitDetailMap" type="com.threego.algo.studyrecruit.query.dto.StudyRecruitDetailDTO">
+        <id property="id" column="POST_ID"/>
+        <result property="title" column="POST_TITLE"/>
+        <result property="content" column="POST_CONTENT"/>
+        <result property="memberNickname" column="MEMBER_NICKNAME"/>
+        <result property="rankName" column="RANK_NAME"/>
+        <result property="status" column="STATUS"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="expiresAt" column="EXPIRES_AT"/>
+        <result property="capacity" column="CAPACITY"/>
+        <result property="participantCount" column="PARTICIPANT_COUNT"/>
+        <result property="commentCount" column="COMMENT_COUNT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+    </resultMap>
+
+    <!-- 참가 신청자 조회용 결과 매핑 -->
+    <resultMap id="StudyRecruitMemberMap" type="com.threego.algo.studyrecruit.query.dto.StudyRecruitMemberDTO">
+        <id property="id" column="RECRUIT_MEMBER_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="memberNickname" column="MEMBER_NICKNAME"/>
+        <result property="rankName" column="RANK_NAME"/>
+        <result property="status" column="MEMBER_STATUS"/>
+        <result property="appliedAt" column="APPLIED_AT"/>
+    </resultMap>
+
+
+
+    <!-- 스터디 모집글 전체 목록 조회 -->
+    <select id="selectStudyRecruitList"
+            parameterType="com.threego.algo.studyrecruit.query.dto.StudyRecruitSearchDTO"
+            resultMap="StudyRecruitListMap">
+        <!-- offset 자동 계산 -->
+        <if test="page != null and size != null">
+            <bind name="offset" value="page * size"/>
+        </if>
+        SELECT
+               A.ID AS POST_ID
+             , B.ID AS MEMBER_ID
+             , B.NICKNAME AS MEMBER_NICKNAME
+             , A.TITLE AS POST_TITLE
+             , A.START_DATE AS START_DATE
+             , A.END_DATE AS END_DATE
+             , A.EXPIRES_AT AS EXPIRES_AT
+             , A.STATUS AS STATUS
+             , A.CAPACITY AS CAPACITY
+             , COUNT(D.ID) AS PARTICIPANT_COUNT
+             , A.COMMENT_COUNT AS COMMENT_COUNT
+             , A.CREATED_AT AS CREATED_AT
+             , A.UPDATED_AT AS UPDATED_AT
+             , A.VISIBILITY AS VISIBILITY
+             , C.NAME AS RANK_NAME
+          FROM STUDY_RECRUIT_POST A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+          LEFT JOIN STUDY_RECRUIT_MEMBER D ON A.ID = D.POST_ID AND D.STATUS = 'APPROVED'
+        <where>
+            A.VISIBILITY = 'Y'
+            <if test="status != null and status != ''">
+                AND A.STATUS = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR A.CONTENT LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+          GROUP BY A.ID
+          ORDER BY A.ID DESC
+        <if test="size != null and size > 0">
+            LIMIT #{size}
+            <if test="offset != null and offset >= 0">
+                OFFSET #{offset}
+            </if>
+        </if>
+    </select>
+
+    <!-- 스터디 모집글 상세 조회 -->
+    <select id="selectStudyRecruitDetail"
+            parameterType="long"
+            resultMap="StudyRecruitDetailMap">
+        SELECT
+               A.ID AS POST_ID
+             , B.ID AS MEMBER_ID
+             , B.NICKNAME AS MEMBER_NICKNAME
+             , A.TITLE AS POST_TITLE
+             , A.CONTENT AS POST_CONTENT
+             , A.START_DATE AS START_DATE
+             , A.END_DATE AS END_DATE
+             , A.EXPIRES_AT AS EXPIRES_AT
+             , A.STATUS AS STATUS
+             , A.CAPACITY AS CAPACITY
+             , COUNT(D.ID) AS PARTICIPANT_COUNT
+             , A.COMMENT_COUNT AS COMMENT_COUNT
+             , A.CREATED_AT AS CREATED_AT
+             , A.UPDATED_AT AS UPDATED_AT
+             , C.NAME AS RANK_NAME
+          FROM STUDY_RECRUIT_POST A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+          LEFT JOIN STUDY_RECRUIT_MEMBER D ON A.ID = D.POST_ID AND D.STATUS = 'APPROVED'
+         WHERE A.VISIBILITY = 'Y'
+           AND A.ID = #{id}
+         GROUP BY A.ID
+    </select>
+
+    <!-- 스터디 모집글 참가 신청자 목록 조회 -->
+    <select id="selectStudyRecruitMembers"
+            parameterType="long"
+            resultMap="StudyRecruitMemberMap">
+        SELECT
+               A.ID AS RECRUIT_MEMBER_ID
+             , A.MEMBER_ID AS MEMBER_ID
+             , B.NICKNAME AS MEMBER_NICKNAME
+             , C.NAME AS RANK_NAME
+             , A.STATUS AS MEMBER_STATUS
+          FROM STUDY_RECRUIT_MEMBER A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+         WHERE A.POST_ID = #{postId}
+         ORDER BY
+          CASE A.STATUS
+               WHEN 'PENDING' THEN 1
+               WHEN 'APPROVED' THEN 2
+               WHEN 'REJECTED' THEN 3
+               END,
+                   A.ID ASC
+    </select>
+
+    <!-- 관리자용 - 숨김 처리 스터디 모집글 목록 조회 -->
+    <select id="selectStudyRecruitListIncludeHidden"
+            parameterType="com.threego.algo.studyrecruit.query.dto.StudyRecruitSearchDTO"
+            resultMap="StudyRecruitListMap">
+        SELECT
+               A.ID AS POST_ID
+             , B.ID AS MEMBER_ID
+             , B.NICKNAME AS MEMBER_NICKNAME
+             , A.TITLE AS POST_TITLE
+             , A.START_DATE AS START_DATE
+             , A.END_DATE AS END_DATE
+             , A.EXPIRES_AT AS EXPIRES_AT
+             , A.STATUS AS STATUS
+             , A.CAPACITY AS CAPACITY
+             , COUNT(D.ID) AS PARTICIPANT_COUNT
+             , A.COMMENT_COUNT AS COMMENT_COUNT
+             , A.CREATED_AT AS CREATED_AT
+             , A.UPDATED_AT AS UPDATED_AT
+             , A.VISIBILITY AS VISIBILITY
+             , C.NAME AS RANK_NAME
+          FROM STUDY_RECRUIT_POST A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+          LEFT JOIN STUDY_RECRUIT_MEMBER D ON A.ID = D.POST_ID AND D.STATUS = 'APPROVED'
+        <where>
+            A.VISIBILITY = 'N'
+            <if test="status != null and status != ''">
+                AND A.STATUS = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR A.CONTENT LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        GROUP BY A.ID
+        ORDER BY A.ID DESC
+        <if test="size != null and size > 0">
+            LIMIT #{size}
+            <if test="offset != null and offset >= 0">
+                OFFSET #{offset}
+            </if>
+        </if>
+    </select>
+
+    <!-- 관리자용 - 숨김 처리 포함 스터디 모집글 상세 조회 -->
+    <select id="selectStudyRecruitDetailIncludeHidden"
+            parameterType="long"
+            resultMap="StudyRecruitDetailMap">
+        SELECT
+               A.ID AS POST_ID
+             , B.ID AS MEMBER_ID
+             , B.NICKNAME AS MEMBER_NICKNAME
+             , A.TITLE AS POST_TITLE
+             , A.CONTENT AS POST_CONTENT
+             , A.START_DATE AS START_DATE
+             , A.END_DATE AS END_DATE
+             , A.EXPIRES_AT AS EXPIRES_AT
+             , A.STATUS AS STATUS
+             , A.CAPACITY AS CAPACITY
+             , COUNT(D.ID) AS PARTICIPANT_COUNT
+             , A.COMMENT_COUNT AS COMMENT_COUNT
+             , A.CREATED_AT AS CREATED_AT
+             , A.UPDATED_AT AS UPDATED_AT
+             , C.NAME AS RANK_NAME
+          FROM STUDY_RECRUIT_POST A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+          JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+          LEFT JOIN STUDY_RECRUIT_MEMBER D ON A.ID = D.POST_ID AND D.STATUS = 'APPROVED'
+         WHERE A.ID = #{postId}
+               AND A.VISIBILITY = 'N'
+         GROUP BY A.ID
+    </select>
+</mapper>

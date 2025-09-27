@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threego.algo.study.query.dao.StudyRoadmapMapper">
+
+    <!-- 스터디 로드맵 목록 조회용 매핑 -->
+    <resultMap id="StudyRoadmapMap" type="com.threego.algo.study.query.dto.StudyRoadmapDTO">
+        <id property="id" column="STUDY_ROADMAP_ID"/>
+        <result property="studyId" column="STUDY_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="title" column="STUDY_ROADMAP_TITLE"/>
+        <result property="description" column="STUDY_ROADMAP_DESCRIPTION"/>
+        <result property="order" column="STUDY_ROADMAP_ORDER"/>
+        <result property="createdAt" column="STUDY_ROADMAP_CREATED_AT"/>
+    </resultMap>
+
+    <!-- 스터디 로드맵 상세 조회용 매핑 -->
+    <resultMap id="StudyRoadmapDetailMap" type="com.threego.algo.study.query.dto.StudyRoadmapDetailDTO">
+        <id property="roadmapId" column="ROADMAP_ID"/>
+        <result property="roadmapTitle" column="ROADMAP_TITLE"/>
+        <result property="roadmapDescription" column="ROADMAP_DESCRIPTION"/>
+        <collection property="milestones" ofType="com.threego.algo.study.query.dto.StudyRoadmapDetailDTO$MilestoneInfo">
+            <id property="milestoneId" column="MILESTONE_ID"/>
+            <result property="milestoneTitle" column="MILESTONE_TITLE"/>
+            <result property="milestoneDescription" column="MILESTONE_DESCRIPTION"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllStudyRoadmap" parameterType="int" resultMap="StudyRoadmapMap">
+        SELECT
+               A.ID           AS STUDY_ROADMAP_ID
+             , A.STUDY_ID     AS STUDY_ID
+             , A.MEMBER_ID    AS MEMBER_ID
+             , A.TITLE        AS STUDY_ROADMAP_TITLE
+             , A.DESCRIPTION  AS STUDY_ROADMAP_DESCRIPTION
+             , A.`ORDER`      AS STUDY_ROADMAP_ORDER
+             , A.CREATED_AT   AS STUDY_ROADMAP_CREATED_AT
+          FROM STUDY_ROADMAP A
+          JOIN STUDY_MEMBER B ON A.MEMBER_ID = B.ID
+         WHERE A.STUDY_ID = #{studyId}
+           AND B.ROLE != 'NOT_MEMBER'
+         ORDER BY A.`ORDER` ASC
+    </select>
+
+    <select id="selectStudyRoadmapDetail" parameterType="int" resultMap="StudyRoadmapDetailMap">
+        SELECT
+               A.ID                   AS ROADMAP_ID
+             , A.TITLE                AS ROADMAP_TITLE
+             , A.`DESCRIPTION`        AS ROADMAP_DESCRIPTION
+             , C.ID                   AS MILESTONE_ID
+             , C.TITLE                AS MILESTONE_TITLE
+             , C.`DESCRIPTION`        AS MILESTONE_DESCRIPTION
+             , C.`ORDER`              AS MILESTONE_ORDER
+          FROM STUDY_ROADMAP A
+          JOIN STUDY_MEMBER B        ON A.MEMBER_ID = B.ID
+          LEFT JOIN STUDY_MILESTONE C ON A.ID = C.ROADMAP_ID
+         WHERE A.ID = #{roadmapId}
+           AND B.ROLE != 'NOT_MEMBER'
+         ORDER BY C.`ORDER`
+    </select>
+
+
+
+</mapper>
