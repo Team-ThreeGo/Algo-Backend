@@ -1,4 +1,4 @@
-package com.threego.algo.auth.command.infrastructure.security;
+package com.threego.algo.security;
 
 
 import com.threego.algo.auth.command.application.service.AuthService;

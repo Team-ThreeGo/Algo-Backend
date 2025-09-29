@@ -12,4 +12,12 @@
           FROM MEMBER A
          WHERE EMAIL = #{email}
     </select>
+
+    <select id="selectRolesByEmail" parameterType="string" resultType="com.threego.algo.member.command.domain.aggregate.Role">
+        SELECT r.id, r.name, r.description
+        FROM Member m
+        JOIN Member_Role mr ON m.id = mr.member_id
+        JOIN Role r ON mr.role_id = r.id
+        WHERE m.email = #{email}
+    </select>
 </mapper>
