@@ -45,18 +45,16 @@ public class WebSecurity {
 
         http.authorizeHttpRequests(authz ->
                 authz
+                        // Swagger 허용
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/auth/**", "/login").permitAll()
-//                        .requestMatchers( "/**").permitAll()
-//                authz.requestMatchers( "/member/**").permitAll()
-//                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/algo/**").permitAll()
-//                        .requestMatchers("/coding/**").permitAll()
-//                        .requestMatchers("/career-info/**").permitAll()
-//                        .requestMatchers("/study-recruit/**").permitAll()
-//                        .requestMatchers("/study/**").permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN")
 
+                        // Auth (회원가입, 로그인, 메일 인증) 허용
+                        .requestMatchers("/auth/**", "/login", "/mail/**").permitAll()
+
+                        // 관리자 API
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // 기타 요청
                         .anyRequest().authenticated()
         )
                 .sessionManagement(session ->
