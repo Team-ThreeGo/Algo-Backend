@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Auth", description = "인증 API")
+@Tag(
+        name = "Auth - Public Query",
+        description = "공용 인증 API (Query)"
+)
 @RestController
 @RequestMapping("/member")
 public class AuthQueryController {

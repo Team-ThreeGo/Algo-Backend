@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/study")
 @RequiredArgsConstructor
-@Tag(name = "Study Comment API", description = "스터디 그룹 게시물 API")
+@Tag(
+        name = "Study Comment - Member Command",
+        description = "회원용 스터디 댓글 API (Command)"
+)
 public class StudyCommentCommandController {
 
     private final StudyCommentService studyCommentService;

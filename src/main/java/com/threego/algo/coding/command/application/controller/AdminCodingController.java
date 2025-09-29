@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Admin Coding - Command", description = "관리자용 코딩게시물,코딩문제 API (Command)")
+@Tag(
+        name = "Coding - Admin Command",
+        description = "관리자용 코딩 게시물 및 문제 API (Command)"
+)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")

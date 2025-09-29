@@ -18,9 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 @Slf4j
+@Tag(
+        name = "Auth - User",
+        description = "회원용 인증 API"
+)
 @RestController
-@Tag(name = "Auth API", description = "사용자 인증 API")
 public class AuthController {
 
     private AuthService authService;

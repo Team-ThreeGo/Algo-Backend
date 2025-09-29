@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@Tag(name = "Study Recruit Comment API", description = "스터디 모집 댓글 API")
+@Tag(
+        name = "Study Recruit Comment - Member Query",
+        description = "회원용 스터디 모집 댓글 API (Query)"
+)
 @RestController
 @AllArgsConstructor
 @RequestMapping("/study-recruit")

@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(name = "Algorithm - Query", description = "회원용 알고리즘 학습 API (Query)")
+@Tag(
+        name = "Algorithm - Member Query",
+        description = "회원용 알고리즘 학습 API (Query)"
+)
 @RequestMapping("/algo")
 @RestController
 public class AlgoQueryController {

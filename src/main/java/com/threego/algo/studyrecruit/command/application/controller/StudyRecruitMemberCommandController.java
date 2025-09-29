@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/study-recruit/applicants")
 @RequiredArgsConstructor
-@Tag(name = "Study Recruit Member API", description = "스터디 참가 신청 API")
+@Tag(
+        name = "Study Recruit Comment - Member Command",
+        description = "회원용 스터디 모집 댓글 API (Command)"
+)
 public class StudyRecruitMemberCommandController {
 
     private final StudyRecruitMemberService studyRecruitMemberService;

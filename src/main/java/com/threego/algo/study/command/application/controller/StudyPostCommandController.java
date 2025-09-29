@@ -21,7 +21,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/study")
 @RequiredArgsConstructor
-@Tag(name = "Study Post API", description = "스터디 게시물 API")
+@Tag(
+        name = "Study Post - Member Command",
+        description = "회원용 스터디 게시물 API (Command)"
+)
 public class StudyPostCommandController {
 
     private final StudyPostService studyPostService;

@@ -11,8 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Tag(
+        name = "Auth - Mail",
+        description = "사용자 이메일 인증 API"
+)
 @RestController
-@Tag(name = "Mail API", description = "이메일 인증 API")
 public class MailController {
 
     private final MailService mailService;

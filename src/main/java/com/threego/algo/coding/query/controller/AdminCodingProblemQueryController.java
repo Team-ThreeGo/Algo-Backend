@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "CodingProblem (Admin)", description = "관리자용 코딩문제 API")
+@Tag(
+        name = "Coding Problem - Admin Query",
+        description = "관리자용 코딩 문제 API (Query)"
+)
 @RequestMapping("/admin/coding-problem")
 @RestController
 @RequiredArgsConstructor

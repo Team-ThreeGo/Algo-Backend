@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Career Info (Admin)", description = "관리자용 기업별 정보 공유 API")
+@Tag(
+        name = "Career Info - Admin Query",
+        description = "관리자용 기업별 정보 공유 API (Query)"
+)
 @RestController
 @RequestMapping("/admin/career-info")
 public class AdminCareerQueryController {

@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Member API (Admin)", description = "관리자용 회원 API")
+@Tag(
+        name = "Member - Admin Command",
+        description = "관리자용 회원 관리 API (Command)"
+)
 @RestController
 @RequestMapping("/admin/member")
 public class AdminMemberCommandController {

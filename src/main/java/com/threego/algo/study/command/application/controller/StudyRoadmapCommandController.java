@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/study/roadmap")
 @RequiredArgsConstructor
-@Tag(name = "Study Roadmap API", description = "스터디 로드맵 API")
+@Tag(
+        name = "Study Roadmap - Member Command",
+        description = "회원용 스터디 로드맵 API (Command)"
+)
 public class StudyRoadmapCommandController {
 
 

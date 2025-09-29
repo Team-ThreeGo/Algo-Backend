@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Admin Algorithm - Command", description = "관리자용 알고리즘 학습 API (Command)")
+@Tag(
+        name = "Algorithm - Admin Command",
+        description = "관리자용 알고리즘 학습 API (Command)"
+)
 @RequestMapping("/admin/algo")
 @RestController
 public class AdminAlgoCommandController {
