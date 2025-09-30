@@ -20,9 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -46,7 +44,7 @@ class ReportCommandServiceTest {
     private AdminReportQueryService reportService;
 
     @InjectMocks
-    private ReportServiceImpl reportServiceImpl; // 실제 구현체 테스트
+    private ReportServiceImpl reportServiceImpl;
 
     Member reporter;
     Member reportedMember;
@@ -107,13 +105,17 @@ class ReportCommandServiceTest {
         request.setMemberId(reporter.getId());
         request.setTargetId(10);
 
-        given(categoryRepository.findById(category.getId())).willReturn(Optional.of(category));
-        given(typeRepository.findById(type.getId())).willReturn(Optional.of(type));
-        given(memberRepository.findById(reporter.getId())).willReturn(Optional.of(reporter));
-        given(memberRepository.findById(reportedMember.getId())).willReturn(Optional.of(reportedMember));
+        given(categoryRepository.findById(category.getId()))
+                                .willReturn(Optional.of(category));
+        given(typeRepository.findById(type.getId()))
+                            .willReturn(Optional.of(type));
+        given(memberRepository.findById(reporter.getId()))
+                              .willReturn(Optional.of(reporter));
+        given(memberRepository.findById(reportedMember.getId()))
+                              .willReturn(Optional.of(reportedMember));
 
         given(reportService.findReportedMemberId(category.getId(), request.getTargetId()))
-                .willReturn(reportedMember.getId());
+                           .willReturn(reportedMember.getId());
 
         given(reportRepository.existsByMemberAndTargetIdAndTypeAndReportedMember(
                 any(Member.class),
