@@ -73,7 +73,7 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
-    private Claims parseClaims(String token) {
+    public Claims parseClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
