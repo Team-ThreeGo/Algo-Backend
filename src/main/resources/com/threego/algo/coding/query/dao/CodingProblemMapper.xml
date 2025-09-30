@@ -92,7 +92,7 @@
         SELECT
         A.ID          AS problemId,
         A.TITLE       AS problemTitle,
-        A.CONTENT     AS problemContent,
+        A.CONTENT     AS content,
         A.PLATFORM    AS platform,
         A.DIFFICULTY  AS difficulty,
         A.INPUT       AS input,
@@ -146,7 +146,7 @@
         SELECT
         A.ID          AS problemId,
         A.TITLE       AS problemTitle,
-        A.CONTENT     AS problemContent,
+        A.CONTENT     AS content,
         A.PLATFORM    AS platform,
         A.DIFFICULTY  AS difficulty,
         A.INPUT       AS input,

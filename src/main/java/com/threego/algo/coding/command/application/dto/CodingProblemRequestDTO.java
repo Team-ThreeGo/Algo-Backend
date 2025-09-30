@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class CodingProblemRequestDTO {
     private int memberId;
-    private String title;
+    private String problemTitle;
     private String problemUrl;
     private Platform platform;   // BOJ, PGS, ETC
     private String difficulty; // 난이도

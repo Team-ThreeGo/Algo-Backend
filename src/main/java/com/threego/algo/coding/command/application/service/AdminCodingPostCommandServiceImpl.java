@@ -67,7 +67,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
         CodingProblem problem = CodingProblem.builder()
                 .member(member)   // 여기서는 Member 객체
                 .platform(dto.getPlatform())
-                .title(dto.getTitle())
+                .title(dto.getProblemTitle())
                 .problemUrl(dto.getProblemUrl())
                 .difficulty(dto.getDifficulty())
                 .content(dto.getContent())
@@ -87,7 +87,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
         CodingProblem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제 없음"));
         problem.update(
-                dto.getTitle(),
+                dto.getProblemTitle(),
                 dto.getProblemUrl(),
                 dto.getDifficulty(),
                 dto.getContent(),

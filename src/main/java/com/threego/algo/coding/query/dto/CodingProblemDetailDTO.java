@@ -21,6 +21,13 @@ public class CodingProblemDetailDTO {
     private int postCount;
     private String input;
     private String output;
+    private String problemUrl;
     private String createdAt;
     private String visibility;
+
+    // === AI 피드백 추가 ===
+    private String aiBigO;
+    private String aiGood;
+    private String aiBad;
+    private String aiPlan;
 }
