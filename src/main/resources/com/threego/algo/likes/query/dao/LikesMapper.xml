@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.threego.algo.likes.query.dao.LikesMapper">
+    <select id="existsLikesByMemberIdAndPostIdAndPostType" resultType="_boolean">
+        SELECT
+               EXISTS (SELECT
+                              1
+                          FROM LIKES A
+                         WHERE A.MEMBER_ID = #{memberId}
+        <if test="type == 'ALGO_POST'">
+            AND A.ALGO_POST_ID = #{postId}
+        </if>
+        <if test="type == 'CODING_POST'">
+            AND A.CODING_POST_ID = #{postId}
+        </if>
+        <if test="type == 'CAREER_INFO_POST'">
+            AND A.CAREER_INFO_POST_ID = #{postId}
+        </if>
+                     ) AS IS_LIKED
+    </select>
+</mapper>

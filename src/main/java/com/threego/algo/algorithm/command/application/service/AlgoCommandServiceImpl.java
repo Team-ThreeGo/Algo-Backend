@@ -3,23 +3,28 @@ package com.threego.algo.algorithm.command.application.service;
 import com.threego.algo.algorithm.command.application.dto.*;
 import com.threego.algo.algorithm.command.domain.aggregate.*;
 import com.threego.algo.algorithm.command.domain.repository.*;
+import com.threego.algo.common.service.S3Service;
 import com.threego.algo.algorithm.query.service.AlgoQueryService;
+import com.threego.algo.likes.command.application.service.LikesCommandService;
+import com.threego.algo.likes.command.domain.aggregate.enums.Type;
+import com.threego.algo.likes.query.service.LikesQueryService;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class AlgoCommandServiceImpl implements AlgoCommandService {
     private final AlgoRoadmapCommandRepository algoRoadmapCommandRepository;
-    private final MemberCommandRepository memberCommandRepository;
     private final AlgoPostCommandRepository algoPostCommandRepository;
     private final AlgoPostImageCommandRepository algoPostImageCommandRepository;
     private final AlgoQuizQuestionCommandRepository algoQuizQuestionCommandRepository;
@@ -27,28 +32,13 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     private final AlgoCommentRepository algoCommentRepository;
     private final MemberAlgoCorrectQuizHistoryCommandRepository memberAlgoCorrectQuizHistoryCommandRepository;
 
-    private final AlgoQueryService algoQueryService;
+    private final MemberCommandRepository memberCommandRepository;
 
-    @Autowired
-    public AlgoCommandServiceImpl(AlgoRoadmapCommandRepository algoRoadmapCommandRepository
-            , MemberCommandRepository memberCommandRepository
-            , AlgoPostCommandRepository algoPostCommandRepository
-            , AlgoPostImageCommandRepository algoPostImageCommandRepository
-            , AlgoQuizQuestionCommandRepository algoQuizQuestionCommandRepository
-            , AlgoQuizOptionCommandRepository algoQuizOptionCommandRepository
-            , AlgoCommentRepository algoCommentRepository
-            , MemberAlgoCorrectQuizHistoryCommandRepository memberAlgoCorrectQuizHistoryCommandRepository
-            , AlgoQueryService algoQueryService) {
-        this.algoRoadmapCommandRepository = algoRoadmapCommandRepository;
-        this.memberCommandRepository = memberCommandRepository;
-        this.algoPostCommandRepository = algoPostCommandRepository;
-        this.algoPostImageCommandRepository = algoPostImageCommandRepository;
-        this.algoQuizQuestionCommandRepository = algoQuizQuestionCommandRepository;
-        this.algoQuizOptionCommandRepository = algoQuizOptionCommandRepository;
-        this.algoCommentRepository = algoCommentRepository;
-        this.memberAlgoCorrectQuizHistoryCommandRepository = memberAlgoCorrectQuizHistoryCommandRepository;
-        this.algoQueryService = algoQueryService;
-    }
+    private final AlgoQueryService algoQueryService;
+    private final LikesCommandService likesCommandService;
+    private final LikesQueryService likesQueryService;
+
+    private final S3Service s3Service;
 
     @Override
     public AlgoRoadmap createAlgoRoadmap(final AlgoRoadmapRequestDTO request) {
@@ -83,29 +73,52 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     @Transactional
     @Override
     public AlgoPostDetailResponseDTO createAlgoPost(final int memberId, final int roadmapId,
-                                                    final AlgoPostRequestDTO request) throws Exception {
+                                                    final AlgoPostRequestDTO request) {
         final Member member = findMemberById(memberId);
-
         final AlgoRoadmap algoRoadmap = findAlgoRoadmapById(roadmapId);
 
         AlgoPost algoPost = new AlgoPost(request.getTitle(), request.getContent(), algoRoadmap, member);
-
         algoPost = algoPostCommandRepository.save(algoPost);
 
         final AlgoPostDetailResponseDTO response = AlgoPostDetailResponseDTO.of(algoPost);
 
-        final List<String> savedAlgoPostImages = saveAlgoPostImages(request.getImageUrls(), algoPost).stream()
-                .map(AlgoPostImage::getImageUrl)
-                .collect(Collectors.toList());
+        // 이미지 처리 로직 수정
+        List<String> savedImageUrls = new ArrayList<>();
 
-        response.setImageUrls(savedAlgoPostImages);
+        // 1. MultipartFile로 받은 이미지 처리 (새로 추가)
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            for (MultipartFile image : request.getImages()) {
+                if (!image.isEmpty()) {
+                    // 이미지 파일 유효성 검사
+                    s3Service.validateImageFile(image);
 
+                    // S3에 업로드
+                    String imageUrl = s3Service.uploadFile(image, "algo-posts");
+
+                    // DB에 저장
+                    AlgoPostImage postImage = new AlgoPostImage(imageUrl, algoPost);
+                    algoPostImageCommandRepository.save(postImage);
+
+                    savedImageUrls.add(imageUrl);
+                }
+            }
+        }
+
+        // 2. 기존 imageUrls로 받은 URL 처리 (하위 호환성 유지)
+        if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
+            List<AlgoPostImage> urlImages = saveAlgoPostImages(request.getImageUrls(), algoPost);
+            savedImageUrls.addAll(urlImages.stream()
+                    .map(AlgoPostImage::getImageUrl)
+                    .collect(Collectors.toList()));
+        }
+
+        response.setImageUrls(savedImageUrls);
         return response;
     }
 
     @Transactional
     @Override
-    public void deleteAlgoPost(final int postId) throws Exception {
+    public void deleteAlgoPost(final int postId) {
         final AlgoPost algoPost = findAlgoPostById(postId);
 
         if (algoPost.getVisibility().equals("N")) {
@@ -205,7 +218,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public AlgoQuizQuestionResponseDTO createAlgoQuiz(int postId, AlgoQuizQuestionRequestDTO request) throws Exception {
+    public AlgoQuizQuestionResponseDTO createAlgoQuiz(int postId, AlgoQuizQuestionRequestDTO request) {
         final AlgoPost algoPost = findAlgoPostById(postId);
 
         validQuizQuestion(request.getQuestion());
@@ -259,7 +272,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public AlgoPostDetailResponseDTO updateAlgoPost(final int postId, final AlgoPostRequestDTO request) throws Exception {
+    public AlgoPostDetailResponseDTO updateAlgoPost(final int postId, final AlgoPostRequestDTO request) {
         final AlgoPost algoPost = findAlgoPostById(postId);
 
         algoPost.updateAlgoPost(request.getTitle(), request.getContent());
@@ -295,7 +308,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public void deleteCommentForAdmin(final int commentId) throws Exception {
+    public void deleteCommentForAdmin(final int commentId) {
         final AlgoComment comment = findAlgoCommentId(commentId);
 
         if (comment.getVisibility().equals("N")) {
@@ -323,6 +336,25 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         final int totalQuizCount = algoPost.getAlgoRoadmap().getQuestionCount();
 
         algoPost.getAlgoRoadmap().updateQuestionCount(totalQuizCount - 1);
+    }
+
+    @Transactional
+    @Override
+    public void createAlgoPostLikes(final int memberId, final int postId) {
+        final Member member = findMemberById(memberId);
+        final AlgoPost algoPost = findAlgoPostById(postId);
+
+        if (member == algoPost.getMember()) {
+            throw new RuntimeException("자신이 작성한 글은 추천할 수 없습니다.");
+        }
+
+        if (likesQueryService.existsLikesByMemberIdAndPostIdAndPostType(memberId, postId, Type.ALGO_POST)) {
+            throw new RuntimeException("이미 추천한 게시물입니다.");
+        }
+
+        likesCommandService.createLikes(member, algoPost, Type.ALGO_POST);
+
+        algoPost.increaseLikeCount();
     }
 
     private void validQuizQuestion(final String question) {
@@ -374,7 +406,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         });
     }
 
-    private AlgoPost findAlgoPostById(final int postId) throws Exception {
+    private AlgoPost findAlgoPostById(final int postId) {
         return algoPostCommandRepository.findById(postId).orElseThrow(() -> {
             throw new RuntimeException("알고리즘 학습 게시물(ID: " + postId + ") 을(를) 찾을 수 없습니다.");
         });

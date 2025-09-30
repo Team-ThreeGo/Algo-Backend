@@ -1,6 +1,9 @@
 package com.threego.algo.common.service;
 
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import java.util.UUID;
 public class S3Service {
 
     private final S3Client s3Client;
+//    private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -47,6 +51,9 @@ public class S3Service {
             throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
         }
     }
+
+
+
 
     public void deleteFile(String fileUrl) {
         try {
@@ -89,14 +96,6 @@ public class S3Service {
 
     public String uploadStudyPostImage(MultipartFile file) {
         return uploadFile(file, "study-posts");
-    }
-
-    public String uploadBoardImage(MultipartFile file) {
-        return uploadFile(file, "board-posts");
-    }
-
-    public String uploadRecruitImage(MultipartFile file) {
-        return uploadFile(file, "recruit-posts");
     }
 
     public boolean isValidImageFile(MultipartFile file) {

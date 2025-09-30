@@ -6,8 +6,9 @@ import lombok.*;
 @Entity
 @Table(name = "Study_Post_Image")
 @Getter
-@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StudyPostImage {
 
     @Id
@@ -20,9 +21,4 @@ public class StudyPostImage {
     @Column(name = "image_url", nullable = false, length = 255)
     private String imageUrl;
 
-    // 생성자
-    public StudyPostImage(int postId, String imageUrl) {
-        this.postId = postId;
-        this.imageUrl = imageUrl;
-    }
 }

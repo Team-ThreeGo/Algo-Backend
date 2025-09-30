@@ -4,10 +4,16 @@ import com.threego.algo.coding.command.application.dto.CodingCommentRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostImageRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostRequestDTO;
 import com.threego.algo.coding.command.application.service.CodingPostCommandService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Tag(
         name = "Coding - Member Command",
@@ -21,8 +27,22 @@ public class CodingPostCommandController {
     private final CodingPostCommandService codingPostCommandService;
 
     // 게시물 등록
-    @PostMapping("/posts")
-    public ResponseEntity<Integer> createPost(@RequestBody CodingPostRequestDTO request) {
+    @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Integer> createPost(
+            @Parameter(description = "작성자 ID") @RequestParam Integer memberId,
+            @Parameter(description = "문제 ID") @RequestParam Integer problemId,
+            @Parameter(description = "제목") @RequestParam String title,
+            @Parameter(description = "내용") @RequestParam String content,
+            @Parameter(description = "이미지 파일들")
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        CodingPostRequestDTO request = new CodingPostRequestDTO();
+        request.setMemberId(memberId);
+        request.setProblemId(problemId);
+        request.setTitle(title);
+        request.setContent(content);
+        request.setImages(images);
+
         int id = codingPostCommandService.createPost(request);
         return ResponseEntity.ok(id);
     }
@@ -47,15 +67,6 @@ public class CodingPostCommandController {
         int id = codingPostCommandService.addImage(postId, request);
         return ResponseEntity.ok(id);
     }
-//      S3 적용
-//    @PostMapping("/posts/{postId}/images")
-//    public ResponseEntity<Integer> addImage(
-//            @PathVariable int postId,
-//            @RequestParam("file") MultipartFile file) {
-//        CodingPostImageRequestDTO dto = new CodingPostImageRequestDTO(file);
-//        int id = codingPostCommandService.addImage(postId, dto);
-//        return ResponseEntity.ok(id);
-//    }
 
     // 댓글 등록 (parentId가 있으면 대댓글)
     @PostMapping("/posts/{postId}/comments")
@@ -79,5 +90,15 @@ public class CodingPostCommandController {
     public ResponseEntity<String> deleteComment(@PathVariable int commentId) {
         codingPostCommandService.softDeleteComment(commentId);
         return ResponseEntity.ok("삭제 완료");
+    }
+
+    @Operation(summary = "코딩 문제 풀이 게시물 추천",
+            description = "회원이 코딩 문제 풀이 게시물을 추천하는 API입니다.")
+    @PostMapping("/posts/{postId}/likes")
+    public ResponseEntity<Void> createdCodingPostLikes(@PathVariable("postId") final int postId) {
+        // TODO. memberID는 Authentication에서 받아오도록 수정 필요
+        codingPostCommandService.createCodingPostLikes(1, postId);
+
+        return ResponseEntity.ok().build();
     }
 }

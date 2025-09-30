@@ -7,6 +7,7 @@ import com.threego.algo.member.command.domain.repository.MemberRepository;
 import com.threego.algo.member.command.domain.repository.MemberRoleRepository;
 import com.threego.algo.study.command.application.dto.create.StudyPostCreateDTO;
 import com.threego.algo.study.command.application.dto.create.StudyPostCreateResponseDTO;
+import com.threego.algo.study.command.application.dto.create.StudyPostRequestDTO;
 import com.threego.algo.study.command.application.dto.create.StudyReportCreateDTO;
 import com.threego.algo.study.command.application.dto.update.StudyPostUpdateDTO;
 import com.threego.algo.study.command.domain.aggregate.Study;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,61 +42,55 @@ public class StudyPostServiceImpl implements StudyPostService {
     private final MemberRoleRepository memberRoleRepository;
     private final S3Service s3Service;
 
-    @Override
-    public ResponseEntity<StudyPostCreateResponseDTO> createPost(
-            int studyId, int memberId, StudyPostCreateDTO request, List<MultipartFile> images) {
-        try {
-            // 1. 스터디 멤버 권한 확인
-            validateStudyMemberAccess(studyId, memberId);
+    public StudyPostCreateResponseDTO createPost(StudyPostRequestDTO requestDto) {
+        // 1. 게시물 저장
+        StudyPost post = StudyPost.builder()
+                .studyId(requestDto.getStudyId())
+                .memberId(requestDto.getMemberId())
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .commentCount(0)
+                .createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .visibility(requestDto.getVisibility() != null ? requestDto.getVisibility() : "Y")
+                .build();
 
-            // 2. 이미지 검증
-            if (images != null && !images.isEmpty()) {
-                if (images.size() > 10) {
-                    throw new IllegalArgumentException("이미지는 최대 10개까지 업로드 가능합니다.");
-                }
+        StudyPost savedPost = studyPostRepository.save(post);
 
-                for (MultipartFile image : images) {
-                    s3Service.validateImageFile(image);  // S3Service의 validateImageFile 사용
-                }
-            }
+        // 2. 이미지 업로드 및 저장
+        List<String> imageUrls = new ArrayList<>();
+        if (requestDto.getImages() != null && !requestDto.getImages().isEmpty()) {
+            for (MultipartFile image : requestDto.getImages()) {
+                if (!image.isEmpty()) {
+                    // 이미지 파일 유효성 검사
+                    s3Service.validateImageFile(image);
 
-            // 3. 게시물 생성
-            StudyPost post = new StudyPost(studyId, memberId, request.getTitle(), request.getContent());
-            studyPostRepository.save(post);
+                    // S3에 업로드 (study-posts 폴더에 저장)
+                    String imageUrl = s3Service.uploadStudyPostImage(image);
 
-            // 4. 이미지 S3 업로드 및 DB 저장
-            List<String> uploadedImageUrls = new ArrayList<>();
+                    // DB에 저장
+                    StudyPostImage postImage = StudyPostImage.builder()
+                            .postId(savedPost.getId())
+                            .imageUrl(imageUrl)
+                            .build();
+                    studyPostImageRepository.save(postImage);
 
-            if (images != null && !images.isEmpty()) {
-                for (MultipartFile image : images) {
-                    try {
-                        String imageUrl = s3Service.uploadStudyPostImage(image);
-                        StudyPostImage postImage = new StudyPostImage(post.getId(), imageUrl);
-                        studyPostImageRepository.save(postImage);
-                        uploadedImageUrls.add(imageUrl);
-                    } catch (Exception e) {
-                        rollbackUploadedImages(post.getId());
-                        throw new IllegalArgumentException("이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
-                    }
+                    imageUrls.add(imageUrl);
                 }
             }
-
-            // 5. 응답 생성
-            StudyPostCreateResponseDTO response = new StudyPostCreateResponseDTO(
-                    post.getId(),
-                    post.getTitle(),
-                    post.getContent(),
-                    uploadedImageUrls,
-                    "게시물이 성공적으로 등록되었습니다."
-            );
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        } catch (IllegalArgumentException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("게시물 등록 중 오류가 발생했습니다.");
         }
+
+        // 3. 응답 생성
+        return StudyPostCreateResponseDTO.builder()
+                .id(savedPost.getId())
+                .studyId(savedPost.getStudyId())
+                .memberId(savedPost.getMemberId())
+                .title(savedPost.getTitle())
+                .content(savedPost.getContent())
+                .commentCount(savedPost.getCommentCount())
+                .createdAt(savedPost.getCreatedAt())
+                .visibility(savedPost.getVisibility())
+                .imageUrls(imageUrls)
+                .build();
     }
 
 
@@ -105,7 +102,7 @@ public class StudyPostServiceImpl implements StudyPostService {
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
 
             // 2. 작성자 권한 확인
-            if (post.getMemberId()!=(memberId)) {
+            if (post.getMemberId() != (memberId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body("게시물을 수정할 권한이 없습니다.");
             }
@@ -131,7 +128,7 @@ public class StudyPostServiceImpl implements StudyPostService {
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
 
             // 2. 작성자 권한 확인
-            if (post.getMemberId()!=(memberId)) {
+            if (post.getMemberId() != (memberId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body("게시물을 삭제할 권한이 없습니다.");
             }

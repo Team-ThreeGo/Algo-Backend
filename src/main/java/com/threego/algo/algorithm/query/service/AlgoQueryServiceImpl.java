@@ -3,20 +3,16 @@ package com.threego.algo.algorithm.query.service;
 import com.threego.algo.algorithm.command.domain.aggregate.AlgoRoadmap;
 import com.threego.algo.algorithm.query.dao.AlgoMapper;
 import com.threego.algo.algorithm.query.dto.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class AlgoQueryServiceImpl implements AlgoQueryService {
     private final AlgoMapper algoMapper;
-
-    @Autowired
-    public AlgoQueryServiceImpl(AlgoMapper algoMapper) {
-        this.algoMapper = algoMapper;
-    }
 
     @Override
     public List<AlgoRoadmap> findAllAlgoRoadmaps() {

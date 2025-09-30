@@ -20,4 +20,6 @@ public interface CodingPostCommandService {
     void updateComment(int commentId, CodingCommentRequestDTO dto);
 
     void softDeleteComment(int commentId);
+
+    void createCodingPostLikes(final int memberId, final int postId);
 }

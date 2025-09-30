@@ -34,7 +34,6 @@ public class Member {
     @Column(columnDefinition = "int default 0")
     private int point;
 
-
     @Column(name = "reported_count", columnDefinition = "int default 0")
     private int reportedCount;
 
@@ -73,6 +72,7 @@ public class Member {
         );
     }
 
-
-
+    public void increasePoint(final int point) {
+        this.point += point;
+    }
 }

@@ -76,4 +76,8 @@ public class AlgoPost {
             this.updatedAt = DateTimeUtils.nowDateTime();
         }
     }
+
+    public void increaseLikeCount() {
+        this.likeCount += 1;
+    }
 }

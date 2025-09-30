@@ -8,5 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class CodingPostImageRequestDTO {
     private String imageUrl;
-//    private MultipartFile file; // 실제 업로드 파일
+    private MultipartFile file; // 실제 업로드 파일
 }

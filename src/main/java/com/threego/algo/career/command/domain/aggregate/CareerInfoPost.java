@@ -60,7 +60,7 @@ public class CareerInfoPost {
     public static CareerInfoPost create(Member member, String title, String content, String imageUrl) {
         CareerInfoPost post = new CareerInfoPost(member, title, content);
 
-        if(imageUrl != null && !imageUrl.isBlank()) {
+        if (imageUrl != null && !imageUrl.isBlank()) {
             post.imageUrl = imageUrl;
             post.status = Status.PENDING;
         }
@@ -77,5 +77,9 @@ public class CareerInfoPost {
 
     public void decreaseCommentCount() {
         this.commentCount -= 1;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount += 1;
     }
 }

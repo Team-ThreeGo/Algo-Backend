@@ -29,4 +29,6 @@ public interface AlgoCommandService {
     void deleteCommentForAdmin(final int commentId) throws Exception;
 
     void deleteAlgoQuizQuestion(int quizQuestionId) throws Exception;
+
+    void createAlgoPostLikes(final int memberId, final int postId);
 }

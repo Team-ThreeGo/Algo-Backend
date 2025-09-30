@@ -2,6 +2,7 @@ package com.threego.algo.study.command.application.controller;
 
 import com.threego.algo.study.command.application.dto.create.StudyPostCreateDTO;
 import com.threego.algo.study.command.application.dto.create.StudyPostCreateResponseDTO;
+import com.threego.algo.study.command.application.dto.create.StudyPostRequestDTO;
 import com.threego.algo.study.command.application.dto.update.StudyPostUpdateDTO;
 import com.threego.algo.study.command.application.service.StudyPostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,21 +30,27 @@ public class StudyPostCommandController {
 
     private final StudyPostService studyPostService;
 
-
     @PostMapping(value = "/{studyId}/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "스터디 게시물 등록")
     public ResponseEntity<StudyPostCreateResponseDTO> createPost(
-            @PathVariable int studyId,
+            @Parameter(description = "스터디 ID") @PathVariable Integer studyId,
+            @Parameter(description = "멤버 ID") @RequestParam Integer memberId,
+            @Parameter(description = "제목") @RequestParam String title,
+            @Parameter(description = "내용") @RequestParam String content,
+            @Parameter(description = "공개 여부") @RequestParam(defaultValue = "Y") String visibility,
+            @Parameter(description = "이미지 파일들 (최대 5MB, JPG/PNG/GIF 등)")
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
-            @RequestPart(value = "post")
-            @Parameter(description = "게시물 정보",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
-            StudyPostCreateDTO postDto,
+        StudyPostRequestDTO requestDto = new StudyPostRequestDTO();
+        requestDto.setStudyId(studyId);
+        requestDto.setMemberId(memberId);
+        requestDto.setTitle(title);
+        requestDto.setContent(content);
+        requestDto.setVisibility(visibility);
+        requestDto.setImages(images);
 
-            @RequestPart(value = "images", required = false) List<MultipartFile> images,
-
-            @RequestParam int memberId) {
-
-        return studyPostService.createPost(studyId, memberId, postDto, images);
+        StudyPostCreateResponseDTO response = studyPostService.createPost(requestDto);
+        return ResponseEntity.ok(response);
     }
 
     // 게시물 수정

@@ -4,7 +4,7 @@ import com.threego.algo.algorithm.query.dto.*;
 import com.threego.algo.algorithm.query.service.AlgoQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +16,10 @@ import java.util.stream.Collectors;
         description = "관리자용 알고리즘 학습 API (Query)"
 )
 @RequestMapping("/admin/algo")
+@RequiredArgsConstructor
 @RestController
 public class AdminAlgoQueryController {
     private final AlgoQueryService algoQueryService;
-
-    @Autowired
-    public AdminAlgoQueryController(AlgoQueryService algoQueryService) {
-        this.algoQueryService = algoQueryService;
-    }
 
     @Operation(summary = "알고리즘 학습 로드맵 목록 조회", description = "관리자가 알고리즘 학습 로드맵 목록을 확인할 수 있는 API입니다.")
     @GetMapping("/roadmaps")

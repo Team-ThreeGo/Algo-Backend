@@ -9,4 +9,5 @@ public interface CareerCommandService {
     Integer createComment(int postId, Integer parentId, CareerCommentRequest request);
     void updateComment(int commentId, CareerCommentRequest request);
     void deleteComment(int commentId);
+    void createCareerPostLikes(final int memberId, final int postId);
 }
