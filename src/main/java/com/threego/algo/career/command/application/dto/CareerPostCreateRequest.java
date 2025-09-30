@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @NoArgsConstructor
 public class CareerPostCreateRequest {
+    private int memberId;
     private String title;
     private String content;
     private MultipartFile image; // 단일 파일
