@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
         description = "회원용 인증 API"
 )
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     private AuthService authService;
@@ -39,7 +41,7 @@ public class AuthController {
             summary = "회원가입",
             description = "사용자가 입력한 이메일, 비밀번호, 닉네임으로 회원가입을 합니다."
     )
-    @PostMapping("/auth/signup")
+    @PostMapping("/signup")
     public ResponseEntity<ResponseRegistUserDTO> registUser(@RequestBody RequestRegistUserDTO newUser) {
         UserDTO userDTO = modelMapper.map(newUser, UserDTO.class);
 

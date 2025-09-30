@@ -49,7 +49,7 @@ public class WebSecurity {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         // Auth (회원가입, 로그인, 메일 인증) 허용
-                        .requestMatchers("/auth/**", "/login", "/mail/**").permitAll()
+                        .requestMatchers("/auth/**", "/health/**").permitAll()
 
                         // 관리자 API
                         .requestMatchers("/admin/**").hasRole("ADMIN")
