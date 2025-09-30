@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
         description = "회원용 인증 API"
 )
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
 
     private AuthService authService;
