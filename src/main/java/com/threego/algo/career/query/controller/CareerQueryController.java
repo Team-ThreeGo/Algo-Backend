@@ -60,4 +60,11 @@ public class CareerQueryController {
     ){
         return ResponseEntity.ok(careerQueryService.findCommentsByPostId(postId));
     }
+
+    // 특정 회원이 쓴 게시물 조회
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<List<PostSummaryResponseDto>> getPostsByMember(@PathVariable int memberId) {
+        List<PostSummaryResponseDto> posts = careerQueryService.findPostsByMember(memberId);
+        return ResponseEntity.ok(posts);
+    }
 }

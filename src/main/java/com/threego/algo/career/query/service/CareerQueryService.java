@@ -14,4 +14,6 @@ public interface CareerQueryService {
     PostDetailResponseDto findPostForAdmin(int postId);
     List<CommentResponseDto> findCommentsByPostId(int postId);
     List<PostDetailResponseDto> findCommentsForAdmin();
+
+    List<PostSummaryResponseDto> findPostsByMember(int memberId);
 }
