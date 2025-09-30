@@ -79,8 +79,6 @@ public class StudyRecruitPost {
         this.status = RecruitStatus.OPEN;
         this.commentCount = 0;
         this.createdAt = createdAt;
-        this.visibility = visibility;
-//        this.visibility = VisibilityStatus.Y;
     }
 
     // 비즈니스 메소드

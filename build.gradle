@@ -70,8 +70,9 @@ dependencies {
     /* E-Mail */
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-
-
+    /* SlF4j */
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
