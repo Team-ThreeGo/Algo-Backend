@@ -3,15 +3,11 @@ package com.threego.algo.career.command.application.controller;
 import com.threego.algo.career.command.application.dto.CareerCommentRequest;
 import com.threego.algo.career.command.application.dto.CareerPostCreateRequest;
 import com.threego.algo.career.command.application.service.CareerCommandService;
-import com.threego.algo.member.command.domain.aggregate.Member;
-import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
-import com.threego.algo.security.JwtUtil;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/career-info")
 public class CareerCommandController {
     private final CareerCommandService service;
-    private final JwtUtil jwtUtil;
-    private final MemberCommandRepository memberCommandRepository;
 
     @Autowired
-    public CareerCommandController(CareerCommandService service, JwtUtil jwtUtil, MemberCommandRepository memberCommandRepository) {
+    public CareerCommandController(@Qualifier("careerCommandServiceImpl") CareerCommandService service) {
         this.service = service;
-        this.jwtUtil = jwtUtil;
-        this.memberCommandRepository = memberCommandRepository;
     }
 
     @Operation(
@@ -41,29 +33,17 @@ public class CareerCommandController {
     )
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Integer> createPost(
-            HttpServletRequest request,
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "이미지 파일 (선택, 최대 5MB)")
-            @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+            @RequestPart(value = "image", required = false) MultipartFile image) {
 
-        // 🔑 JWT 토큰에서 회원 정보 추출
-        String token = request.getHeader("Authorization").substring(7);
-        Claims claims = jwtUtil.parseClaims(token);
-        String email = claims.getSubject();
+        CareerPostCreateRequest request = new CareerPostCreateRequest();
+        request.setTitle(title);
+        request.setContent(content);
+        request.setImage(image);
 
-        Member member = memberCommandRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("사용자 없음"));
-        int memberId = member.getId();
-
-        // DTO 생성
-        CareerPostCreateRequest dto = new CareerPostCreateRequest();
-        dto.setMemberId(memberId);
-        dto.setTitle(title);
-        dto.setContent(content);
-        dto.setImage(image);
-
-        Integer postId = service.createPost(dto);
+        Integer postId = service.createPost(request);
         return ResponseEntity.ok(postId);
     }
 

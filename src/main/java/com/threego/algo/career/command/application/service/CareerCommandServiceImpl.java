@@ -45,7 +45,7 @@ public class CareerCommandServiceImpl implements CareerCommandService {
     @Override
     public Integer createPost(CareerPostCreateRequest request) {
         // TODO: 로그인 회원 정보 가져오기 (Spring Security에서 인증 객체 활용)
-        Member member = memberRepository.findById(request.getMemberId())
+        Member member = memberRepository.findById(1)
                 .orElseThrow(() -> new IllegalArgumentException("테스트용 회원이 없습니다."));
 
         String imageUrl = null;
