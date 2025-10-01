@@ -1,6 +1,7 @@
 package com.threego.algo.report.command.domain.aggregate;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReportCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
