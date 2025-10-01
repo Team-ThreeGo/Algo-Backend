@@ -72,6 +72,10 @@ public class Member {
         );
     }
 
+    public void increaseReportCount() {
+        this.reportedCount += 1;
+    }
+
     public void increasePoint(final int point) {
         this.point += point;
     }

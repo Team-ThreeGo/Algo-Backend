@@ -1,4 +1,4 @@
-package com.threego.algo.auth.command.infrastructure.security;
+package com.threego.algo.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

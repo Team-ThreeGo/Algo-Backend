@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "Study Roadmap API", description = "스터디 로드맵 API")
+@Tag(
+        name = "Study Roadmap - Member Query",
+        description = "회원용 스터디 로드맵 API (Query)"
+)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/study")

@@ -1,15 +1,17 @@
 package com.threego.algo.report.command.domain.aggregate;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
-@Getter
-@Table(name = "Report_Type")
-@NoArgsConstructor
 @Entity
+@Table(name = "Report_Type")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReportType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

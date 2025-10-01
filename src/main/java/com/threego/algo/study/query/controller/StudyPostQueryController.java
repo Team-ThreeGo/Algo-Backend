@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Study Post API", description = "스터디 게시물 API")
+@Tag(
+        name = "Study Post - Member Query",
+        description = "회원용 스터디 게시물 API (Query)"
+)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/study")

@@ -1,7 +1,9 @@
 package com.threego.algo.report.query.service;
 
 import com.threego.algo.report.query.dao.ReportMapper;
+import com.threego.algo.report.query.dto.ReportContentResponseDTO;
 import com.threego.algo.report.query.dto.ReportDetailResponseDTO;
+import com.threego.algo.report.query.dto.ReportedMemberResponseDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,18 @@ public class AdminReportQueryServiceImpl implements AdminReportQueryService {
     @Override
     public List<ReportDetailResponseDTO> findReportedListByMemberId(int memberId) {
         List<ReportDetailResponseDTO> dto = reportMapper.selectReportedDetailsById(memberId);
+        return dto;
+    }
+
+    @Override
+    public List<ReportContentResponseDTO> findDetailByReportId(int reportId) {
+        List<ReportContentResponseDTO> dto = reportMapper.selectReportContentDetailsByReportId(reportId);
+        return dto;
+    }
+
+    @Override
+    public Integer findReportedMemberId(int categoryId, int targetId) {
+        Integer dto = reportMapper.selectReportedMember(categoryId, targetId);
         return dto;
     }
 }

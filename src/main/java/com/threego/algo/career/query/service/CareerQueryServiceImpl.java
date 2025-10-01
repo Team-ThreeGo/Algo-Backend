@@ -72,4 +72,9 @@ public class CareerQueryServiceImpl implements CareerQueryService {
         return careerInfoMapper.selectComments();
     }
 
+    @Override
+    public List<PostSummaryResponseDto> findPostsByMember(int memberId) {
+        return careerInfoMapper.selectPostsByMember(memberId);
+    }
+
 }

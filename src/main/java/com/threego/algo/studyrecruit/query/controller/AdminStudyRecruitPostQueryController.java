@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "[Admin] Study Recruit API", description = "관리자용 스터디 모집글 API")
+@Tag(
+        name = "Study Recruit - Admin Query",
+        description = "관리자용 스터디 모집글 API (Query)"
+)
 @RestController
 @AllArgsConstructor
 @RequestMapping("/admin/study-recruit")

@@ -12,9 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/admin/study-recruit")
+@RequestMapping("/admin/study-recruit")
 @RequiredArgsConstructor
-@Tag(name = "[Admin] Study Recruit API", description = "관리자용 스터디 모집 API")
+@Tag(
+        name = "Study Recruit - Admin Command",
+        description = "관리자용 스터디 모집 API (Command)"
+)
 public class AdminStudyRecruitController {
 
     private final StudyRecruitPostService studyRecruitPostService;

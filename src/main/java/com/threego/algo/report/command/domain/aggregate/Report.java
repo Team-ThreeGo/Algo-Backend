@@ -28,15 +28,38 @@ public class Report {
     @JoinColumn(name = "type_id", nullable = false)
     private ReportType type;
 
+
+    @Column(name = "target_id", nullable = false)
+    private int targetId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reported_member_id", nullable = false)
+    private Member reportedMember;
+
+    @Column(name = "content", nullable = true)
+    private String content;
+
     @Column(name = "created_at", nullable = false)
     private String createdAt;
 
-    @Column
-    private String content;
-
-    @Column(nullable = false)
-    private int targetId;
-
-    @Column(nullable = false)
-    private int reportedMemberId;
+    public static Report create(
+            Member reporter,
+            ReportCategory category,
+            ReportType type,
+            int targetId,
+            Member reportedMember,
+            String content,
+            String createdAt
+    ) {
+        Report report = new Report();
+        report.member = reporter;
+        report.category = category;
+        report.type = type;
+        report.targetId = targetId;
+        report.reportedMember = reportedMember;
+        report.content = content;
+        report.createdAt = createdAt;
+        return report;
+    }
 }
+

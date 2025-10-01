@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Career Info (Admin)", description = "관리자용 기업별 정보 공유 API")
+@Tag(
+        name = "Career Info - Admin Command",
+        description = "관리자용 기업별 정보 공유 API (Command)"
+)
 @RestController
 @RequestMapping("/admin/career-info")
 public class AdminCareerCommandController {

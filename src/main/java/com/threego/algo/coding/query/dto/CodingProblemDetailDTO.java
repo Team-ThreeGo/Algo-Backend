@@ -21,6 +21,7 @@ public class CodingProblemDetailDTO {
     private int postCount;
     private String input;
     private String output;
+    private String problemUrl;
     private String createdAt;
     private String visibility;
 }

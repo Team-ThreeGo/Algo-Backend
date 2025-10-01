@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Algorithm - Command", description = "회원용 알고리즘 학습 API (Command)")
+@Tag(
+        name = "Algorithm - Member Command",
+        description = "회원용 알고리즘 학습 API (Command)"
+)
 @RequestMapping("/algo")
 @RequiredArgsConstructor
 @RestController

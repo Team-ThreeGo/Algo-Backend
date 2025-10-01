@@ -2,6 +2,8 @@ package com.threego.algo.auth.command.application.service;
 import com.threego.algo.auth.command.application.dto.UserDTO;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.aggregate.MemberRank;
+import com.threego.algo.member.command.domain.aggregate.MemberRole;
+import com.threego.algo.member.command.domain.aggregate.Role;
 import com.threego.algo.member.command.domain.repository.MemberRankRepository;
 import com.threego.algo.member.command.domain.repository.MemberRepository;
 import com.threego.algo.member.query.dao.AuthMapper;
@@ -17,8 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.threego.algo.member.command.domain.aggregate.Member.UserToMember;
 
@@ -51,10 +53,17 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("기본 Rank 없음"));
 
         Member member = UserToMember(userDTO, defaultRank);
-
         member.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+
+        // ROLE_USER 기본 권한 부여
+        Role userRole = new Role();
+        userRole.setId(1);
+        MemberRole memberRole = new MemberRole(savedMember, userRole);
+
+        savedMember.getMemberRoles().add(memberRole);
+        memberRepository.save(savedMember);
     }
 
     @Override
@@ -64,9 +73,14 @@ public class AuthServiceImpl implements AuthService {
             throw new UsernameNotFoundException(email + "이메일 사용자는 존재하지 않습니다.");
         }
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        List<Role> roles = authMapper.selectRolesByEmail(email);
+        List<GrantedAuthority> grantedAuthorities = roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().name()))
+                .map(authority -> (GrantedAuthority) authority)
+                .collect(Collectors.toList());
 
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+//        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+//        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new User(loginUser.getEmail(), loginUser.getPassword(), true, true, true, true, grantedAuthorities);
     }

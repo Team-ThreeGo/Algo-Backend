@@ -11,7 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Member API", description = "회원 API")
+@Tag(
+        name = "Member - Member Command",
+        description = "회원용 회원 관리 API (Command)"
+)
 @RestController
 @RequestMapping("/member")
 public class MemberCommandController {

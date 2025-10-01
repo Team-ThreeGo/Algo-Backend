@@ -24,6 +24,10 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    set('springCloudVersion', "2025.0.0")
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -70,9 +74,18 @@ dependencies {
     /* E-Mail */
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+    /* Eureka client */
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
     /* SlF4j */
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {

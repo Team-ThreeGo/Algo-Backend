@@ -13,7 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "Career Info", description = "회원용 기업별 정보 공유 API")
+@Tag(
+        name = "Career Info - Member Command",
+        description = "회원용 기업별 정보 공유 API (Command)"
+)
 @RestController
 @RequestMapping("/career-info")
 public class CareerCommandController {

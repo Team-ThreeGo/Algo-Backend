@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "CodingProblem", description = "회원용 코딩문제 API")
+@Tag(
+        name = "Coding Problem - Member Query",
+        description = "회원용 코딩 문제 API (Query)"
+)
 @RequestMapping("/coding-problem")
 @RestController
 @AllArgsConstructor
@@ -58,8 +61,8 @@ public class CodingProblemQueryController {
     // 회원용 알고리즘 게시물 상세 조회
     // GET /coding-problem/posts/{postId}
     @Operation(
-            summary = "회원용 알고리즘 게시물 상세 조회",
-            description = "회원이 알고리즘 게시물 상세 조회합니다."
+            summary = "회원용 알고리즘 문제 게시물 상세 조회",
+            description = "회원이 알고리즘 문제 게시물 상세 조회합니다."
     )
     @GetMapping("/posts/{postId}")
     public CodingProblemDetailDTO findProblemDetail(@PathVariable int postId) {
