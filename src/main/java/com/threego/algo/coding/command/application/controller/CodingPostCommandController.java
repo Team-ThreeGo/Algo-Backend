@@ -15,7 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Tag(name = "Coding Post- Command", description = "회원용 코딩게시물 API (Command)")
+@Tag(
+        name = "Coding - Member Command",
+        description = "회원용 코딩 게시물 API (Command)"
+)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/coding")

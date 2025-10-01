@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "[Admin] Member API", description = "관리자 회원 조회 API")
+@Tag(
+        name = "Member - Admin Query",
+        description = "관리자용 회원 관리 API (Query)"
+)
 @RestController
 @RequestMapping("/admin/member")
 public class AdminMemberQueryController {

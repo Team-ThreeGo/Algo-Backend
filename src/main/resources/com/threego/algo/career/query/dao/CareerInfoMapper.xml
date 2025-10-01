@@ -101,4 +101,26 @@
               ON B.RANK_ID = C.ID
            ORDER BY A.ID DESC;
     </select>
+
+    <select id="selectPostsByMember"
+            parameterType="int"
+            resultType="com.threego.algo.career.query.dto.PostSummaryResponseDto">
+        SELECT
+        A.ID AS id
+        , A.TITLE AS title
+        , A.MEMBER_ID AS memberId
+        , B.NICKNAME AS nickname
+        , C.NAME AS rankName
+        , A.CREATED_AT AS createdAt
+        , A.STATUS AS status
+        , A.LIKE_COUNT AS likeCount
+        , A.COMMENT_COUNT AS commentCount
+        FROM CAREER_INFO_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        WHERE A.MEMBER_ID = #{memberId}
+        ORDER BY A.ID DESC
+    </select>
+
+
 </mapper>

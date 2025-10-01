@@ -29,12 +29,4 @@ public class Role {
 
     @OneToMany(mappedBy = "role")
     private List<MemberRole> memberRoles = new ArrayList<>();
-
-    public boolean isAdmin() {
-        return this.name == RoleName.ADMIN;
-    }
-
-    public boolean isMember() {
-        return this.name == RoleName.MEMBER;
-    }
 }

@@ -27,4 +27,6 @@ public interface CareerInfoMapper {
     );
 
     List<PostDetailResponseDto> selectComments();
+
+    List<PostSummaryResponseDto> selectPostsByMember(@Param("memberId") int memberId);
 }

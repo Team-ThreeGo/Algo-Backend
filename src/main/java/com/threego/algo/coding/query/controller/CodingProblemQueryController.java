@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "CodingProblem", description = "회원용 코딩문제 API")
+@Tag(
+        name = "Coding Problem - Member Query",
+        description = "회원용 코딩 문제 API (Query)"
+)
 @RequestMapping("/coding-problem")
 @RestController
 @AllArgsConstructor

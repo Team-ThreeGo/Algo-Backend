@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Career Info", description = "회원용 기업별 정보 공유 API")
+@Tag(
+        name = "Career Info - Member Query",
+        description = "회원용 기업별 정보 공유 API (Query)"
+)
 @RestController
 @RequestMapping("/career-info")
 public class CareerQueryController {
@@ -56,5 +59,12 @@ public class CareerQueryController {
             @PathVariable int postId
     ){
         return ResponseEntity.ok(careerQueryService.findCommentsByPostId(postId));
+    }
+
+    // 특정 회원이 쓴 게시물 조회
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<List<PostSummaryResponseDto>> getPostsByMember(@PathVariable int memberId) {
+        List<PostSummaryResponseDto> posts = careerQueryService.findPostsByMember(memberId);
+        return ResponseEntity.ok(posts);
     }
 }
