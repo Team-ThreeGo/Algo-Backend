@@ -72,4 +72,54 @@
          WHERE A.REPORTED_MEMBER_ID = #{id}
     </select>
 
+    <!-- 신고 당한 게시물/댓글 내용 조회 -->
+    <select id="selectReportContentDetailsByReportId" resultType="com.threego.algo.report.query.dto.ReportContentResponseDTO">
+        SELECT
+        CASE A.category_id
+        WHEN 1 THEN (SELECT member_id FROM Study_Recruit_Post WHERE id = A.target_id)
+        WHEN 2 THEN (SELECT member_id FROM Study_Recruit_Comment WHERE id = A.target_id)
+        WHEN 3 THEN (SELECT member_id FROM Study_Post WHERE id = A.target_id)
+        WHEN 4 THEN (SELECT member_id FROM Study_Comment WHERE id = A.target_id)
+        WHEN 5 THEN (SELECT member_id FROM Algo_Post WHERE id = A.target_id)
+        WHEN 6 THEN (SELECT member_id FROM Algo_Comment WHERE id = A.target_id)
+        WHEN 7 THEN (SELECT member_id FROM Coding_Post WHERE id = A.target_id)
+        WHEN 8 THEN (SELECT member_id FROM Coding_Comment WHERE id = A.target_id)
+        WHEN 9 THEN (SELECT member_id FROM Career_Info_Post WHERE id = A.target_id)
+        WHEN 10 THEN (SELECT member_id FROM Career_Info_Comment WHERE id = A.target_id)
+        END AS member_id,
+        CASE A.category_id
+        WHEN 1 THEN (SELECT content FROM Study_Recruit_Post WHERE id = A.target_id)
+        WHEN 2 THEN (SELECT content FROM Study_Recruit_Comment WHERE id = A.target_id)
+        WHEN 3 THEN (SELECT content FROM Study_Post WHERE id = A.target_id)
+        WHEN 4 THEN (SELECT content FROM Study_Comment WHERE id = A.target_id)
+        WHEN 5 THEN (SELECT content FROM Algo_Post WHERE id = A.target_id)
+        WHEN 6 THEN (SELECT content FROM Algo_Comment WHERE id = A.target_id)
+        WHEN 7 THEN (SELECT content FROM Coding_Post WHERE id = A.target_id)
+        WHEN 8 THEN (SELECT content FROM Coding_Comment WHERE id = A.target_id)
+        WHEN 9 THEN (SELECT content FROM Career_Info_Post WHERE id = A.target_id)
+        WHEN 10 THEN (SELECT content FROM Career_Info_Comment WHERE id = A.target_id)
+        END AS content
+        FROM REPORT A
+        WHERE A.id = #{reportId}
+    </select>
+
+
+    <select id="selectReportedMember"
+            parameterType="map"
+            resultType="int">
+        SELECT
+            CASE #{categoryId}
+                WHEN 1 THEN (SELECT member_id FROM Study_Recruit_Post WHERE id = #{targetId})
+                WHEN 2 THEN (SELECT member_id FROM Study_Recruit_Comment WHERE id = #{targetId})
+                WHEN 3 THEN (SELECT member_id FROM Study_Post WHERE id = #{targetId})
+                WHEN 4 THEN (SELECT member_id FROM Study_Comment WHERE id = #{targetId})
+                WHEN 5 THEN (SELECT member_id FROM Algo_Post WHERE id = #{targetId})
+                WHEN 6 THEN (SELECT member_id FROM Algo_Comment WHERE id = #{targetId})
+                WHEN 7 THEN (SELECT member_id FROM Coding_Post WHERE id = #{targetId})
+                WHEN 8 THEN (SELECT member_id FROM Coding_Comment WHERE id = #{targetId})
+                WHEN 9 THEN (SELECT member_id FROM Career_Info_Post WHERE id = #{targetId})
+                WHEN 10 THEN (SELECT member_id FROM Career_Info_Comment WHERE id = #{targetId})
+            END
+    </select>
+
 </mapper>

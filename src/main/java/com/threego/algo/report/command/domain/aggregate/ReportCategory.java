@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
-@Getter
-@Table(name = "Report_Category")
-@NoArgsConstructor
 @Entity
+@Table(name = "Report_Category")
+@Getter
+@Setter
+@NoArgsConstructor
 public class ReportCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

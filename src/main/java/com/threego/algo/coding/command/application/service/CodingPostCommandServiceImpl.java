@@ -40,7 +40,6 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
     private final CodingProblemRepository problemRepository;
     private final MemberCommandRepository memberRepository;
     private final S3Service s3Service;
-    private final CodingPostImageRepository codingPostImageRepository;
     private final LikesCommandService likesCommandService;
     private final LikesQueryService likesQueryService;
 
