@@ -1,12 +1,17 @@
 package com.threego.algo.study.command.application.controller;
 
 
+import com.threego.algo.member.command.domain.aggregate.Member;
+import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
+import com.threego.algo.security.JwtUtil;
 import com.threego.algo.study.command.application.dto.create.StudyCreateDTO;
 import com.threego.algo.study.command.application.dto.update.StudyUpdateDTO;
 import com.threego.algo.study.command.application.service.StudyService;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.tags.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 public class StudyCommandController {
 
     private final StudyService studyService;
+    private final JwtUtil jwtUtil;
+    private final MemberCommandRepository memberCommandRepository;
 
     @Operation(
             summary = "스터디 그룹 생성",
@@ -36,6 +43,7 @@ public class StudyCommandController {
     })
     @PostMapping
     public ResponseEntity<String> createStudy(
+            HttpServletRequest request,
             @Parameter(description = "작성자 ID", required = true)
             @RequestHeader("Member-Id") int authorId,
 
@@ -43,8 +51,17 @@ public class StudyCommandController {
             @RequestHeader("POST-ID") int post_id,
 
             @Parameter(description = "스터디 생성 정보", required = true)
-            @Valid @RequestBody StudyCreateDTO request) {
-        return studyService.createStudyFromRecruit(authorId, post_id, request);
+            @Valid @RequestBody StudyCreateDTO dto) {
+
+        String token = request.getHeader("Authorization").substring(7);
+        Claims claims = jwtUtil.parseClaims(token);
+        String email = claims.getSubject();
+
+        Member member = memberCommandRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+        int memberId = member.getId();
+
+        return studyService.createStudyFromRecruit(authorId, post_id, dto);
     }
 
     @Operation(
