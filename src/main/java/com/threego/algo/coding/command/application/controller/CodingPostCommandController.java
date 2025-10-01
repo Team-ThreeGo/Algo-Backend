@@ -4,14 +4,9 @@ import com.threego.algo.coding.command.application.dto.CodingCommentRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostImageRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostRequestDTO;
 import com.threego.algo.coding.command.application.service.CodingPostCommandService;
-import com.threego.algo.member.command.domain.aggregate.Member;
-import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
-import com.threego.algo.security.JwtUtil;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,35 +25,25 @@ import java.util.List;
 public class CodingPostCommandController {
 
     private final CodingPostCommandService codingPostCommandService;
-    private final JwtUtil jwtUtil;
-    private final MemberCommandRepository memberCommandRepository;
 
     // 게시물 등록
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Integer> createPost(
-            HttpServletRequest request,
+            @Parameter(description = "작성자 ID") @RequestParam Integer memberId,
             @Parameter(description = "문제 ID") @RequestParam Integer problemId,
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "이미지 파일들")
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
-        String token = request.getHeader("Authorization").substring(7);
-        Claims claims = jwtUtil.parseClaims(token);
-        String email = claims.getSubject();
+        CodingPostRequestDTO request = new CodingPostRequestDTO();
+        request.setMemberId(memberId);
+        request.setProblemId(problemId);
+        request.setTitle(title);
+        request.setContent(content);
+        request.setImages(images);
 
-        Member member = memberCommandRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("사용자 없음"));
-        int memberId = member.getId();
-
-        CodingPostRequestDTO dto = new CodingPostRequestDTO();
-        dto.setMemberId(memberId);
-        dto.setProblemId(problemId);
-        dto.setTitle(title);
-        dto.setContent(content);
-        dto.setImages(images);
-
-        int id = codingPostCommandService.createPost(dto);
+        int id = codingPostCommandService.createPost(request);
         return ResponseEntity.ok(id);
     }
 
