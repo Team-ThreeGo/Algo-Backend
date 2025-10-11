@@ -4,6 +4,7 @@ import com.threego.algo.coding.query.dto.CodingPostCommentDTO;
 import com.threego.algo.coding.query.dto.CodingPostDetailDTO;
 import com.threego.algo.coding.query.dto.CodingPostSummaryDTO;
 import com.threego.algo.coding.query.service.CodingPostQueryService;
+import com.threego.algo.common.pagination.PageRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -31,9 +32,10 @@ public class CodingQueryController {
     )
     @GetMapping("/posts")
     public List<CodingPostSummaryDTO> findPostList(
-            @RequestParam(value = "keyword", required = false) String keyword)
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @ModelAttribute PageRequestDTO pageRequest)
     {
-        return codingPostQueryService.findPostList(keyword);
+        return codingPostQueryService.findPostList(keyword, pageRequest);
     }
 
     /**

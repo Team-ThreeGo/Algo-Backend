@@ -31,19 +31,24 @@ public class CodingPostCommandController {
     public ResponseEntity<Integer> createPost(
             @Parameter(description = "작성자 ID") @RequestParam Integer memberId,
             @Parameter(description = "문제 ID") @RequestParam Integer problemId,
-            @Parameter(description = "제목") @RequestParam String title,
-            @Parameter(description = "내용") @RequestParam String content,
-            @Parameter(description = "이미지 파일들")
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+            @Parameter(description = "게시물 본문 JSON") @RequestPart("data") CodingPostRequestDTO data,
+//            @Parameter(description = "제목") @RequestParam String title,
+//            @Parameter(description = "내용") @RequestParam String content,
+            @Parameter(description = "이미지 파일")
+            @RequestPart(value = "images", required = false) MultipartFile images) {
 
-        CodingPostRequestDTO request = new CodingPostRequestDTO();
-        request.setMemberId(memberId);
-        request.setProblemId(problemId);
-        request.setTitle(title);
-        request.setContent(content);
-        request.setImages(images);
+//        CodingPostRequestDTO request = new CodingPostRequestDTO();
+//        request.setMemberId(memberId);
+//        request.setProblemId(problemId);
+//        request.setTitle(title);
+//        request.setContent(content);
+//        request.setImages(images);
 
-        int id = codingPostCommandService.createPost(request);
+        data.setMemberId(memberId);
+        data.setProblemId(problemId);
+        data.setImages(images);
+
+        int id = codingPostCommandService.createPost(data);
         return ResponseEntity.ok(id);
     }
 
@@ -62,11 +67,11 @@ public class CodingPostCommandController {
     }
 
     // 게시물 이미지 등록
-    @PostMapping("/posts/{postId}/images")
-    public ResponseEntity<Integer> addImage(@PathVariable int postId, @RequestBody CodingPostImageRequestDTO request) {
-        int id = codingPostCommandService.addImage(postId, request);
-        return ResponseEntity.ok(id);
-    }
+//    @PostMapping("/posts/{postId}/images")
+//    public ResponseEntity<Integer> addImage(@PathVariable int postId, @RequestBody CodingPostImageRequestDTO request) {
+//        int id = codingPostCommandService.addImage(postId, request);
+//        return ResponseEntity.ok(id);
+//    }
 
     // 댓글 등록 (parentId가 있으면 대댓글)
     @PostMapping("/posts/{postId}/comments")
