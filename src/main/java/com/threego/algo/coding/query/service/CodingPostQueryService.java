@@ -3,13 +3,14 @@ package com.threego.algo.coding.query.service;
 import com.threego.algo.coding.query.dto.CodingPostCommentDTO;
 import com.threego.algo.coding.query.dto.CodingPostDetailDTO;
 import com.threego.algo.coding.query.dto.CodingPostSummaryDTO;
+import com.threego.algo.common.pagination.PageRequestDTO;
 
 import java.util.List;
 
 public interface CodingPostQueryService {
 
     // 회원용: 전체 문제별 게시물 목록 조회
-    List<CodingPostSummaryDTO> findPostList(String keyword);
+    List<CodingPostSummaryDTO> findPostList(String keyword, PageRequestDTO pageRequest);
 
 
 
