@@ -16,7 +16,9 @@ import com.threego.algo.likes.command.domain.aggregate.enums.Type;
 import com.threego.algo.likes.query.service.LikesQueryService;
 import com.threego.algo.common.service.S3Service;
 import com.threego.algo.member.command.domain.aggregate.Member;
+import com.threego.algo.member.command.domain.aggregate.MemberRank;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
+import com.threego.algo.member.command.domain.repository.MemberRankRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -28,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -42,6 +46,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
     private final S3Service s3Service;
     private final LikesCommandService likesCommandService;
     private final LikesQueryService likesQueryService;
+    private final MemberRankRepository memberRankRepository;
 
     @Value("${coding.fastapi.url}")
     private String fastApiUrl;
@@ -124,9 +129,14 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 //                }
 //            }
 //        }
-        
-        // 즉시 동기화: 해당 문제의 postCount 재계산
+
+        // 해당 문제의 postCount 재계산
         problem.syncPostCount();
+
+        member.increasePoint(5);
+        List<MemberRank> allRanks = memberRankRepository.findAll();
+        member.updateRank(allRanks);
+        memberRepository.save(member);
 
         return saved.getId();
     }
@@ -260,7 +270,18 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
         likesCommandService.createLikes(member, post, Type.CODING_POST);
 
-        post.getMemberId().increasePoint(1);
+//        post.getMemberId().increasePoint(1);
+
+        // === 게시물 작성자 포인트 +1 ===
+        Member writer = post.getMemberId();
+        writer.increasePoint(1);
+
+        // === 등급 자동 업데이트 ===
+        List<MemberRank> allRanks = memberRankRepository.findAll();
+        writer.updateRank(allRanks);
+
+        // === DB 반영 ===
+        memberRepository.save(writer);
 
         post.increaseLikeCount();
     }
