@@ -44,7 +44,8 @@ public class StudyCommandController {
 
             @Parameter(description = "스터디 생성 정보", required = true)
             @Valid @RequestBody StudyCreateDTO request) {
-        return studyService.createStudyFromRecruit(authorId, post_id, request);
+        studyService.createStudyFromRecruit(authorId, post_id, request);
+        return ResponseEntity.status(201).body("스터디 그룹이 성공적으로 생성되었습니다.");
     }
 
     @Operation(
@@ -66,7 +67,8 @@ public class StudyCommandController {
             @RequestHeader("Member-Id") int leaderId,
             @Parameter(description = "스터디 수정 정보", required = true)
             @Valid @RequestBody StudyUpdateDTO request) {
-        return studyService.updateStudy(studyId, leaderId, request);
+        studyService.updateStudy(studyId, leaderId, request);
+        return ResponseEntity.ok("스터디 정보가 성공적으로 수정되었습니다.");
     }
 
     @Operation(
@@ -88,8 +90,8 @@ public class StudyCommandController {
 
             @Parameter(description = "그룹장 ID", required = true)
             @RequestHeader("Member-Id") int leaderId) {
-
-        return studyService.deleteStudy(studyId, leaderId);
+        studyService.deleteStudy(studyId, leaderId);
+        return ResponseEntity.ok("스터디 그룹을 삭제했습니다.");
     }
 
 }

@@ -41,7 +41,8 @@ public class AdminStudyRecruitController {
             @Parameter(description = "관리자 ID", required = true)
             @RequestHeader("Member-Id") int adminId) {
 
-        return studyRecruitPostService.adminDeletePost(postId, adminId);
+        studyRecruitPostService.adminDeletePost(postId, adminId);
+        return ResponseEntity.ok("모집 게시물이 삭제되었습니다.");
     }
 
     @Operation(

@@ -28,7 +28,8 @@ public class StudyRecruitPostCommandController {
     public ResponseEntity<String> createPost(
             @RequestHeader("Member-Id") int memberId,
             @Valid @RequestBody StudyRecruitPostCreateDTO request) {
-        return studyRecruitPostService.createPost(memberId, request);
+        studyRecruitPostService.createPost(memberId, request);
+        return ResponseEntity.status(201).body("모집글이 성공적으로 등록되었습니다.");
     }
 
     @Operation(summary = "모집글 수정", description = "작성자가 자신의 모집글을 수정합니다.")
@@ -37,7 +38,8 @@ public class StudyRecruitPostCommandController {
             @PathVariable int postId,
             @RequestHeader("Member-Id") int memberId,
             @Valid @RequestBody StudyRecruitPostUpdateDTO request) {
-        return studyRecruitPostService.updatePost(postId, memberId, request);
+        studyRecruitPostService.updatePost(postId, memberId, request);
+        return ResponseEntity.ok("모집글이 성공적으로 수정되었습니다.");
     }
 
     @Operation(summary = "모집글 삭제", description = "작성자가 자신의 모집글을 삭제합니다.")
@@ -45,7 +47,8 @@ public class StudyRecruitPostCommandController {
     public ResponseEntity<String> deletePost(
             @PathVariable int postId,
             @RequestHeader("Member-Id") int memberId) {
-        return studyRecruitPostService.deletePost(postId, memberId);
+        studyRecruitPostService.deletePost(postId, memberId);
+        return ResponseEntity.ok("모집글이 성공적으로 삭제되었습니다.");
     }
 
     @Operation(summary = "모집 마감", description = "작성자가 모집을 마감합니다.")
@@ -53,7 +56,8 @@ public class StudyRecruitPostCommandController {
     public ResponseEntity<String> closeRecruitment(
             @PathVariable int postId,
             @RequestHeader("Member-Id") int memberId) {
-        return studyRecruitPostService.closeRecruitment(postId, memberId);
+        studyRecruitPostService.closeRecruitment(postId, memberId);
+        return ResponseEntity.ok("모집이 성공적으로 마감되었습니다.");
     }
 
 

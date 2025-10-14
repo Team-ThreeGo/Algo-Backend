@@ -28,16 +28,15 @@ public class StudyRoadmap {
     private String description;
 
     @Column(name = "`order`", nullable = false)
-    private Integer order; // 로드맵 순서
+    private Integer order;
 
     @Column(name = "created_at", nullable = false)
     private String createdAt;
 
-
     // 생성자
     public StudyRoadmap(int studyId, int memberId, String title, String description, Integer order) {
         this.studyId = studyId;
-        this.memberId = memberId;  // 추가
+        this.memberId = memberId;
         this.title = title;
         this.description = description;
         this.order = order;

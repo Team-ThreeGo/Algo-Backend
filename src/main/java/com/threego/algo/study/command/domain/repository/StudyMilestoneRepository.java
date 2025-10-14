@@ -9,7 +9,6 @@ import java.util.Optional;
 @Repository
 public interface StudyMilestoneRepository extends JpaRepository<StudyMilestone, Integer> {
 
-
     /* 설명. 하위 마일스톤 존재 여부 확인 */
     boolean existsByRoadmapId(int roadmapId);
 }
