@@ -84,4 +84,13 @@ public class AuthServiceImpl implements AuthService {
 
         return new User(loginUser.getEmail(), loginUser.getPassword(), true, true, true, true, grantedAuthorities);
     }
+
+    @Override
+    public Integer getMemberIdByEmail(String email) {
+        LoginUserResponseDTO loginUser = authMapper.selectMemberByEmail(email);
+        if (loginUser == null) {
+            return null;
+        }
+        return loginUser.getId();
+    }
 }

@@ -77,4 +77,12 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
+    public Integer getMemberIdFromToken(String token) {
+        Claims claims = parseClaims(token);
+        String email = claims.getSubject();
+
+        // email로 member 정보 조회하여 id 반환
+        return authService.getMemberIdByEmail(email);
+    }
+
 }

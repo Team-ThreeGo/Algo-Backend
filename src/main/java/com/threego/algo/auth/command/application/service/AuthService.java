@@ -6,4 +6,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AuthService extends UserDetailsService {
     void registUser(UserDTO newUser);
+    Integer getMemberIdByEmail(String email);
 }

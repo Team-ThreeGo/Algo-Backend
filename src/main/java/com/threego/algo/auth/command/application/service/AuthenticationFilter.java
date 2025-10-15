@@ -49,12 +49,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        String id = ((User)authResult.getPrincipal()).getUsername();
+        String email = ((User)authResult.getPrincipal()).getUsername();
         List<String> roles = authResult.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        Claims claims = Jwts.claims().setSubject(id);
+        Claims claims = Jwts.claims().setSubject(email);
         claims.put("auth", roles);
 
         String token = Jwts.builder()
