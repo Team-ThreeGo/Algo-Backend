@@ -34,7 +34,7 @@ public class StudyPostCommandController {
     @Operation(summary = "스터디 게시물 등록")
     public ResponseEntity<StudyPostCreateResponseDTO> createPost(
             @Parameter(description = "스터디 ID") @PathVariable Integer studyId,
-            @Parameter(description = "멤버 ID") @RequestParam Integer memberId,
+            @Parameter(description = "멤버 ID") @RequestHeader("Member-Id") Integer memberId,
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "공개 여부") @RequestParam(defaultValue = "Y") String visibility,
@@ -65,7 +65,7 @@ public class StudyPostCommandController {
     public ResponseEntity<String> updatePost(
             @PathVariable int postId,
             @RequestBody StudyPostUpdateDTO postDto,
-            @RequestParam int memberId) {
+            @RequestHeader("Member-Id") int memberId) {
         return studyPostService.updatePost(postId, memberId, postDto);
     }
 
@@ -80,7 +80,7 @@ public class StudyPostCommandController {
     })
     public ResponseEntity<String> deletePost(
             @PathVariable int postId,
-            @RequestParam int memberId) {
+            @RequestHeader("Member-Id") int memberId) {
         return studyPostService.deletePost(postId, memberId);
     }
 

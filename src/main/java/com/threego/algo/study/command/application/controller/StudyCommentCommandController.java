@@ -35,7 +35,7 @@ public class StudyCommentCommandController {
     public ResponseEntity<String> createComment(
             @PathVariable int postId,
             @RequestBody StudyCommentCreateDTO commentDto,
-            @RequestParam int memberId) {
+            @RequestHeader("Member-Id") int memberId) {
         return studyCommentService.createComment(postId, memberId, commentDto);
     }
 
@@ -51,7 +51,7 @@ public class StudyCommentCommandController {
     public ResponseEntity<String> updateComment(
             @PathVariable int commentId,
             @RequestBody StudyCommentUpdateDTO commentDto,
-            @RequestParam int memberId) {
+            @RequestHeader("Member-Id") int memberId) {
         return studyCommentService.updateComment(commentId, memberId, commentDto);
     }
 
@@ -66,7 +66,7 @@ public class StudyCommentCommandController {
     })
     public ResponseEntity<String> deleteComment(
             @PathVariable int commentId,
-            @RequestParam int memberId) {
+            @RequestHeader("Member-Id") int memberId) {
         return studyCommentService.deleteComment(commentId, memberId);
     }
 }
