@@ -1,4 +1,4 @@
-package com.threego.algo.auth.command.application.dto;
+package com.threego.algo.member.command.application.dto;
 
 import com.threego.algo.member.command.domain.aggregate.MemberRank;
 import lombok.Data;
