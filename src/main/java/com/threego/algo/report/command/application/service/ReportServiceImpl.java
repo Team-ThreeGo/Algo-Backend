@@ -2,6 +2,7 @@ package com.threego.algo.report.command.application.service;
 
 import com.threego.algo.common.util.DateTimeUtils;
 import com.threego.algo.member.command.domain.aggregate.Member;
+import com.threego.algo.member.command.domain.aggregate.enums.Status;
 import com.threego.algo.member.command.domain.repository.MemberRepository;
 import com.threego.algo.report.command.application.dto.ReportRequest;
 import com.threego.algo.report.command.domain.aggregate.Report;
@@ -13,6 +14,7 @@ import com.threego.algo.report.command.domain.repository.ReportTypeRepository;
 import com.threego.algo.report.query.dao.ReportMapper;
 import com.threego.algo.report.query.dto.ReportedMemberResponseDTO;
 import com.threego.algo.report.query.service.AdminReportQueryService;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ public class ReportServiceImpl implements ReportService {
     private final ReportTypeRepository typeRepository;
     private final MemberRepository memberRepository;
     private final AdminReportQueryService reportService;
+    private final EntityManager entityManager;
 
     @Transactional
     @Override
@@ -73,7 +76,33 @@ public class ReportServiceImpl implements ReportService {
 
         reportedMember.increaseReportCount();
 
+        // 20번 이상 신고된 회원 Block 처리
+        if(reportedMember.getReportedCount() >= 20){
+            reportedMember.setStatus(Status.BLOCKED);
+
+            // Block된 회원이 작성한 게시물 및 댓글 비공개
+            changeVisibility(reportedMember);
+        }
+
         reportRepository.save(report);
     }
+
+    @Transactional
+    @Override
+    public void changeVisibility(Member member) {
+        String[] tables = {
+                "Algo_Comment", "Career_Info_Comment", "Career_Info_Post",
+                "Coding_Post", "Coding_Comment", "Study_Comment",
+                "Study_Post", "Study_Recruit_Comment", "Study_Recruit_Post"
+        };
+
+        for (String table : tables) {
+            entityManager.createNativeQuery("UPDATE " + table + " SET visibility = 'N' WHERE member_id = :memberId")
+                    .setParameter("memberId", member.getId())
+                    .executeUpdate();
+        }
+    }
+
+
 }
 
