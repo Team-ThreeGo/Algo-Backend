@@ -3,6 +3,7 @@ package com.threego.algo.algorithm.command.application.service;
 import com.threego.algo.algorithm.command.application.dto.*;
 import com.threego.algo.algorithm.command.domain.aggregate.*;
 import com.threego.algo.algorithm.command.domain.repository.*;
+import com.threego.algo.common.error.exception.EntityNotFoundException;
 import com.threego.algo.common.service.S3Service;
 import com.threego.algo.algorithm.query.service.AlgoQueryService;
 import com.threego.algo.likes.command.application.service.LikesCommandService;
@@ -395,9 +396,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     }
 
     private AlgoRoadmap findAlgoRoadmapById(final int roadmapId) {
-        return algoRoadmapCommandRepository.findById(roadmapId).orElseThrow(() -> {
-            throw new RuntimeException("알고리즘 학습 로드맵 대분류(ID: " + roadmapId + ") 을(를) 찾을 수 없습니다.");
-        });
+        return algoRoadmapCommandRepository.findById(roadmapId).orElseThrow(() -> new EntityNotFoundException());
     }
 
     private Member findMemberById(final int memberId) {
