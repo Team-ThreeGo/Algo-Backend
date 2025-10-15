@@ -3,6 +3,7 @@ package com.threego.algo.algorithm.command.application.service;
 import com.threego.algo.algorithm.command.application.dto.*;
 import com.threego.algo.algorithm.command.domain.aggregate.*;
 import com.threego.algo.algorithm.command.domain.repository.*;
+import com.threego.algo.algorithm.command.exception.*;
 import com.threego.algo.common.error.ErrorCode;
 import com.threego.algo.common.error.exception.EntityNotFoundException;
 import com.threego.algo.common.service.S3Service;
@@ -44,7 +45,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Override
     public AlgoRoadmap createAlgoRoadmap(final AlgoRoadmapRequestDTO request) {
-        validAlgoRoadmapTitle(request.getTitle());
+        validateAlgoRoadmapTitle(request.getTitle());
 
         final AlgoRoadmap algoRoadmap = new AlgoRoadmap(request.getTitle(), request.getDescription(),
                 request.getOrder() == null ? 1 : request.getOrder());
@@ -54,12 +55,11 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public AlgoRoadmap updateAlgoRoadmap(final int roadmapId, final AlgoRoadmapRequestDTO request) throws Exception {
-        // TODO 커스텀 예외 발생 및 처리 필요
+    public AlgoRoadmap updateAlgoRoadmap(final int roadmapId, final AlgoRoadmapRequestDTO request) {
         final AlgoRoadmap algoRoadmap = findAlgoRoadmapById(roadmapId);
 
         if (!algoRoadmap.getTitle().equals(request.getTitle())) {
-            validAlgoRoadmapTitle(request.getTitle());
+            validateAlgoRoadmapTitle(request.getTitle());
         }
 
         if (!algoRoadmap.getTitle().equals(request.getTitle())
@@ -124,7 +124,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         final AlgoPost algoPost = findAlgoPostById(postId);
 
         if (algoPost.getVisibility().equals("N")) {
-            throw new RuntimeException("이미 삭제 처리된 알고리즘 학습 게시물입니다.");
+            throw new AlgoPostAlreadyDeletedException("이미 삭제 처리된 알고리즘 학습 게시물입니다.");
         }
 
         // TODO 주석 제거 필요
@@ -143,7 +143,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public void createComment(final int memberId, final int postId, final AlgoCommentRequestDTO request) throws Exception {
+    public void createComment(final int memberId, final int postId, final AlgoCommentRequestDTO request) {
         final Member member = findMemberById(memberId);
 
         final AlgoPost algoPost = findAlgoPostById(postId);
@@ -163,27 +163,27 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public void updateComment(final int memberId, final int commentId, final AlgoCommentRequestDTO request) throws Exception {
+    public void updateComment(final int memberId, final int commentId, final AlgoCommentRequestDTO request) {
         final AlgoComment comment = findAlgoCommentId(commentId);
 
         final Member member = findMemberById(memberId);
 
-        validAuthor(comment.getMember(), member);
+        validateAuthor(comment.getMember(), member);
 
         comment.updateContent(request.getContent());
     }
 
     @Transactional
     @Override
-    public void deleteComment(final int memberId, final int commentId) throws Exception {
+    public void deleteComment(final int memberId, final int commentId) {
         final AlgoComment comment = findAlgoCommentId(commentId);
 
         final Member member = findMemberById(memberId);
 
-        validAuthor(comment.getMember(), member);
+        validateAuthor(comment.getMember(), member);
 
         if (comment.getVisibility().equals("N")) {
-            throw new RuntimeException("이미 삭제 처리된 댓글입니다.");
+            throw new AlgoCommentAlreadyDeletedException("이미 삭제 처리된 댓글입니다.");
         }
 
         comment.updateVisibility();
@@ -195,7 +195,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public void createCorrectQuizHistory(int memberId, int questionId) throws Exception {
+    public void createCorrectQuizHistory(int memberId, int questionId) {
         final Member member = findMemberById(memberId);
 
         final AlgoQuizQuestion quizQuestion = findAlgoQuizQuestion(questionId);
@@ -205,7 +205,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         if (!memberAlgoCorrectQuizHistoryCommandRepository.existsById(id)) {
             memberAlgoCorrectQuizHistoryCommandRepository.save(new MemberAlgoCorrectQuizHistory(id));
         } else {
-            throw new RuntimeException("이미 등록된 퀴즈 정답 제출 이력입니다.");
+            throw new AlgoCorrectQuizHistoryAlreadyExistsException("이미 등록된 퀴즈 정답 제출 이력입니다.");
         }
 
         final int correctQuizCount = algoQueryService.countMemberCorrectAnswersInRoadmap(memberId,
@@ -215,7 +215,9 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
             // TODO 로드맵 대분류의 퀴즈를 전부 맞힌 경우 포인트 20 증가
             log.info("{}번 회원이 로드맵 대분류 {}번의 퀴즈를 모두 달성했으므로 20 포인트가 지급되었습니다."
                     , memberId, quizQuestion.getAlgoPost().getAlgoRoadmap().getId());
+            member.increasePoint(20);
         }
+        member.increasePoint(1);
     }
 
     @Transactional
@@ -223,7 +225,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     public AlgoQuizQuestionResponseDTO createAlgoQuiz(int postId, AlgoQuizQuestionRequestDTO request) {
         final AlgoPost algoPost = findAlgoPostById(postId);
 
-        validQuizQuestion(request.getQuestion());
+        validateNewQuizQuestion(postId, request.getQuestion());
 
         final AlgoQuizQuestion algoQuizQuestion = new AlgoQuizQuestion(request.getQuestion(), request.getType(), algoPost);
 
@@ -245,11 +247,11 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     @Transactional
     @Override
     public AlgoQuizQuestionResponseDTO updateAlgoQuiz(final int quizQuestionId,
-                                                      final UpdateAlgoQuizQuestionRequestDTO request) throws Exception {
+                                                      final UpdateAlgoQuizQuestionRequestDTO request) {
         final AlgoQuizQuestion quizQuestion = findAlgoQuizQuestion(quizQuestionId);
 
         if (!quizQuestion.getQuestion().equals(request.getQuestion())) {
-            validQuizQuestion(request.getQuestion());
+            validateUpdatedQuizQuestion(quizQuestion.getAlgoPost().getId(), quizQuestionId, request.getQuestion());
             quizQuestion.updateQuestion(request.getQuestion());
         }
 
@@ -258,11 +260,11 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         final List<AlgoQuizOptionResponseDTO> optionResponse = new ArrayList<>();
 
         for (UpdateAlgoQuizOptionRequestDTO dto : request.getOptions()) {
+            // "알고리즘 학습 게시물 퀴즈의 보기(ID: " + dto.getOptionId() + ") 을(를) 찾을 수 없습니다."
             final AlgoQuizOption algoQuizOption = algoQuizOptions.stream()
                     .filter((option) -> option.getId() == dto.getOptionId())
                     .findFirst()
-                    .orElseThrow(() ->
-                            new RuntimeException("알고리즘 학습 게시물 퀴즈의 보기(ID: " + dto.getOptionId() + ") 을(를) 찾을 수 없습니다."));
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ALGO_QUIZ_OPTION_NOT_FOUND));
 
             algoQuizOption.updateAlgoQuizOption(dto.getOptionText(), dto.isCorrect());
 
@@ -314,7 +316,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         final AlgoComment comment = findAlgoCommentId(commentId);
 
         if (comment.getVisibility().equals("N")) {
-            throw new RuntimeException("이미 삭제 처리된 댓글입니다.");
+            throw new AlgoCommentAlreadyDeletedException("이미 삭제 처리된 댓글입니다.");
         }
 
         comment.updateVisibility();
@@ -326,7 +328,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    public void deleteAlgoQuizQuestion(final int quizQuestionId) throws Exception {
+    public void deleteAlgoQuizQuestion(final int quizQuestionId) {
         final AlgoQuizQuestion algoQuizQuestion = findAlgoQuizQuestion(quizQuestionId);
 
         final AlgoPost algoPost = algoQuizQuestion.getAlgoPost();
@@ -346,12 +348,8 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         final Member member = findMemberById(memberId);
         final AlgoPost algoPost = findAlgoPostById(postId);
 
-        if (member == algoPost.getMember()) {
-            throw new RuntimeException("자신이 작성한 글은 추천할 수 없습니다.");
-        }
-
         if (likesQueryService.existsLikesByMemberIdAndPostIdAndPostType(memberId, postId, Type.ALGO_POST)) {
-            throw new RuntimeException("이미 추천한 게시물입니다.");
+            throw new AlgoPostAlreadyLikedException("이미 추천한 게시물입니다.");
         }
 
         likesCommandService.createLikes(member, algoPost, Type.ALGO_POST);
@@ -359,27 +357,32 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         algoPost.increaseLikeCount();
     }
 
-    private void validQuizQuestion(final String question) {
-        if (algoQuizQuestionCommandRepository.existsByQuestionLike(question)) {
-            throw new RuntimeException("이미 동일한 내용의 퀴즈 질문이 존재합니다.");
+    private void validateNewQuizQuestion(final int postId, final String question) {
+        if (algoQuizQuestionCommandRepository.existsByAlgoPostIdAndQuestionLike(postId, question)) {
+            throw new DuplicatedQuestionException("이미 동일한 내용의 퀴즈 질문이 존재합니다.");
         }
     }
 
-    private AlgoQuizQuestion findAlgoQuizQuestion(final int questionId) throws Exception {
-        return algoQuizQuestionCommandRepository.findById(questionId).orElseThrow(Exception::new);
+    private void validateUpdatedQuizQuestion(final int postId, final int quizId, final String question) {
+        if (algoQuizQuestionCommandRepository.existsByAlgoPostIdAndIdIsNotAndQuestionLike(postId, quizId, question)) {
+            throw new DuplicatedQuestionException("이미 동일한 내용의 퀴즈 질문이 존재합니다.");
+        }
     }
 
-    private void validAuthor(final Member author, final Member loginMember) {
+    private AlgoQuizQuestion findAlgoQuizQuestion(final int questionId) {
+        return algoQuizQuestionCommandRepository.findById(questionId).orElseThrow(() ->
+                new EntityNotFoundException(ErrorCode.ALGO_QUIZ_QUESTION_NOT_FOUND));
+    }
+
+    private void validateAuthor(final Member author, final Member loginMember) {
         if (author != loginMember) {
-            // TODO 커스텀 예외 발생
-            throw new RuntimeException("작성자가 아니므로 수정 및 삭제 권한이 없습니다.");
+            throw new NotAuthorException();
         }
     }
 
     private AlgoComment findAlgoCommentId(final int parentId) {
-        return algoCommentRepository.findById(parentId).orElseThrow(() -> {
-            throw new RuntimeException("알고리즘 학습 게시물 댓글(ID: " + parentId + ") 을(를) 찾을 수 없습니다.");
-        });
+        return algoCommentRepository.findById(parentId).orElseThrow(() ->
+                new EntityNotFoundException(ErrorCode.ALGO_COMMENT_NOT_FOUND));
     }
 
     private List<AlgoPostImage> saveAlgoPostImages(final List<String> imageUrls, final AlgoPost algoPost) {
@@ -390,9 +393,9 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         return algoPostImageCommandRepository.saveAll(algoPostImages);
     }
 
-    private void validAlgoRoadmapTitle(final String title) {
+    private void validateAlgoRoadmapTitle(final String title) {
         if (algoRoadmapCommandRepository.existsByTitle(title)) {
-            throw new RuntimeException("이미 존재하는 로드맵 제목입니다.");
+            throw new DuplicatedTitleException(ErrorCode.DUPLICATED_TITLE);
         }
     }
 
@@ -402,14 +405,13 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     }
 
     private Member findMemberById(final int memberId) {
-        return memberCommandRepository.findById(memberId).orElseThrow(() -> {
-            throw new RuntimeException("회원(ID: " + memberId + ") 을(를) 찾을 수 없습니다.");
-        });
+        return memberCommandRepository.findById(memberId).orElseThrow(() ->
+                new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     private AlgoPost findAlgoPostById(final int postId) {
-        return algoPostCommandRepository.findById(postId).orElseThrow(() -> {
-            throw new RuntimeException("알고리즘 학습 게시물(ID: " + postId + ") 을(를) 찾을 수 없습니다.");
-        });
+        return algoPostCommandRepository.findById(postId).orElseThrow(() ->
+                new EntityNotFoundException(ErrorCode.ALGO_POST_NOT_FOUND)
+        );
     }
 }

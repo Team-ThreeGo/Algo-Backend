@@ -37,7 +37,7 @@ public class AdminAlgoCommandController {
     @Operation(summary = "알고리즘 학습 로드맵 수정", description = "관리자가 알고리즘 학습 로드맵을 수정하는 API입니다.")
     @PutMapping("/roadmaps/{roadmapId}")
     public ResponseEntity<AlgoRoadmapResponseDTO> updateAlgoRoadmap(@PathVariable("roadmapId") final int roadmapId,
-                                                                    @RequestBody final AlgoRoadmapRequestDTO request) throws Exception {
+                                                                    @RequestBody final AlgoRoadmapRequestDTO request) {
         final AlgoRoadmap algoRoadmap = algoCommandService.updateAlgoRoadmap(roadmapId, request);
 
         final AlgoRoadmapResponseDTO response = AlgoRoadmapResponseDTO.of(algoRoadmap);
@@ -53,7 +53,7 @@ public class AdminAlgoCommandController {
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "이미지 파일들 (최대 5MB, JPG/PNG/GIF 등)")
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws Exception {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
         AlgoPostRequestDTO request = new AlgoPostRequestDTO();
         request.setTitle(title);
@@ -68,7 +68,7 @@ public class AdminAlgoCommandController {
 
     @Operation(summary = "알고리즘 학습 게시물 삭제", description = "관리자가 알고리즘 학습 게시물을 삭제하는 API입니다.")
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Void> deleteAlgoPost(@PathVariable("postId") final int postId) throws Exception {
+    public ResponseEntity<Void> deleteAlgoPost(@PathVariable("postId") final int postId) {
         algoCommandService.deleteAlgoPost(postId);
 
         return ResponseEntity.noContent().build();
@@ -77,7 +77,7 @@ public class AdminAlgoCommandController {
     @Operation(summary = "알고리즘 학습 게시물 퀴즈 등록", description = "관리자가 알고리즘 학습 게시물 퀴즈를 등록하는 API입니다.")
     @PostMapping("/posts/{postId}/quizzes")
     public ResponseEntity<AlgoQuizQuestionResponseDTO> createAlgoQuiz(@PathVariable("postId") final int postId,
-                                                                      @RequestBody final AlgoQuizQuestionRequestDTO request) throws Exception {
+                                                                      @RequestBody final AlgoQuizQuestionRequestDTO request) {
         AlgoQuizQuestionResponseDTO response = algoCommandService.createAlgoQuiz(postId, request);
 
         return ResponseEntity.ok(response);
@@ -87,7 +87,7 @@ public class AdminAlgoCommandController {
             "퀴즈 질문 내용과 보기 내용만 수정 가능합니다.")
     @PutMapping("/quizzes/{quizQuestionId}")
     public ResponseEntity<AlgoQuizQuestionResponseDTO> updateAlgoQuiz(@PathVariable("quizQuestionId") final int quizQuestionId,
-                                                                      @RequestBody final UpdateAlgoQuizQuestionRequestDTO request) throws Exception {
+                                                                      @RequestBody final UpdateAlgoQuizQuestionRequestDTO request) {
         AlgoQuizQuestionResponseDTO response = algoCommandService.updateAlgoQuiz(quizQuestionId, request);
 
         return ResponseEntity.ok(response);
@@ -97,7 +97,7 @@ public class AdminAlgoCommandController {
             "퀴즈 질문 내용과 보기 내용만 수정 가능합니다.")
     @PutMapping("/algo/posts/{postId}")
     public ResponseEntity<AlgoPostDetailResponseDTO> updateAlgoPost(@PathVariable("postId") final int postId,
-                                                                    @RequestBody final AlgoPostRequestDTO request) throws Exception {
+                                                                    @RequestBody final AlgoPostRequestDTO request) {
         AlgoPostDetailResponseDTO response = algoCommandService.updateAlgoPost(postId, request);
 
         return ResponseEntity.ok(response);
@@ -105,7 +105,7 @@ public class AdminAlgoCommandController {
 
     @Operation(summary = "알고리즘 학습 게시물 댓글 삭제", description = "관리자가 알고리즘 학습 게시물 댓글을 삭제하는 API입니다.")
     @DeleteMapping("/algo/comments/{commentId}")
-    public ResponseEntity<Void> deleteAlgoComment(@PathVariable("commentId") final int commentId) throws Exception {
+    public ResponseEntity<Void> deleteAlgoComment(@PathVariable("commentId") final int commentId) {
         algoCommandService.deleteCommentForAdmin(commentId);
 
         return ResponseEntity.ok().build();
@@ -113,7 +113,7 @@ public class AdminAlgoCommandController {
 
     @Operation(summary = "알고리즘 학습 게시물 퀴즈 삭제", description = "관리자가 알고리즘 학습 게시물 댓글을 삭제하는 API입니다.")
     @DeleteMapping("/quizzes/{quizQuestionId}")
-    public ResponseEntity<Void> deleteAlgoQuizQuestion(@PathVariable("quizQuestionId") final int quizQuestionId) throws Exception {
+    public ResponseEntity<Void> deleteAlgoQuizQuestion(@PathVariable("quizQuestionId") final int quizQuestionId) {
         algoCommandService.deleteAlgoQuizQuestion(quizQuestionId);
 
         return ResponseEntity.ok().build();
