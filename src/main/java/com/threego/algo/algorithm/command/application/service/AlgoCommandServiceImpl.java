@@ -3,6 +3,7 @@ package com.threego.algo.algorithm.command.application.service;
 import com.threego.algo.algorithm.command.application.dto.*;
 import com.threego.algo.algorithm.command.domain.aggregate.*;
 import com.threego.algo.algorithm.command.domain.repository.*;
+import com.threego.algo.common.error.ErrorCode;
 import com.threego.algo.common.error.exception.EntityNotFoundException;
 import com.threego.algo.common.service.S3Service;
 import com.threego.algo.algorithm.query.service.AlgoQueryService;
@@ -396,7 +397,8 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     }
 
     private AlgoRoadmap findAlgoRoadmapById(final int roadmapId) {
-        return algoRoadmapCommandRepository.findById(roadmapId).orElseThrow(() -> new EntityNotFoundException());
+        return algoRoadmapCommandRepository.findById(roadmapId).orElseThrow(() ->
+                new EntityNotFoundException(ErrorCode.ALGO_ROADMAP_NOT_FOUND));
     }
 
     private Member findMemberById(final int memberId) {
