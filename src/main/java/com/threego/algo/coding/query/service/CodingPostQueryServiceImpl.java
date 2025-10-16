@@ -5,7 +5,6 @@ import com.threego.algo.coding.query.dto.CodingPostCommentDTO;
 import com.threego.algo.coding.query.dto.CodingPostDetailDTO;
 import com.threego.algo.coding.query.dto.CodingPostSearchConditionDTO;
 import com.threego.algo.coding.query.dto.CodingPostSummaryDTO;
-import com.threego.algo.common.pagination.PageRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ public class CodingPostQueryServiceImpl implements CodingPostQueryService {
     // ---------------- 회원용 ---------------- //
 
     @Override
-    public List<CodingPostSummaryDTO> findPostList(String keyword, PageRequestDTO pageRequest) {
+    public List<CodingPostSummaryDTO> findPostList(String keyword) {
         CodingPostSearchConditionDTO condition = new CodingPostSearchConditionDTO();
         condition.setKeyword(keyword);
         return codingPostMapper.selectPostList(condition);

@@ -11,6 +11,7 @@ import com.threego.algo.coding.command.domain.repository.CodingCommentRepository
 import com.threego.algo.coding.command.domain.repository.CodingPostImageRepository;
 import com.threego.algo.coding.command.domain.repository.CodingPostRepository;
 import com.threego.algo.coding.command.domain.repository.CodingProblemRepository;
+import com.threego.algo.coding.event.AiFeedbackEvent;
 import com.threego.algo.likes.command.application.service.LikesCommandService;
 import com.threego.algo.likes.command.domain.aggregate.enums.Type;
 import com.threego.algo.likes.query.service.LikesQueryService;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Map;
 
@@ -45,7 +47,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
     private final S3Service s3Service;
     private final LikesCommandService likesCommandService;
     private final LikesQueryService likesQueryService;
-    private final MemberRankRepository memberRankRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${coding.fastapi.url}")
     private String fastApiUrl;
@@ -62,44 +64,6 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
         CodingPost post = CodingPost.create(member, problem, dto.getTitle(), dto.getContent());
         CodingPost saved = postRepository.save(post);
-
-        // === FastAPI 호출 ===
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, String> request = Map.of(
-                "title", dto.getTitle(),
-                "content", dto.getContent(),
-                "problem", problem.getTitle()
-        );
-
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
-
-        try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(
-                    fastApiUrl,
-                    entity,
-                    Map.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                Map<String, String> body = response.getBody();
-                post.setAiFeedback(
-                        body.get("aiBigO"),
-                        body.get("aiGood"),
-                        body.get("aiBad"),
-                        body.get("aiPlan")
-                );
-            }
-        } catch (Exception e) {
-            // FastAPI 서버 호출 실패 시 예외 처리
-            if (e instanceof RestClientException) {
-                throw new RuntimeException("FastAPI 서버에 연결할 수 없습니다.", e);
-            } else {
-                throw new RuntimeException("AI 피드백 요청 실패", e);
-            }
-        }
 
         // 이미지 업로드 및 저장
         MultipartFile image = dto.getImages();
@@ -129,6 +93,10 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         // 해당 문제의 postCount 재계산
         problem.syncPostCount();
 
+        // FastAPI 호출
+        eventPublisher.publishEvent(
+                new AiFeedbackEvent(saved.getId(), dto.getTitle(), dto.getContent(), problem.getTitle())
+        );
 
         return saved.getId();
     }
