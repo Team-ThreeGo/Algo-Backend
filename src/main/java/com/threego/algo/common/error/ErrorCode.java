@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-/**
- * 에러 코드 정의
- */
+
+/* 설명. 에러 코드 정의 */
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {

@@ -70,8 +70,6 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
         studyRecruitPost.setVisibility(request.getVisibility());
         studyRecruitPost.setUpdatedAt(DateTimeUtils.nowDateTime());
 
-        // 3. 저장 (더티 체킹으로 자동 업데이트)
-        studyRecruitPostRepository.save(studyRecruitPost);
     }
 
     @Override
@@ -85,8 +83,6 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
         studyRecruitPost.softDelete();
         studyRecruitPost.setUpdatedAt(DateTimeUtils.nowDateTime());
 
-        // 3. 저장 (더티 체킹으로 자동 업데이트)
-        studyRecruitPostRepository.save(studyRecruitPost);
     }
 
     @Override
@@ -105,8 +101,6 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
         studyRecruitPost.closeRecruitment();
         studyRecruitPost.setUpdatedAt(DateTimeUtils.nowDateTime());
 
-        // 4. 저장 (더티 체킹으로 자동 업데이트)
-        studyRecruitPostRepository.save(studyRecruitPost);
     }
 
     @Override
@@ -132,7 +126,6 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
 
         // 4. 소프트 딜리트 (VISIBILITY: Y → N)
         post.softDelete();
-        studyRecruitPostRepository.save(post);
     }
 
     private boolean isAdmin(int memberId) {

@@ -22,9 +22,8 @@ public class AdminCodingQueryController {
 
     private final CodingPostQueryService codingPostQueryService;
 
-    /**
-     * 관리자용 코딩풀이 게시물 목록 조회
-     */
+
+    /* 설명. 관리자용 코딩풀이 게시물 목록 조회 */
     @Operation(
             summary = "관리자용 코딩풀이 게시물 목록 조회",
             description = "관리자가 자신의 관리자용 코딩풀이 게시물 목록 조회합니다."
@@ -36,10 +35,7 @@ public class AdminCodingQueryController {
         return codingPostQueryService.findPostListForAdmin(visibility, keyword);
     }
 
-    /**
-     * 관리자용 코딩풀이 게시물 상세 조회
-     * GET /admin/coding/posts/{postId}
-     */
+    /* 설명. 관리자용 코딩풀이 게시물 상세 조회 */
     @Operation(
             summary = "관리자용 코딩풀이 게시물 상세 조회",
             description = "관리자가 자신의 관리자용 코딩풀이 게시물 상세 조회합니다."
@@ -49,10 +45,7 @@ public class AdminCodingQueryController {
         return codingPostQueryService.findPostDetailForAdmin(postId);
     }
 
-    /**
-     * 관리자용 코딩풀이 댓글 목록 조회
-     * GET /admin/coding/comments
-     */
+    /* 설명. 관리자용 코딩풀이 댓글 목록 조회 */
     @Operation(
             summary = "관리자용 코딩풀이 댓글 목록 조회",
             description = "관리자가 자신의 관리자용 코딩풀이 댓글 목록 조회합니다."

@@ -23,7 +23,7 @@ public class AdminCodingController {
     @Qualifier("adminCodingPostCommandService")
     private final AdminCodingPostCommandService service;
 
-    /** 게시글 수정 */
+    /* 설명. 게시글 수정 */
     @PutMapping("/posts/{postId}")
     public ResponseEntity<CodingPost> updatePost(@PathVariable int postId,
                                                  @RequestBody CodingPostRequestDTO dto,
@@ -31,7 +31,7 @@ public class AdminCodingController {
         return ResponseEntity.ok(service.updatePost(postId, dto));
     }
 
-    /** 게시글 삭제 */
+    /* 설명. 게시글 삭제 */
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable int postId,
                                            @RequestParam int adminId) {
@@ -39,7 +39,7 @@ public class AdminCodingController {
         return ResponseEntity.noContent().build();
     }
 
-    /** 댓글 수정 */
+    /* 설명. 댓글 수정 */
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<CodingComment> updateComment(@PathVariable int commentId,
                                                        @RequestBody CodingCommentRequestDTO dto,
@@ -47,7 +47,7 @@ public class AdminCodingController {
         return ResponseEntity.ok(service.updateComment(commentId, dto));
     }
 
-    /** 댓글 삭제 */
+    /* 설명. 댓글 삭제 */
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable int commentId,
                                               @RequestParam int adminId) {
@@ -55,7 +55,7 @@ public class AdminCodingController {
         return ResponseEntity.noContent().build();
     }
 
-    /** 코딩문제 등록 */
+    /* 설명. 코딩문제 등록 */
     @PostMapping("/coding-problem/posts")
     public ResponseEntity<CodingProblem> createProblem(@RequestBody CodingProblemRequestDTO dto,
                                                        @RequestParam int adminId) {
@@ -63,7 +63,7 @@ public class AdminCodingController {
         return ResponseEntity.ok(problem);
     }
 
-    /** 코딩문제 수정 */
+    /* 설명. 코딩문제 수정 */
     @PutMapping("/coding-problem/{problemId}")
     public ResponseEntity<CodingProblem> updateProblem(@PathVariable int problemId,
                                                        @RequestBody CodingProblemRequestDTO dto,
@@ -71,7 +71,7 @@ public class AdminCodingController {
         return ResponseEntity.ok(service.updateProblem(problemId, dto));
     }
 
-    /** 코딩문제 삭제 */
+    /* 설명. 코딩문제 삭제 */
     @DeleteMapping("/coding-problem/{problemId}")
     public ResponseEntity<Void> deleteProblem(@PathVariable int problemId,
                                               @RequestParam int adminId) {
@@ -79,7 +79,7 @@ public class AdminCodingController {
         return ResponseEntity.noContent().build();
     }
 
-    /** 관리자 계정 검증 */
+    /* 설명. 관리자 계정 검증 */
     private void validateAdmin(int adminId) {
         if (adminId != 29 && adminId != 30) {
             throw new IllegalArgumentException("관리자 권한 없음");

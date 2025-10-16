@@ -110,7 +110,7 @@ public class StudyServiceImpl implements StudyService {
                 .orElseThrow(() -> new StudyNotFoundException("스터디 그룹을 찾을 수 없습니다."));
 
         Member leader = memberRepository.findById(leaderId)
-                .orElseThrow(() -> new IllegalArgumentException("그룹장을 찾을 수 없습니다."));
+                .orElseThrow(() -> new StudyNotLeaderException("그룹장을 찾을 수 없습니다."));
 
         StudyMember leaderMember = (StudyMember) studyMemberRepository.findByStudyAndMember(study, leader)
                 .orElseThrow(() -> new IllegalArgumentException("스터디 멤버를 찾을 수 없습니다."));
