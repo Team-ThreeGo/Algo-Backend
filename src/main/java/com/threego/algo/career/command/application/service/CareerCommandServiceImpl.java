@@ -13,6 +13,7 @@ import com.threego.algo.common.service.S3Service;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,10 +44,9 @@ public class CareerCommandServiceImpl implements CareerCommandService {
 
     @Transactional
     @Override
-    public Integer createPost(CareerPostCreateRequest request) {
-        // TODO: 로그인 회원 정보 가져오기 (Spring Security에서 인증 객체 활용)
-        Member member = memberRepository.findById(1)
-                .orElseThrow(() -> new IllegalArgumentException("테스트용 회원이 없습니다."));
+    public Integer createPost(CareerPostCreateRequest request, int memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
 
         String imageUrl = null;
 
@@ -68,11 +68,13 @@ public class CareerCommandServiceImpl implements CareerCommandService {
 
     @Transactional
     @Override
-    public void deletePost(int postId) {
+    public void deletePost(int postId, int memberId) {
         CareerInfoPost post = careerPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
 
-        // TODO: 로그인한 회원 == post.getMember() 확인 (본인 글만 삭제 가능)
+         if (post.getMember().getId() != memberId) {
+             throw new AccessDeniedException("본인 글만 삭제할 수 있습니다.");
+         }
 
         if ("N".equals(post.getVisibility())) {
             throw new IllegalStateException("이미 삭제된 게시물입니다.");
@@ -85,14 +87,14 @@ public class CareerCommandServiceImpl implements CareerCommandService {
     @Override
     public Integer createComment(int postId,
                                  Integer parentId,
-                                 CareerCommentRequest request
+                                 CareerCommentRequest request,
+                                 int memberId
     ) {
         CareerInfoPost post = careerPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
 
-        // TODO: 로그인 회원 정보 가져오기 (Spring Security에서 인증 객체 활용)
-        Member member = memberRepository.findById(1)
-                .orElseThrow(() -> new IllegalArgumentException("테스트용 회원이 없습니다."));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
 
         CareerInfoComment parent = null;
         if (parentId != null) {
@@ -114,21 +116,25 @@ public class CareerCommandServiceImpl implements CareerCommandService {
 
     @Transactional
     @Override
-    public void updateComment(int commentId, CareerCommentRequest request) {
+    public void updateComment(int commentId, CareerCommentRequest request, int memberId) {
         CareerInfoComment comment = careerCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
-        // TODO: 로그인 회원 == 작성자 확인
+        if (comment.getMember().getId() != memberId) {
+            throw new AccessDeniedException("본인 댓글만 수정할 수 있습니다.");
+        }
         comment.updateComment(request.getContent());
     }
 
     @Transactional
     @Override
-    public void deleteComment(int commentId) {
+    public void deleteComment(int commentId, int memberId) {
         CareerInfoComment comment = careerCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
-        // TODO: 로그인 회원 == 작성자 확인
+        if (comment.getMember().getId() != memberId) {
+            throw new AccessDeniedException("본인 댓글만 삭제할 수 있습니다.");
+        }
 
         if ("N".equals(comment.getVisibility())) {
             throw new IllegalStateException("이미 삭제된 댓글입니다.");
@@ -141,9 +147,8 @@ public class CareerCommandServiceImpl implements CareerCommandService {
     @Transactional
     @Override
     public void createCareerPostLikes(final int memberId, final int postId) {
-        // TODO: 로그인 회원 정보 가져오기 (Spring Security에서 인증 객체 활용)
-        final Member member = memberRepository.findById(1)
-                .orElseThrow(() -> new IllegalArgumentException("테스트용 회원이 없습니다."));
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
 
         final CareerInfoPost post = careerPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
