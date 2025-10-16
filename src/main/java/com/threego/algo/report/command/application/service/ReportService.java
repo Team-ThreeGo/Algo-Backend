@@ -4,6 +4,6 @@ import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.report.command.application.dto.ReportRequest;
 
 public interface ReportService {
-    void createReport(ReportRequest request);
+    void createReport(ReportRequest request, int memberId);
     void changeVisibility(Member member);
 }

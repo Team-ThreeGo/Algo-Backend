@@ -1,5 +1,6 @@
 package com.threego.algo.report.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.report.command.application.dto.ReportRequest;
 import com.threego.algo.report.command.application.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,9 +26,10 @@ public class ReportComandController {
     )
     @PostMapping
     public ResponseEntity<Integer> createReport(
+            @LoginMember int memberId,
             @RequestBody ReportRequest request
     ) {
-        service.createReport(request);
+        service.createReport(request, memberId);
         return ResponseEntity.ok().build();
     }
 

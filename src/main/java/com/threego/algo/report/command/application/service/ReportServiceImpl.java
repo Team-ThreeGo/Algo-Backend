@@ -32,14 +32,14 @@ public class ReportServiceImpl implements ReportService {
 
     @Transactional
     @Override
-    public void createReport(ReportRequest request) {
+    public void createReport(ReportRequest request, int memberId) {
         ReportCategory category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
         ReportType type = typeRepository.findById(request.getTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신고 타입입니다."));
 
-        Member reporter = memberRepository.findById(request.getMemberId())
+        Member reporter = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신고자입니다."));
 
         Integer reportedMemberId = reportService.findReportedMemberId(
@@ -47,15 +47,16 @@ public class ReportServiceImpl implements ReportService {
                 request.getTargetId()
         );
         if (reportedMemberId == null) {
-            throw new IllegalArgumentException("대상 사용자가 존재하지 않습니다.");
+            throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
         }
 
         Member reportedMember = memberRepository.findById(reportedMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피신고자입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         // 중복 신고 방지
-        boolean exists = reportRepository.existsByMemberAndTargetIdAndTypeAndReportedMember(
+        boolean exists = reportRepository.existsByMemberAndCategoryAndTargetIdAndTypeAndReportedMember(
                 reporter,
+                category,
                 request.getTargetId(),
                 type,
                 reportedMember
@@ -87,7 +88,6 @@ public class ReportServiceImpl implements ReportService {
         reportRepository.save(report);
     }
 
-    @Transactional
     @Override
     public void changeVisibility(Member member) {
         String[] tables = {
