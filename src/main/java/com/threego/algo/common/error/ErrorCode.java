@@ -9,7 +9,13 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON02", "Internal server error"),
 
     /* Algo */
-    ALGO_ROADMAP_NOT_FOUND(HttpStatus.NOT_FOUND, "ALGO01", "Algo roadmap not found");
+    ALGO_ROADMAP_NOT_FOUND(HttpStatus.NOT_FOUND, "ALGO01", "Algo roadmap not found"),
+    /* Member */
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER01", "Member not found"),
+    /* Report */
+    REPORT_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT02","Report category not found"),
+    REPORT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT03","Report type not found");
+
 
     private final HttpStatus status;
     private final String code;

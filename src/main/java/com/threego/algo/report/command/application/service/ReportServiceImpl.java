@@ -1,5 +1,7 @@
 package com.threego.algo.report.command.application.service;
 
+import com.threego.algo.common.error.ErrorCode;
+import com.threego.algo.common.error.exception.EntityNotFoundException;
 import com.threego.algo.common.util.DateTimeUtils;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.aggregate.enums.Status;
@@ -34,24 +36,24 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void createReport(ReportRequest request, int memberId) {
         ReportCategory category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.REPORT_CATEGORY_NOT_FOUND));
 
         ReportType type = typeRepository.findById(request.getTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신고 타입입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.REPORT_TYPE_NOT_FOUND));
 
         Member reporter = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신고자입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         Integer reportedMemberId = reportService.findReportedMemberId(
                 request.getCategoryId(),
                 request.getTargetId()
         );
         if (reportedMemberId == null) {
-            throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
+            throw new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
         }
 
         Member reportedMember = memberRepository.findById(reportedMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 중복 신고 방지
         boolean exists = reportRepository.existsByMemberAndCategoryAndTargetIdAndTypeAndReportedMember(
