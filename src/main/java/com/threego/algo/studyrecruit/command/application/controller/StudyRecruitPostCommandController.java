@@ -1,5 +1,6 @@
 package com.threego.algo.studyrecruit.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.studyrecruit.command.application.dto.create.StudyRecruitPostCreateDTO;
 import com.threego.algo.studyrecruit.command.application.dto.update.StudyRecruitPostUpdateDTO;
 import com.threego.algo.studyrecruit.command.application.service.StudyRecruitMemberService;
@@ -26,7 +27,7 @@ public class StudyRecruitPostCommandController {
     @Operation(summary = "모집글 등록", description = "새로운 스터디 모집글을 등록합니다.")
     @PostMapping
     public ResponseEntity<String> createPost(
-            @RequestHeader("Member-Id") int memberId,
+            @LoginMember int memberId,
             @Valid @RequestBody StudyRecruitPostCreateDTO request) {
         studyRecruitPostService.createPost(memberId, request);
         return ResponseEntity.status(201).body("모집글이 성공적으로 등록되었습니다.");
@@ -36,7 +37,7 @@ public class StudyRecruitPostCommandController {
     @PutMapping("/{postId}")
     public ResponseEntity<String> updatePost(
             @PathVariable int postId,
-            @RequestHeader("Member-Id") int memberId,
+            @LoginMember int memberId,
             @Valid @RequestBody StudyRecruitPostUpdateDTO request) {
         studyRecruitPostService.updatePost(postId, memberId, request);
         return ResponseEntity.ok("모집글이 성공적으로 수정되었습니다.");
@@ -46,7 +47,7 @@ public class StudyRecruitPostCommandController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<String> deletePost(
             @PathVariable int postId,
-            @RequestHeader("Member-Id") int memberId) {
+            @LoginMember int memberId) {
         studyRecruitPostService.deletePost(postId, memberId);
         return ResponseEntity.ok("모집글이 성공적으로 삭제되었습니다.");
     }
@@ -55,7 +56,7 @@ public class StudyRecruitPostCommandController {
     @PostMapping("/{postId}/close")
     public ResponseEntity<String> closeRecruitment(
             @PathVariable int postId,
-            @RequestHeader("Member-Id") int memberId) {
+            @LoginMember int memberId) {
         studyRecruitPostService.closeRecruitment(postId, memberId);
         return ResponseEntity.ok("모집이 성공적으로 마감되었습니다.");
     }
@@ -66,7 +67,7 @@ public class StudyRecruitPostCommandController {
     @PostMapping("/{postId}/applicants")
     public ResponseEntity<String> applyToStudy(
             @PathVariable int postId,
-            @RequestHeader("Member-Id") int memberId) {
+            @LoginMember int memberId) {
         return studyRecruitMemberService.applyToStudy(postId, memberId);
     }
 

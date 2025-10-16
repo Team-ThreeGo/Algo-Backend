@@ -139,12 +139,6 @@
         WHERE A.ID = #{postId}
     </select>
 
-    <select id="findImagesByPostId" resultType="string">
-        SELECT IMAGE_URL
-        FROM CODING_POST_IMAGE
-        WHERE POST_ID = #{postId}
-    </select>
-
     <!-- 특정 게시물 댓글 목록 조회 (사용자용) -->
     <select id="selectCommentsByPostId" resultType="com.threego.algo.coding.query.dto.CodingPostCommentDTO">
         SELECT

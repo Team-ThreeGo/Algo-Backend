@@ -1,9 +1,11 @@
 package com.threego.algo.study.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.command.application.dto.create.StudyCommentCreateDTO;
 import com.threego.algo.study.command.application.dto.update.StudyCommentUpdateDTO;
 import com.threego.algo.study.command.application.service.StudyCommentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +37,7 @@ public class StudyCommentCommandController {
     public ResponseEntity<String> createComment(
             @PathVariable int postId,
             @RequestBody StudyCommentCreateDTO commentDto,
-            @RequestHeader("Member-Id") int memberId) {
+            @Parameter(hidden = true) @LoginMember int memberId) {
         return studyCommentService.createComment(postId, memberId, commentDto);
     }
 
@@ -51,7 +53,7 @@ public class StudyCommentCommandController {
     public ResponseEntity<String> updateComment(
             @PathVariable int commentId,
             @RequestBody StudyCommentUpdateDTO commentDto,
-            @RequestHeader("Member-Id") int memberId) {
+            @Parameter(hidden = true) @LoginMember int memberId) {
         return studyCommentService.updateComment(commentId, memberId, commentDto);
     }
 
@@ -66,7 +68,7 @@ public class StudyCommentCommandController {
     })
     public ResponseEntity<String> deleteComment(
             @PathVariable int commentId,
-            @RequestHeader("Member-Id") int memberId) {
+            @Parameter(hidden = true) @LoginMember int memberId) {
         return studyCommentService.deleteComment(commentId, memberId);
     }
 }

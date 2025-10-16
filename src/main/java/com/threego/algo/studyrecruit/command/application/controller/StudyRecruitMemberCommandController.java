@@ -1,6 +1,7 @@
 package com.threego.algo.studyrecruit.command.application.controller;
 
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.studyrecruit.command.application.service.StudyRecruitMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +24,7 @@ public class StudyRecruitMemberCommandController {
     @DeleteMapping("/{joinId}")
     public ResponseEntity<String> cancelApplication(
             @PathVariable int joinId,
-            @RequestHeader("Member-Id") int memberId) {
+            @LoginMember int memberId) {
         return studyRecruitMemberService.cancelApplication(joinId, memberId);
     }
 
@@ -31,7 +32,7 @@ public class StudyRecruitMemberCommandController {
     @PostMapping("/{joinId}/accept")
     public ResponseEntity<String> acceptApplication(
             @PathVariable int joinId,
-            @RequestHeader("Member-Id") int authorId) {
+            @LoginMember int authorId) {
         return studyRecruitMemberService.acceptApplication(joinId, authorId);
     }
 
@@ -39,7 +40,7 @@ public class StudyRecruitMemberCommandController {
     @PostMapping("/{joinId}/reject")
     public ResponseEntity<String> rejectApplication(
             @PathVariable int joinId,
-            @RequestHeader("Member-Id") int authorId) {
+            @LoginMember int authorId) {
         return studyRecruitMemberService.rejectApplication(joinId, authorId);
     }
 }

@@ -1,6 +1,7 @@
 package com.threego.algo.study.command.application.controller;
 
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.command.application.dto.create.StudyCreateDTO;
 import com.threego.algo.study.command.application.dto.update.StudyUpdateDTO;
 import com.threego.algo.study.command.application.service.StudyService;
@@ -36,8 +37,7 @@ public class StudyCommandController {
     })
     @PostMapping
     public ResponseEntity<String> createStudy(
-            @Parameter(description = "작성자 ID", required = true)
-            @RequestHeader("Member-Id") int authorId,
+            @Parameter(hidden = true) @LoginMember int authorId,
 
             @Parameter(description = "모집글 ID", required = true)
             @RequestHeader("POST-ID") int post_id,
@@ -63,8 +63,7 @@ public class StudyCommandController {
     public ResponseEntity<String> updateStudy(
             @Parameter(description = "스터디 ID", required = true)
             @PathVariable int studyId,
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId,
+            @Parameter(hidden = true) @LoginMember int leaderId,
             @Parameter(description = "스터디 수정 정보", required = true)
             @Valid @RequestBody StudyUpdateDTO request) {
         studyService.updateStudy(studyId, leaderId, request);
@@ -87,9 +86,7 @@ public class StudyCommandController {
     public ResponseEntity<String> deleteStudy(
             @Parameter(description = "삭제할 스터디 ID", required = true)
             @PathVariable int studyId,
-
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId) {
+            @Parameter(hidden = true) @LoginMember int leaderId) {
         studyService.deleteStudy(studyId, leaderId);
         return ResponseEntity.ok("스터디 그룹을 삭제했습니다.");
     }
