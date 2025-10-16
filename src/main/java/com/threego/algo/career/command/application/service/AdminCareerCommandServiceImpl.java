@@ -31,10 +31,6 @@ public class AdminCareerCommandServiceImpl implements AdminCareerCommandService{
         CareerInfoPost post = careerPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
 
-        // TODO: 로그인한 회원 == post.getMember() 확인 (관리자만 수행 가능)
-        Member member = memberRepository.findById(29)
-                .orElseThrow(() -> new IllegalArgumentException("테스트용 관리자가 없습니다."));
-
         post.setStatus(status);
         if (status == Status.REJECTED) {
             post.setRejectReason(rejectReason);

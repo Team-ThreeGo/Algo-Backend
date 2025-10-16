@@ -1,42 +1,22 @@
 package com.threego.algo.security;
 
-import com.threego.algo.auth.command.application.service.AuthenticationFilter;
-import com.threego.algo.auth.command.application.service.JwtAuthenticationProvider;
-import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.Collections;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 public class WebSecurity {
 
-    private JwtAuthenticationProvider jwtAuthenticationProvider;
     private Environment env;
-    private JwtUtil jwtUtil;
-
 
     @Autowired
-    public WebSecurity(JwtAuthenticationProvider jwtAuthenticationProvider
-            , Environment env
-            , JwtUtil jwtUtil) {
-        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+    public WebSecurity(Environment env) {
         this.env = env;
-        this.jwtUtil = jwtUtil;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(Collections.singletonList(jwtAuthenticationProvider));
     }
 
     @Bean
@@ -52,23 +32,15 @@ public class WebSecurity {
                         .requestMatchers("/auth/**", "/health/**", "/signup/**", "/login/**").permitAll()
 
                         // 관리자 API
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // 기타 요청
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
         )
                 .sessionManagement(session ->
                     session.sessionCreationPolicy(STATELESS));
 
-        http.addFilter(getAuthenticationFilter(authenticationManager()));
-
-        http.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
-    }
-
-    private Filter getAuthenticationFilter(AuthenticationManager authenticationManager) {
-        return new AuthenticationFilter(authenticationManager, env);
     }
 
 }
