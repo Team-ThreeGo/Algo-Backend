@@ -118,5 +118,5 @@ class CareerInfoMapperTest {
         System.out.println("Calculated offset: " + offset);
     }
 
-    
+
 }
