@@ -1,9 +1,10 @@
-package com.threego.algo.algorithm.query.service;
+package com.threego.algo.algorithm.command.application.service;
 
-import com.threego.algo.algorithm.command.application.service.AlgoCommandServiceImpl;
 import com.threego.algo.algorithm.command.domain.aggregate.AlgoPost;
 import com.threego.algo.algorithm.command.domain.aggregate.AlgoRoadmap;
-import com.threego.algo.algorithm.command.domain.repository.*;
+import com.threego.algo.algorithm.command.domain.repository.AlgoPostCommandRepository;
+import com.threego.algo.algorithm.command.domain.repository.AlgoRoadmapCommandRepository;
+import com.threego.algo.common.error.exception.EntityNotFoundException;
 import com.threego.algo.common.util.DateTimeUtils;
 import com.threego.algo.likes.command.application.service.LikesCommandService;
 import com.threego.algo.likes.command.domain.aggregate.enums.Type;
@@ -23,12 +24,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AlgoQueryServiceTest {
+class AlgoCommandServiceImplTest {
+    @Mock
+    private AlgoRoadmapCommandRepository algoRoadmapCommandRepository;
+
     @Mock
     private AlgoPostCommandRepository algoPostCommandRepository;
 
@@ -105,5 +110,16 @@ class AlgoQueryServiceTest {
 
         // then
         Assertions.assertEquals(likeCount + 1, algoPost.getLikeCount());
+    }
+
+    @DisplayName("알고리즘 학습 로드맵 수정 실패")
+    @Test
+    void AlgoRoadmapUpdateFailTest() {
+        // given
+        when(algoRoadmapCommandRepository.findById(any())).thenReturn(Optional.empty());
+
+        // when, then
+        assertThrows(EntityNotFoundException.class,
+                () -> algoCommandServiceImpl.updateAlgoRoadmap(100, null));
     }
 }
