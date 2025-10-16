@@ -1,6 +1,6 @@
 package com.threego.algo.study.command.application.service;
 
-import com.threego.algo.common.exception.ErrorCode;
+import com.threego.algo.common.error.ErrorCode;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberRepository;
 import com.threego.algo.study.command.application.dto.create.StudyCreateDTO;

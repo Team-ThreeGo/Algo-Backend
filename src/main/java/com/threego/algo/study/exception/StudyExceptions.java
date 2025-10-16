@@ -1,7 +1,7 @@
 package com.threego.algo.study.exception;
 
-import com.threego.algo.common.exception.BusinessException;
-import com.threego.algo.common.exception.ErrorCode;
+import com.threego.algo.common.error.exception.BusinessException;
+import com.threego.algo.common.error.ErrorCode;
 
 /* 설명. Study 도메인 예외 모음 */
 public class StudyExceptions {
