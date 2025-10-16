@@ -43,7 +43,6 @@ public class StudyPostServiceImpl implements StudyPostService {
     private final MemberRoleRepository memberRoleRepository;
     private final S3Service s3Service;
 
-    @IncreasePoint(amount = 1)
     public StudyPostCreateResponseDTO createPost(StudyPostRequestDTO requestDto) {
         // 1. 게시물 저장
         StudyPost post = StudyPost.builder()

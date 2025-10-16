@@ -32,7 +32,6 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
     private final MemberRoleRepository memberRoleRepository;
 
     @Override
-    @IncreasePoint(amount = 1)
     public ResponseEntity<String> createPost(int memberId, StudyRecruitPostCreateDTO request) {
         try {
             // 1. 회원 존재 여부 확인

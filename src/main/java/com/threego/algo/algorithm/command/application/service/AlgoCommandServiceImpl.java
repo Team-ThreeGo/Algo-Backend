@@ -11,7 +11,6 @@ import com.threego.algo.likes.query.service.LikesQueryService;
 import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
-import com.threego.algo.member.command.domain.repository.MemberRankRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -195,7 +194,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    @IncreasePoint(amount = 1)
+    @IncreasePoint(amount = 2)
     public void createCorrectQuizHistory(int memberId, int questionId) throws Exception {
         final Member member = findMemberById(memberId);
 
