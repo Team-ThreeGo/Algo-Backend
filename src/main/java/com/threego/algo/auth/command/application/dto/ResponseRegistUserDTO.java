@@ -1,9 +1,0 @@
-package com.threego.algo.auth.command.application.dto;
-
-import lombok.Data;
-
-@Data
-public class ResponseRegistUserDTO {
-    private String email;
-    private String nickname;
-}

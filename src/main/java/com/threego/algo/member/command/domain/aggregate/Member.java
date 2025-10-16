@@ -1,6 +1,6 @@
 package com.threego.algo.member.command.domain.aggregate;
 
-import com.threego.algo.auth.command.application.dto.UserDTO;
+import com.threego.algo.member.command.application.dto.UserDTO;
 import com.threego.algo.common.util.DateTimeUtils;
 import com.threego.algo.member.command.domain.aggregate.enums.Status;
 import jakarta.persistence.*;
