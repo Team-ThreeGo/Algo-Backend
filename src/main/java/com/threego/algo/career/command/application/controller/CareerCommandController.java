@@ -3,6 +3,7 @@ package com.threego.algo.career.command.application.controller;
 import com.threego.algo.career.command.application.dto.CareerCommentRequest;
 import com.threego.algo.career.command.application.dto.CareerPostCreateRequest;
 import com.threego.algo.career.command.application.service.CareerCommandService;
+import com.threego.algo.common.auth.LoginMember;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +34,7 @@ public class CareerCommandController {
     )
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Integer> createPost(
+            @LoginMember int memberId,
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "이미지 파일 (선택, 최대 5MB)")
@@ -43,7 +45,7 @@ public class CareerCommandController {
         request.setContent(content);
         request.setImage(image);
 
-        Integer postId = service.createPost(request);
+        Integer postId = service.createPost(request, memberId);
         return ResponseEntity.ok(postId);
     }
 
@@ -52,8 +54,11 @@ public class CareerCommandController {
             description = "회원이 자신의 게시물을 삭제합니다. soft delete로 visibility를 'N'으로 변경합니다."
     )
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Integer postId) {
-        service.deletePost(postId);
+    public ResponseEntity<Void> deletePost(
+            @LoginMember int memberId,
+            @PathVariable Integer postId
+    ) {
+        service.deletePost(postId, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -63,11 +68,12 @@ public class CareerCommandController {
     )
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<Integer> createComment(
+            @LoginMember int memberId,
             @PathVariable Integer postId,
             @RequestParam(value = "parentId", required = false) Integer parentId,
             @RequestBody CareerCommentRequest request
     ) {
-        Integer commentId = service.createComment(postId, parentId, request);
+        Integer commentId = service.createComment(postId, parentId, request, memberId);
         return ResponseEntity.ok(commentId);
     }
 
@@ -77,10 +83,11 @@ public class CareerCommandController {
     )
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<Void> updateComment(
+            @LoginMember int memberId,
             @PathVariable Integer commentId,
             @RequestBody CareerCommentRequest request
     ) {
-        service.updateComment(commentId, request);
+        service.updateComment(commentId, request, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -89,8 +96,11 @@ public class CareerCommandController {
             description = "회원이 자신의 댓글을 삭제합니다. soft delete로 visibility='N'으로 변경합니다."
     )
     @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Integer commentId) {
-        service.deleteComment(commentId);
+    public ResponseEntity<Void> deleteComment(
+            @LoginMember int memberId,
+            @PathVariable Integer commentId
+    ) {
+        service.deleteComment(commentId, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -99,9 +109,11 @@ public class CareerCommandController {
             description = "회원이 자신이 작성하지 않는 게시물을 추천합니다. 추천 시 게시물의 작성자의 포인트가 1씩 증가합니다."
     )
     @DeleteMapping("/posts/{postId}/likes")
-    public ResponseEntity<Void> createCareerPostLikes(@PathVariable("postId") final int postId) {
-        // TODO. memberID는 Authentication에서 받아오도록 수정 필요
-        service.createCareerPostLikes(1, postId);
+    public ResponseEntity<Void> createCareerPostLikes(
+            @LoginMember int memberId,
+            @PathVariable("postId") final int postId
+    ) {
+        service.createCareerPostLikes(memberId, postId);
 
         return ResponseEntity.ok().build();
     }
