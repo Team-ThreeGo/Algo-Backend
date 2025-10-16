@@ -5,6 +5,7 @@
 
 <mapper namespace="com.threego.algo.career.query.dao.CareerInfoMapper">
 
+    <!-- 기존 메서드 (하위 호환성 유지) -->
     <select id="selectPostList" resultType="com.threego.algo.career.query.dto.PostSummaryResponseDto">
         SELECT
         A.ID AS id
@@ -31,6 +32,41 @@
             </if>
         </where>
         ORDER BY A.ID DESC
+    </select>
+
+    <!-- 새로운 페이지네이션 지원 메서드 -->
+    <select id="selectPostListWithPagination"
+            parameterType="com.threego.algo.career.query.dto.CareerPostSearchDTO"
+            resultType="com.threego.algo.career.query.dto.PostSummaryResponseDto">
+        <!-- offset 자동 계산 -->
+        <include refid="com.threego.algo.common.mapper.CommonMapper.calculateOffset"/>
+
+        SELECT
+        A.ID AS id
+        , A.TITLE AS title
+        , A.MEMBER_ID AS memberId
+        , B.NICKNAME AS nickname
+        , C.NAME AS rankName
+        , A.CREATED_AT AS createdAt
+        , A.STATUS AS status
+        , A.LIKE_COUNT AS likeCount
+        , A.COMMENT_COUNT AS commentCount
+        FROM CAREER_INFO_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        <where>
+            <if test="visibility != null">
+                A.VISIBILITY = #{visibility}
+            </if>
+            <if test="status != null">
+                AND A.STATUS = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY A.ID DESC
+        <include refid="com.threego.algo.common.mapper.CommonMapper.pagination"/>
     </select>
 
     <select id="selectPost" resultType="com.threego.algo.career.query.dto.PostDetailResponseDto">
@@ -102,6 +138,7 @@
         ORDER BY A.ID DESC;
     </select>
 
+    <!-- 기존 메서드 (하위 호환성 유지) -->
     <select id="selectPostsByMember"
             parameterType="int"
             resultType="com.threego.algo.career.query.dto.PostSummaryResponseDto">
@@ -122,5 +159,28 @@
         ORDER BY A.ID DESC
     </select>
 
+    <!-- 새로운 페이지네이션 지원 메서드 -->
+    <select id="selectPostsByMemberWithPagination"
+            resultType="com.threego.algo.career.query.dto.PostSummaryResponseDto">
+        <!-- offset 자동 계산 -->
+        <include refid="com.threego.algo.common.mapper.CommonMapper.calculateOffset"/>
+
+        SELECT
+        A.ID AS id
+        , A.TITLE AS title
+        , A.MEMBER_ID AS memberId
+        , B.NICKNAME AS nickname
+        , C.NAME AS rankName
+        , A.CREATED_AT AS createdAt
+        , A.STATUS AS status
+        , A.LIKE_COUNT AS likeCount
+        , A.COMMENT_COUNT AS commentCount
+        FROM CAREER_INFO_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        WHERE A.MEMBER_ID = #{memberId}
+        ORDER BY A.ID DESC
+        <include refid="com.threego.algo.common.mapper.CommonMapper.pagination"/>
+    </select>
 
 </mapper>
