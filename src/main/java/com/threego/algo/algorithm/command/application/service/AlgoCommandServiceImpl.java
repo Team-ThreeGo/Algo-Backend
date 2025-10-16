@@ -8,8 +8,10 @@ import com.threego.algo.algorithm.query.service.AlgoQueryService;
 import com.threego.algo.likes.command.application.service.LikesCommandService;
 import com.threego.algo.likes.command.domain.aggregate.enums.Type;
 import com.threego.algo.likes.query.service.LikesQueryService;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
+import com.threego.algo.member.command.domain.repository.MemberRankRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -193,6 +195,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
+    @IncreasePoint(amount = 1)
     public void createCorrectQuizHistory(int memberId, int questionId) throws Exception {
         final Member member = findMemberById(memberId);
 
@@ -340,6 +343,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
+    @IncreasePoint(amount = 1, useArgumentMemberId = false)
     public void createAlgoPostLikes(final int memberId, final int postId) {
         final Member member = findMemberById(memberId);
         final AlgoPost algoPost = findAlgoPostById(postId);

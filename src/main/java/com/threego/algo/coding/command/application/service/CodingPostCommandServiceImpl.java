@@ -15,8 +15,8 @@ import com.threego.algo.likes.command.application.service.LikesCommandService;
 import com.threego.algo.likes.command.domain.aggregate.enums.Type;
 import com.threego.algo.likes.query.service.LikesQueryService;
 import com.threego.algo.common.service.S3Service;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
-import com.threego.algo.member.command.domain.aggregate.MemberRank;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
 import com.threego.algo.member.command.domain.repository.MemberRankRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -53,12 +52,13 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Override
     @Transactional
-    public int createPost(CodingPostRequestDTO dto) {
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("작성자(Member) 없음: " + dto.getMemberId()));
+    @IncreasePoint(amount = 5)
+    public int createPost(int memberId, int problemId, CodingPostRequestDTO dto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("작성자(Member) 없음: " + memberId));
 
-        CodingProblem problem = problemRepository.findById(dto.getProblemId())
-                .orElseThrow(() -> new IllegalArgumentException("문제 없음: " + dto.getProblemId()));
+        CodingProblem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("문제 없음: "  + problemId));
 
         CodingPost post = CodingPost.create(member, problem, dto.getTitle(), dto.getContent());
         CodingPost saved = postRepository.save(post);
@@ -104,13 +104,9 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         // 이미지 업로드 및 저장
         MultipartFile image = dto.getImages();
         if (image != null && !image.isEmpty()) {
-            // 이미지 파일 유효성 검사
             s3Service.validateImageFile(image);
-
-            // S3에 업로드
             String imageUrl = s3Service.uploadFile(image, "coding-posts");
 
-            // DB에 저장
             CodingPostImage postImage = new CodingPostImage(saved, imageUrl);
             codingPostImageRepository.save(postImage);
         }
@@ -133,10 +129,6 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         // 해당 문제의 postCount 재계산
         problem.syncPostCount();
 
-        member.increasePoint(5);
-        List<MemberRank> allRanks = memberRankRepository.findAll();
-        member.updateRank(allRanks);
-        memberRepository.save(member);
 
         return saved.getId();
     }
@@ -147,8 +139,15 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
 
-        CodingPostImage image = new CodingPostImage(post, dto.getImageUrl());
-        CodingPostImage saved = codingPostImageRepository.save(image);
+        MultipartFile image = dto.getImage();
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("이미지 파일이 비어 있습니다.");
+        }
+
+        s3Service.validateImageFile(image);
+        String imageUrl = s3Service.uploadFile(image, "coding-posts");
+
+        CodingPostImage saved = codingPostImageRepository.save(new CodingPostImage(post, imageUrl));
         return saved.getId();
     }
 
@@ -253,7 +252,8 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Transactional
     @Override
-    public void createCodingPostLikes(final int memberId, final int postId) {
+    @IncreasePoint(amount = 1, useArgumentMemberId = false)
+    public int createCodingPostLikes(final int memberId, final int postId) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException(memberId + "번 회원이 존재하지 않습니다."));
 
@@ -270,19 +270,8 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
         likesCommandService.createLikes(member, post, Type.CODING_POST);
 
-//        post.getMemberId().increasePoint(1);
-
-        // === 게시물 작성자 포인트 +1 ===
-        Member writer = post.getMemberId();
-        writer.increasePoint(1);
-
-        // === 등급 자동 업데이트 ===
-        List<MemberRank> allRanks = memberRankRepository.findAll();
-        writer.updateRank(allRanks);
-
-        // === DB 반영 ===
-        memberRepository.save(writer);
-
         post.increaseLikeCount();
+
+        return post.getMemberId().getId();
     }
 }

@@ -1,6 +1,7 @@
 package com.threego.algo.member.command.application.service;
 
 import com.threego.algo.common.util.DateTimeUtils;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.aggregate.MemberAttendanceHistory;
 import com.threego.algo.member.command.domain.repository.MemberAttendanceHistoryCommandRepository;
@@ -31,6 +32,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Transactional
+    @IncreasePoint(amount = 1)
     public String createAttendance(int memberId) {
         String today = DateTimeUtils.nowDate();
 

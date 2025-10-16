@@ -10,6 +10,7 @@ import com.threego.algo.likes.command.application.service.LikesCommandService;
 import com.threego.algo.likes.command.domain.aggregate.enums.Type;
 import com.threego.algo.likes.query.service.LikesQueryService;
 import com.threego.algo.common.service.S3Service;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class CareerCommandServiceImpl implements CareerCommandService {
 
     @Transactional
     @Override
+    @IncreasePoint(amount = 10)
     public Integer createPost(CareerPostCreateRequest request) {
         // TODO: 로그인 회원 정보 가져오기 (Spring Security에서 인증 객체 활용)
         Member member = memberRepository.findById(1)
@@ -140,6 +142,7 @@ public class CareerCommandServiceImpl implements CareerCommandService {
 
     @Transactional
     @Override
+    @IncreasePoint(amount = 1, useArgumentMemberId = false)
     public void createCareerPostLikes(final int memberId, final int postId) {
         // TODO: 로그인 회원 정보 가져오기 (Spring Security에서 인증 객체 활용)
         final Member member = memberRepository.findById(1)
@@ -157,9 +160,6 @@ public class CareerCommandServiceImpl implements CareerCommandService {
         }
 
         likesCommandService.createLikes(member, post, Type.CAREER_INFO_POST);
-
-        post.getMember().increasePoint(1);
-
         post.increaseLikeCount();
     }
 }

@@ -1,6 +1,7 @@
 package com.threego.algo.study.command.application.service;
 
 import com.threego.algo.common.service.S3Service;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.aggregate.MemberRole;
 import com.threego.algo.member.command.domain.repository.MemberRepository;
@@ -42,6 +43,7 @@ public class StudyPostServiceImpl implements StudyPostService {
     private final MemberRoleRepository memberRoleRepository;
     private final S3Service s3Service;
 
+    @IncreasePoint(amount = 1)
     public StudyPostCreateResponseDTO createPost(StudyPostRequestDTO requestDto) {
         // 1. 게시물 저장
         StudyPost post = StudyPost.builder()

@@ -1,6 +1,7 @@
 package com.threego.algo.studyrecruit.command.application.service;
 
 import com.threego.algo.common.util.DateTimeUtils;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.aggregate.MemberRole;
 import com.threego.algo.member.command.domain.repository.MemberRepository;
@@ -31,6 +32,7 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
     private final MemberRoleRepository memberRoleRepository;
 
     @Override
+    @IncreasePoint(amount = 1)
     public ResponseEntity<String> createPost(int memberId, StudyRecruitPostCreateDTO request) {
         try {
             // 1. 회원 존재 여부 확인
