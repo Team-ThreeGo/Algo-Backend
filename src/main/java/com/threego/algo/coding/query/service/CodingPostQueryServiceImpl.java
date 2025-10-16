@@ -26,8 +26,6 @@ public class CodingPostQueryServiceImpl implements CodingPostQueryService {
     public List<CodingPostSummaryDTO> findPostList(String keyword, PageRequestDTO pageRequest) {
         CodingPostSearchConditionDTO condition = new CodingPostSearchConditionDTO();
         condition.setKeyword(keyword);
-        condition.setLimit(pageRequest.getSize());
-        condition.setOffset(pageRequest.getOffset());
         return codingPostMapper.selectPostList(condition);
     }
 

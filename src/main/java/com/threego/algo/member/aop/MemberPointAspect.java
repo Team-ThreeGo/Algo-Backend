@@ -76,7 +76,7 @@ public class MemberPointAspect {
         }
     }
 
-    // 공통 헬퍼
+    // 공통
     private void increaseMemberPoint(Member member, int amount) {
         MemberRank oldRank = member.getMemberRank();
         member.increasePoint(amount);
