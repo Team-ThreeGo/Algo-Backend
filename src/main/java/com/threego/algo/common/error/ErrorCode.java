@@ -14,8 +14,8 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER01", "Member not found"),
     /* Report */
     REPORT_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT02","Report category not found"),
-    REPORT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT03","Report type not found");
-
+    REPORT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT03","Report type not found"),
+    REPORT_POST_OR_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "REPORT04","Post or Comment not found");
 
     private final HttpStatus status;
     private final String code;

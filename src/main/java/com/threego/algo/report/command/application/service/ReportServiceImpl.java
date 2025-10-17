@@ -49,7 +49,7 @@ public class ReportServiceImpl implements ReportService {
                 request.getTargetId()
         );
         if (reportedMemberId == null) {
-            throw new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+            throw new EntityNotFoundException(ErrorCode.REPORT_POST_OR_COMMENT_NOT_FOUND);
         }
 
         Member reportedMember = memberRepository.findById(reportedMemberId)
