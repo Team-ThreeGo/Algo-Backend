@@ -1,7 +1,10 @@
 package com.threego.algo.report.command.application.service;
 
+import com.threego.algo.common.error.ErrorCode;
+import com.threego.algo.common.error.exception.EntityNotFoundException;
 import com.threego.algo.common.util.DateTimeUtils;
 import com.threego.algo.member.command.domain.aggregate.Member;
+import com.threego.algo.member.command.domain.aggregate.enums.Status;
 import com.threego.algo.member.command.domain.repository.MemberRepository;
 import com.threego.algo.report.command.application.dto.ReportRequest;
 import com.threego.algo.report.command.domain.aggregate.Report;
@@ -13,6 +16,7 @@ import com.threego.algo.report.command.domain.repository.ReportTypeRepository;
 import com.threego.algo.report.query.dao.ReportMapper;
 import com.threego.algo.report.query.dto.ReportedMemberResponseDTO;
 import com.threego.algo.report.query.service.AdminReportQueryService;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,33 +30,35 @@ public class ReportServiceImpl implements ReportService {
     private final ReportTypeRepository typeRepository;
     private final MemberRepository memberRepository;
     private final AdminReportQueryService reportService;
+    private final EntityManager entityManager;
 
     @Transactional
     @Override
-    public void createReport(ReportRequest request) {
+    public void createReport(ReportRequest request, int memberId) {
         ReportCategory category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.REPORT_CATEGORY_NOT_FOUND));
 
         ReportType type = typeRepository.findById(request.getTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신고 타입입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.REPORT_TYPE_NOT_FOUND));
 
-        Member reporter = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신고자입니다."));
+        Member reporter = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         Integer reportedMemberId = reportService.findReportedMemberId(
                 request.getCategoryId(),
                 request.getTargetId()
         );
         if (reportedMemberId == null) {
-            throw new IllegalArgumentException("대상 사용자가 존재하지 않습니다.");
+            throw new EntityNotFoundException(ErrorCode.REPORT_POST_OR_COMMENT_NOT_FOUND);
         }
 
         Member reportedMember = memberRepository.findById(reportedMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피신고자입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 중복 신고 방지
-        boolean exists = reportRepository.existsByMemberAndTargetIdAndTypeAndReportedMember(
+        boolean exists = reportRepository.existsByMemberAndCategoryAndTargetIdAndTypeAndReportedMember(
                 reporter,
+                category,
                 request.getTargetId(),
                 type,
                 reportedMember
@@ -73,7 +79,32 @@ public class ReportServiceImpl implements ReportService {
 
         reportedMember.increaseReportCount();
 
+        // 20번 이상 신고된 회원 Block 처리
+        if(reportedMember.getReportedCount() >= 20){
+            reportedMember.setStatus(Status.BLOCKED);
+
+            // Block된 회원이 작성한 게시물 및 댓글 비공개
+            changeVisibility(reportedMember);
+        }
+
         reportRepository.save(report);
     }
+
+    @Override
+    public void changeVisibility(Member member) {
+        String[] tables = {
+                "Algo_Comment", "Career_Info_Comment", "Career_Info_Post",
+                "Coding_Post", "Coding_Comment", "Study_Comment",
+                "Study_Post", "Study_Recruit_Comment", "Study_Recruit_Post"
+        };
+
+        for (String table : tables) {
+            entityManager.createNativeQuery("UPDATE " + table + " SET visibility = 'N' WHERE member_id = :memberId")
+                    .setParameter("memberId", member.getId())
+                    .executeUpdate();
+        }
+    }
+
+
 }
 
