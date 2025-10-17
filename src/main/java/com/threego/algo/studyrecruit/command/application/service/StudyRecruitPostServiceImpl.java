@@ -1,6 +1,7 @@
 package com.threego.algo.studyrecruit.command.application.service;
 
 import com.threego.algo.common.util.DateTimeUtils;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberRepository;
 import com.threego.algo.member.command.domain.repository.MemberRoleRepository;

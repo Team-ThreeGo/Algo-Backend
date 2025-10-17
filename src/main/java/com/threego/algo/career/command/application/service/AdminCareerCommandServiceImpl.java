@@ -5,6 +5,7 @@ import com.threego.algo.career.command.domain.aggregate.CareerInfoPost;
 import com.threego.algo.career.command.domain.aggregate.enums.Status;
 import com.threego.algo.career.command.domain.repository.CareerCommentRepository;
 import com.threego.algo.career.command.domain.repository.CareerPostRepository;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class AdminCareerCommandServiceImpl implements AdminCareerCommandService{
 
     @Transactional
     @Override
+    @IncreasePoint(amount = 20, useArgumentMemberId = false, onStatusChangeApproved = true)
     public void updatePostStatus(int postId, Status status, String rejectReason) {
         CareerInfoPost post = careerPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
