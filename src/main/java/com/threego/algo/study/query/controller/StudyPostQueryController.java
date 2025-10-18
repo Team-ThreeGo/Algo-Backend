@@ -1,16 +1,12 @@
 package com.threego.algo.study.query.controller;
 
 import com.threego.algo.study.query.dto.*;
-import com.threego.algo.study.query.service.StudyMemberQueryService;
 import com.threego.algo.study.query.service.StudyPostQueryService;
-import com.threego.algo.study.query.service.StudyRoadmapQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "Study Post - Member Query",
@@ -25,10 +21,10 @@ public class StudyPostQueryController {
 
     @Operation(
             summary = "스터디 게시물 목록 조회",
-            description = "스터디 그룹의 게시물 목록을 페이징으로 조회합니다."
+            description = "스터디 그룹의 게시물 목록을 페이징으로 조회합니다. 전체 게시물 수를 함께 반환합니다."
     )
     @GetMapping("/{studyId}/posts")
-    public ResponseEntity<List<StudyPostDTO>> findPosts(
+    public ResponseEntity<StudyPostListResponseDTO> findPosts(
             @PathVariable int studyId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -39,8 +35,8 @@ public class StudyPostQueryController {
                 .size(size)
                 .build();
 
-        List<StudyPostDTO> posts = studyPostQueryService.findAllStudyPosts(searchDto);
-        return ResponseEntity.ok(posts);
+        StudyPostListResponseDTO response = studyPostQueryService.findAllStudyPosts(searchDto);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(

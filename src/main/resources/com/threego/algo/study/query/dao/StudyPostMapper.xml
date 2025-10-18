@@ -213,4 +213,17 @@
             </if>
         </if>
     </select>
+
+    <!-- 스터디 게시물 전체 개수 조회 (검색 조건 포함) -->
+    <select id="countAllStudyPosts"
+            parameterType="com.threego.algo.study.query.dto.StudyPostSearchDTO"
+            resultType="long">
+        SELECT COUNT(DISTINCT A.ID)
+          FROM STUDY_POST A
+          JOIN STUDY_MEMBER B ON A.MEMBER_ID = B.MEMBER_ID
+          JOIN MEMBER C       ON B.MEMBER_ID = C.ID
+         WHERE A.STUDY_ID = #{studyId}
+           AND A.VISIBILITY = 'Y'
+           AND B.ROLE != 'NOT_MEMBER'
+    </select>
 </mapper>

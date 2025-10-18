@@ -28,4 +28,7 @@ public interface StudyPostMapper {
 
     /* 설명. 관리자: 숨김 처리된 스터디 게시물 댓글 조회 */
     List<StudyCommentDTO> selectAllHiddenStudyComments(StudyPostSearchDTO searchDto);
+
+    /* 설명. 스터디 게시물 전체 개수 조회 (검색 조건 포함) */
+    long countAllStudyPosts(StudyPostSearchDTO searchDto);
 }
