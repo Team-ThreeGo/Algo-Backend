@@ -41,4 +41,7 @@ public interface CareerInfoMapper {
             @Param("memberId") int memberId,
             @Param("searchDTO") CareerPostSearchDTO searchDTO
     );
+
+    /* 설명. Career 게시물 전체 개수 조회 (검색 조건 포함) */
+    long countCareerPosts(CareerPostSearchDTO searchDto);
 }

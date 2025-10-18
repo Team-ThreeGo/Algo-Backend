@@ -2,6 +2,8 @@ package com.threego.algo.career.query.service;
 
 import com.threego.algo.career.command.domain.aggregate.enums.Status;
 import com.threego.algo.career.query.dao.CareerInfoMapper;
+import com.threego.algo.career.query.dto.CareerPostListResponseDto;
+import com.threego.algo.career.query.dto.CareerPostSearchDTO;
 import com.threego.algo.career.query.dto.CommentResponseDto;
 import com.threego.algo.career.query.dto.PostDetailResponseDto;
 import com.threego.algo.career.query.dto.PostSummaryResponseDto;
@@ -25,6 +27,17 @@ public class CareerQueryServiceImpl implements CareerQueryService {
     @Override
     public List<PostSummaryResponseDto> findPostList(String visibility, Status status, String keyword) {
         return careerInfoMapper.selectPostList(visibility, status, keyword);
+    }
+
+    @Override
+    public CareerPostListResponseDto findPostListWithPagination(CareerPostSearchDTO searchDTO) {
+        List<PostSummaryResponseDto> posts = careerInfoMapper.selectPostListWithPagination(searchDTO);
+        long totalCount = careerInfoMapper.countCareerPosts(searchDTO);
+
+        return CareerPostListResponseDto.builder()
+                .posts(posts)
+                .totalCount(totalCount)
+                .build();
     }
 
     @Override

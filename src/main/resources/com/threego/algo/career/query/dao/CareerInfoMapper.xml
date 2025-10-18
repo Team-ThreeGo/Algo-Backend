@@ -183,4 +183,24 @@
         <include refid="com.threego.algo.common.mapper.CommonMapper.pagination"/>
     </select>
 
+    <!-- Career 게시물 전체 개수 조회 (검색 조건 포함) -->
+    <select id="countCareerPosts"
+            parameterType="com.threego.algo.career.query.dto.CareerPostSearchDTO"
+            resultType="long">
+        SELECT COUNT(*)
+        FROM CAREER_INFO_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        <where>
+            <if test="visibility != null">
+                A.VISIBILITY = #{visibility}
+            </if>
+            <if test="status != null">
+                AND A.STATUS = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
 </mapper>

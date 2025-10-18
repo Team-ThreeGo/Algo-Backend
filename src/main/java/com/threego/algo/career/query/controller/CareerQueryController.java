@@ -1,5 +1,7 @@
 package com.threego.algo.career.query.controller;
 
+import com.threego.algo.career.query.dto.CareerPostListResponseDto;
+import com.threego.algo.career.query.dto.CareerPostSearchDTO;
 import com.threego.algo.career.query.dto.CommentResponseDto;
 import com.threego.algo.career.query.dto.PostDetailResponseDto;
 import com.threego.algo.career.query.dto.PostSummaryResponseDto;
@@ -29,13 +31,24 @@ public class CareerQueryController {
 
     @Operation(
             summary = "회원용 기업별 정보 공유 게시물 목록 조회",
-            description = "회원은 공개된 게시물만 최신순으로 조회합니다."
+            description = "회원은 공개된 게시물만 최신순으로 조회합니다. (페이징, 검색). 전체 게시물 수를 함께 반환합니다."
     )
     @GetMapping("/posts")
-    public ResponseEntity<List<PostSummaryResponseDto>> findPostList(
+    public ResponseEntity<CareerPostListResponseDto> findPostList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false) String keyword
     ) {
-        return ResponseEntity.ok(careerQueryService.findPostList("Y", null, keyword));
+        CareerPostSearchDTO searchDTO = CareerPostSearchDTO.builder()
+                .page(page)
+                .size(size)
+                .visibility("Y")
+                .status(status != null ? com.threego.algo.career.command.domain.aggregate.enums.Status.valueOf(status) : null)
+                .keyword(keyword)
+                .build();
+
+        return ResponseEntity.ok(careerQueryService.findPostListWithPagination(searchDTO));
     }
 
     @Operation(
