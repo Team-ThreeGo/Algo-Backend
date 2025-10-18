@@ -48,4 +48,15 @@ public class StudyExceptions {
             super(ErrorCode.STUDY_HAS_ACTIVE_MEMBERS);
         }
     }
+
+    /* 설명. 스터디 게시물을 찾을 수 없을 때 */
+    public static class StudyPostNotFoundException extends BusinessException {
+        public StudyPostNotFoundException() {
+            super(ErrorCode.STUDY_POST_NOT_FOUND);
+        }
+
+        public StudyPostNotFoundException(String customMessage) {
+            super(ErrorCode.STUDY_POST_NOT_FOUND, customMessage);
+        }
+    }
 }

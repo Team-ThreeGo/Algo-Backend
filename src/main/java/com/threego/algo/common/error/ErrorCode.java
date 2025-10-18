@@ -25,6 +25,7 @@ public enum ErrorCode {
     STUDY_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "S003", "스터디 멤버를 찾을 수 없습니다."),
     STUDY_NOT_LEADER(HttpStatus.FORBIDDEN, "S004", "그룹장만 수행할 수 있는 작업입니다."),
     STUDY_HAS_ACTIVE_MEMBERS(HttpStatus.CONFLICT, "S005", "활동 중인 그룹원이 있는 상태에서는 그룹을 삭제할 수 없습니다."),
+    STUDY_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "S006", "스터디 게시물을 찾을 수 없습니다."),
 
     // StudyRecruit
     RECRUIT_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "SR001", "모집글을 찾을 수 없습니다."),
