@@ -3,6 +3,7 @@ package com.threego.algo.coding.query.service;
 import com.threego.algo.coding.query.dao.CodingPostMapper;
 import com.threego.algo.coding.query.dto.CodingPostCommentDTO;
 import com.threego.algo.coding.query.dto.CodingPostDetailDTO;
+import com.threego.algo.coding.query.dto.CodingPostListResponseDTO;
 import com.threego.algo.coding.query.dto.CodingPostSearchConditionDTO;
 import com.threego.algo.coding.query.dto.CodingPostSummaryDTO;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,16 @@ public class CodingPostQueryServiceImpl implements CodingPostQueryService {
         return codingPostMapper.selectPostList(condition);
     }
 
+    @Override
+    public CodingPostListResponseDTO findPostListWithPagination(CodingPostSearchConditionDTO condition) {
+        List<CodingPostSummaryDTO> posts = codingPostMapper.selectPostList(condition);
+        long totalCount = codingPostMapper.countCodingPosts(condition);
+
+        return CodingPostListResponseDTO.builder()
+                .posts(posts)
+                .totalCount(totalCount)
+                .build();
+    }
 
     @Override
     public CodingPostDetailDTO findPostDetail(int postId) {

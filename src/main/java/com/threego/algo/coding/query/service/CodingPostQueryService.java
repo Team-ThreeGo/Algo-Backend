@@ -2,6 +2,8 @@ package com.threego.algo.coding.query.service;
 
 import com.threego.algo.coding.query.dto.CodingPostCommentDTO;
 import com.threego.algo.coding.query.dto.CodingPostDetailDTO;
+import com.threego.algo.coding.query.dto.CodingPostListResponseDTO;
+import com.threego.algo.coding.query.dto.CodingPostSearchConditionDTO;
 import com.threego.algo.coding.query.dto.CodingPostSummaryDTO;
 
 import java.util.List;
@@ -10,6 +12,9 @@ public interface CodingPostQueryService {
 
     // 회원용: 전체 문제별 게시물 목록 조회
     List<CodingPostSummaryDTO> findPostList(String keyword);
+
+    // 회원용: 페이지네이션과 전체 개수를 포함한 게시물 목록 조회
+    CodingPostListResponseDTO findPostListWithPagination(CodingPostSearchConditionDTO condition);
 
     // 회원용: 게시물 상세 조회
     CodingPostDetailDTO findPostDetail(int postId);

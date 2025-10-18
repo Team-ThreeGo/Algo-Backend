@@ -260,4 +260,28 @@
         CASE WHEN A.PARENT_ID IS NULL THEN A.ID ELSE A.PARENT_ID END ASC,
         A.ID ASC
     </select>
+
+    <!-- 코딩 게시물 전체 개수 조회 (검색 조건 포함) -->
+    <select id="countCodingPosts"
+            parameterType="com.threego.algo.coding.query.dto.CodingPostSearchConditionDTO"
+            resultType="long">
+        SELECT COUNT(*)
+        FROM CODING_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        <where>
+            <if test="visibility != null">
+                A.VISIBILITY = #{visibility}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR A.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+                OR B.NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="problemId != null">
+                AND A.PROBLEM_ID = #{problemId}
+            </if>
+        </where>
+    </select>
 </mapper>

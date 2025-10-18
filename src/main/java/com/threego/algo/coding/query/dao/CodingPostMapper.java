@@ -32,4 +32,7 @@ public interface CodingPostMapper {
 
     // 관리자용 댓글 전체 조회
     List<CodingPostCommentDTO> selectAdminComments();
+
+    // 게시물 전체 개수 조회 (검색 조건 포함)
+    long countCodingPosts(CodingPostSearchConditionDTO condition);
 }
