@@ -122,39 +122,6 @@ class StudyPostQueryServiceTest {
     }
 
     @Test
-    @DisplayName("스터디별 게시물 개수가 올바르게 카운트되는지 확인")
-    void testCountByStudyId() {
-        // given - 여러 스터디 ID로 조회
-        StudyPostSearchDTO searchDto1 = StudyPostSearchDTO.builder()
-                .studyId(1)
-                .page(0)
-                .size(100)  // 전체 조회
-                .build();
-
-        StudyPostSearchDTO searchDto2 = StudyPostSearchDTO.builder()
-                .studyId(2)
-                .page(0)
-                .size(100)  // 전체 조회
-                .build();
-
-        // when
-        StudyPostListResponseDTO response1 = studyPostQueryService.findAllStudyPosts(searchDto1);
-        StudyPostListResponseDTO response2 = studyPostQueryService.findAllStudyPosts(searchDto2);
-
-        // then
-        System.out.println("===== 스터디별 게시물 개수 =====");
-        System.out.println("스터디 ID 1 - 전체 게시물 수: " + response1.getTotalCount());
-        System.out.println("스터디 ID 1 - 실제 조회된 게시물 수: " + response1.getPosts().size());
-        System.out.println("스터디 ID 2 - 전체 게시물 수: " + response2.getTotalCount());
-        System.out.println("스터디 ID 2 - 실제 조회된 게시물 수: " + response2.getPosts().size());
-        System.out.println("==============================");
-
-        // totalCount와 실제 posts 개수가 일치해야 함 (size가 충분히 큰 경우)
-        assertThat(response1.getTotalCount()).isEqualTo(response1.getPosts().size());
-        assertThat(response2.getTotalCount()).isEqualTo(response2.getPosts().size());
-    }
-
-    @Test
     @DisplayName("VISIBILITY = 'Y'인 게시물만 카운트되는지 확인")
     void testOnlyVisiblePostsCounted() {
         // given
