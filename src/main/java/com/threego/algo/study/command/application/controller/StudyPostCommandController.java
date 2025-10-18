@@ -1,5 +1,6 @@
 package com.threego.algo.study.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.command.application.dto.create.StudyPostCreateDTO;
 import com.threego.algo.study.command.application.dto.create.StudyPostCreateResponseDTO;
 import com.threego.algo.study.command.application.dto.create.StudyPostRequestDTO;
@@ -33,8 +34,8 @@ public class StudyPostCommandController {
     @PostMapping(value = "/{studyId}/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "스터디 게시물 등록")
     public ResponseEntity<StudyPostCreateResponseDTO> createPost(
-            @Parameter(description = "스터디 ID") @PathVariable Integer studyId,
-            @Parameter(description = "멤버 ID") @RequestParam Integer memberId,
+            @Parameter(description = "스터디 ID") @PathVariable int studyId,
+            @Parameter(hidden = true) @LoginMember int memberId,
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "공개 여부") @RequestParam(defaultValue = "Y") String visibility,
@@ -65,7 +66,7 @@ public class StudyPostCommandController {
     public ResponseEntity<String> updatePost(
             @PathVariable int postId,
             @RequestBody StudyPostUpdateDTO postDto,
-            @RequestParam int memberId) {
+            @Parameter(hidden = true) @LoginMember int memberId) {
         return studyPostService.updatePost(postId, memberId, postDto);
     }
 
@@ -80,7 +81,7 @@ public class StudyPostCommandController {
     })
     public ResponseEntity<String> deletePost(
             @PathVariable int postId,
-            @RequestParam int memberId) {
+            @Parameter(hidden = true) @LoginMember int memberId) {
         return studyPostService.deletePost(postId, memberId);
     }
 

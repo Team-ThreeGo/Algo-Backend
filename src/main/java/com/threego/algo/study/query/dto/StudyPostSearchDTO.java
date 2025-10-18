@@ -1,17 +1,30 @@
 package com.threego.algo.study.query.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.threego.algo.common.dto.PageableDTO;
+import lombok.*;
 
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudyPostSearchDTO {
+public class StudyPostSearchDTO extends PageableDTO {
+
     private int studyId;
-    private int page;
-    private int size;
-    private int offset;  // MyBatis에서 자동 계산될 값
+
+    // Builder 패턴 지원 (부모 클래스 필드 포함)
+    @Builder
+    public StudyPostSearchDTO(Integer page, Integer size, String sortBy, String sortDirection, int studyId) {
+        super.setPage(page);
+        super.setSize(size);
+        super.setSortBy(sortBy);
+        super.setSortDirection(sortDirection);
+        this.studyId = studyId;
+    }
+
+    // 정렬 기준 기본값 오버라이드
+    @Override
+    public String getSortBy() {
+        String sortBy = super.getSortBy();
+        return sortBy != null ? sortBy : "createdAt";
+    }
 }

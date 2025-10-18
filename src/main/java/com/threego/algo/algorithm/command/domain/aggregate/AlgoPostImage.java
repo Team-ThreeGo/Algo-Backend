@@ -1,6 +1,5 @@
 package com.threego.algo.algorithm.command.domain.aggregate;
 
-import com.threego.algo.common.util.DateTimeUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

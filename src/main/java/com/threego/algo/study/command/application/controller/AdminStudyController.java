@@ -1,5 +1,6 @@
 package com.threego.algo.study.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.command.application.service.StudyCommentService;
 import com.threego.algo.study.command.application.service.StudyPostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,9 +38,7 @@ public class AdminStudyController {
     public ResponseEntity<String> deleteStudyPost(
             @Parameter(description = "스터디 게시물 ID", required = true)
             @PathVariable int postId,
-
-            @Parameter(description = "관리자 ID", required = true)
-            @RequestHeader("Member-Id") int adminId) {
+            @Parameter(hidden = true) @LoginMember int adminId) {
 
         return studyPostService.adminDeletePost(postId, adminId);
     }
@@ -58,9 +57,7 @@ public class AdminStudyController {
     public ResponseEntity<String> deleteStudyComment(
             @Parameter(description = "스터디 댓글 ID", required = true)
             @PathVariable int commentId,
-
-            @Parameter(description = "관리자 ID", required = true)
-            @RequestHeader("Member-Id") int adminId) {
+            @Parameter(hidden = true) @LoginMember int adminId) {
 
         return studyCommentService.adminDeleteComment(commentId, adminId);
     }

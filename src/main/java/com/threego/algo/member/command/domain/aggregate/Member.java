@@ -79,4 +79,16 @@ public class Member {
     public void increasePoint(final int point) {
         this.point += point;
     }
+
+    public void updateRank(List<MemberRank> allRanks) {
+        MemberRank newRank = this.memberRank;
+        for (MemberRank rank : allRanks) {
+            if (this.point >= rank.getMinPoint() && rank.getMinPoint() > newRank.getMinPoint()) {
+                newRank = rank;
+            }
+        }
+        if (newRank != this.memberRank) {
+            this.memberRank = newRank;
+        }
+    }
 }

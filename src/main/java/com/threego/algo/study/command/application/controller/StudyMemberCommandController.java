@@ -1,5 +1,6 @@
 package com.threego.algo.study.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.command.application.dto.create.StudyCommentCreateDTO;
 import com.threego.algo.study.command.application.dto.update.StudyCommentUpdateDTO;
 import com.threego.algo.study.command.application.service.StudyCommentService;
@@ -44,9 +45,7 @@ public class StudyMemberCommandController {
 
             @Parameter(description = "강퇴할 멤버 ID", required = true)
             @PathVariable int memberId,
-
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId) {
+            @Parameter(hidden = true) @LoginMember int leaderId) {
 
         return studyMemberService.kickMember(studyId, memberId, leaderId);
     }
@@ -69,9 +68,7 @@ public class StudyMemberCommandController {
 
             @Parameter(description = "새로운 그룹장이 될 멤버 ID", required = true)
             @PathVariable int memberId,
-
-            @Parameter(description = "현재 그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int currentLeaderId) {
+            @Parameter(hidden = true) @LoginMember int currentLeaderId) {
 
         return studyMemberService.delegateLeadership(studyId, memberId, currentLeaderId);
     }

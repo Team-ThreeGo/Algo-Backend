@@ -55,9 +55,7 @@
             parameterType="com.threego.algo.studyrecruit.query.dto.StudyRecruitSearchDTO"
             resultMap="StudyRecruitListMap">
         <!-- offset 자동 계산 -->
-        <if test="page != null and size != null">
-            <bind name="offset" value="page * size"/>
-        </if>
+        <include refid="com.threego.algo.common.mapper.CommonMapper.calculateOffset"/>
         SELECT
                A.ID AS POST_ID
              , B.ID AS MEMBER_ID
@@ -90,12 +88,7 @@
         </where>
           GROUP BY A.ID
           ORDER BY A.ID DESC
-        <if test="size != null and size > 0">
-            LIMIT #{size}
-            <if test="offset != null and offset >= 0">
-                OFFSET #{offset}
-            </if>
-        </if>
+        <include refid="com.threego.algo.common.mapper.CommonMapper.pagination"/>
     </select>
 
     <!-- 스터디 모집글 상세 조회 -->

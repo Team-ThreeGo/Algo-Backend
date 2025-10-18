@@ -11,12 +11,15 @@ import com.threego.algo.coding.command.domain.repository.CodingCommentRepository
 import com.threego.algo.coding.command.domain.repository.CodingPostImageRepository;
 import com.threego.algo.coding.command.domain.repository.CodingPostRepository;
 import com.threego.algo.coding.command.domain.repository.CodingProblemRepository;
+import com.threego.algo.coding.event.AiFeedbackEvent;
 import com.threego.algo.likes.command.application.service.LikesCommandService;
 import com.threego.algo.likes.command.domain.aggregate.enums.Type;
 import com.threego.algo.likes.query.service.LikesQueryService;
 import com.threego.algo.common.service.S3Service;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
+import com.threego.algo.member.command.domain.repository.MemberRankRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -28,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.context.ApplicationEventPublisher;
+
 import java.util.Map;
 
 @Service
@@ -42,79 +47,56 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
     private final S3Service s3Service;
     private final LikesCommandService likesCommandService;
     private final LikesQueryService likesQueryService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${coding.fastapi.url}")
     private String fastApiUrl;
 
     @Override
     @Transactional
-    public int createPost(CodingPostRequestDTO dto) {
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("작성자(Member) 없음: " + dto.getMemberId()));
+    @IncreasePoint(amount = 5)
+    public int createPost(int memberId, int problemId, CodingPostRequestDTO dto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("작성자(Member) 없음: " + memberId));
 
-        CodingProblem problem = problemRepository.findById(dto.getProblemId())
-                .orElseThrow(() -> new IllegalArgumentException("문제 없음: " + dto.getProblemId()));
+        CodingProblem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("문제 없음: "  + problemId));
 
         CodingPost post = CodingPost.create(member, problem, dto.getTitle(), dto.getContent());
         CodingPost saved = postRepository.save(post);
 
-        // === FastAPI 호출 ===
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, String> request = Map.of(
-                "title", dto.getTitle(),
-                "content", dto.getContent(),
-                "problem", problem.getTitle()
-        );
-
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
-
-        try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(
-                    fastApiUrl,
-                    entity,
-                    Map.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                Map<String, String> body = response.getBody();
-                post.setAiFeedback(
-                        body.get("aiBigO"),
-                        body.get("aiGood"),
-                        body.get("aiBad"),
-                        body.get("aiPlan")
-                );
-            }
-        } catch (Exception e) {
-            // FastAPI 서버 호출 실패 시 예외 처리
-            if (e instanceof RestClientException) {
-                throw new RuntimeException("FastAPI 서버에 연결할 수 없습니다.", e);
-            } else {
-                throw new RuntimeException("AI 피드백 요청 실패", e);
-            }
-        }
-
         // 이미지 업로드 및 저장
-        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-            for (MultipartFile image : dto.getImages()) {
-                if (!image.isEmpty()) {
-                    // 이미지 파일 유효성 검사
-                    s3Service.validateImageFile(image);
+        MultipartFile image = dto.getImages();
+        if (image != null && !image.isEmpty()) {
+            s3Service.validateImageFile(image);
+            String imageUrl = s3Service.uploadFile(image, "coding-posts");
 
-                    // S3에 업로드
-                    String imageUrl = s3Service.uploadFile(image, "coding-posts");
-
-                    // DB에 저장
-                    CodingPostImage postImage = new CodingPostImage(saved, imageUrl);
-                    codingPostImageRepository.save(postImage);
-                }
-            }
+            CodingPostImage postImage = new CodingPostImage(saved, imageUrl);
+            codingPostImageRepository.save(postImage);
         }
-        
-        // 즉시 동기화: 해당 문제의 postCount 재계산
+//        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+//            for (MultipartFile image : dto.getImages()) {
+//                if (!image.isEmpty()) {
+//                    // 이미지 파일 유효성 검사
+//                    s3Service.validateImageFile(image);
+//
+//                    // S3에 업로드
+//                    String imageUrl = s3Service.uploadFile(image, "coding-posts");
+//
+//                    // DB에 저장
+//                    CodingPostImage postImage = new CodingPostImage(saved, imageUrl);
+//                    codingPostImageRepository.save(postImage);
+//                }
+//            }
+//        }
+
+        // 해당 문제의 postCount 재계산
         problem.syncPostCount();
+
+        // FastAPI 호출
+        eventPublisher.publishEvent(
+                new AiFeedbackEvent(saved.getId(), dto.getTitle(), dto.getContent(), problem.getTitle())
+        );
 
         return saved.getId();
     }
@@ -125,8 +107,15 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
 
-        CodingPostImage image = new CodingPostImage(post, dto.getImageUrl());
-        CodingPostImage saved = codingPostImageRepository.save(image);
+        MultipartFile image = dto.getImage();
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("이미지 파일이 비어 있습니다.");
+        }
+
+        s3Service.validateImageFile(image);
+        String imageUrl = s3Service.uploadFile(image, "coding-posts");
+
+        CodingPostImage saved = codingPostImageRepository.save(new CodingPostImage(post, imageUrl));
         return saved.getId();
     }
 
@@ -231,7 +220,8 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Transactional
     @Override
-    public void createCodingPostLikes(final int memberId, final int postId) {
+    @IncreasePoint(amount = 1, useArgumentMemberId = false)
+    public int createCodingPostLikes(final int memberId, final int postId) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException(memberId + "번 회원이 존재하지 않습니다."));
 
@@ -248,8 +238,8 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
         likesCommandService.createLikes(member, post, Type.CODING_POST);
 
-        post.getMemberId().increasePoint(1);
-
         post.increaseLikeCount();
+
+        return post.getMemberId().getId();
     }
 }

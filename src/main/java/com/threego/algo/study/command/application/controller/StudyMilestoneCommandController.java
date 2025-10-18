@@ -1,5 +1,6 @@
 package com.threego.algo.study.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.command.application.dto.create.StudyMilestoneCreateDTO;
 import com.threego.algo.study.command.application.dto.update.StudyMilestoneUpdateDTO;
 import com.threego.algo.study.command.application.service.StudyMilestoneService;
@@ -36,8 +37,7 @@ public class StudyMilestoneCommandController {
     public ResponseEntity<String> createMilestone(
             @Parameter(description = "로드맵 ID", required = true)
             @PathVariable int roadmapId,
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId,
+            @Parameter(hidden = true) @LoginMember int leaderId,
             @Parameter(description = "마일스톤 등록 정보", required = true)
             @Valid @RequestBody StudyMilestoneCreateDTO request) {
         return studyMilestoneService.createMilestone(roadmapId, leaderId, request);
@@ -55,8 +55,7 @@ public class StudyMilestoneCommandController {
     public ResponseEntity<String> updateMilestone(
             @Parameter(description = "마일스톤 ID", required = true)
             @PathVariable int milestoneId,
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId,
+            @Parameter(hidden = true) @LoginMember int leaderId,
             @Parameter(description = "마일스톤 수정 정보", required = true)
             @Valid @RequestBody StudyMilestoneUpdateDTO request) {
         return studyMilestoneService.updateMilestone(milestoneId, leaderId, request);
@@ -73,8 +72,7 @@ public class StudyMilestoneCommandController {
     public ResponseEntity<String> deleteMilestone(
             @Parameter(description = "마일스톤 ID", required = true)
             @PathVariable int milestoneId,
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId) {
+            @Parameter(hidden = true) @LoginMember int leaderId) {
         return studyMilestoneService.deleteMilestone(milestoneId, leaderId);
     }
 }

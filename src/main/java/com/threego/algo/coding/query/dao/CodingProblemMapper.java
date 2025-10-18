@@ -18,8 +18,6 @@ public interface CodingProblemMapper {
     // 문제 목록 조회 (난이도/플랫폼 기준 정렬)
     List<CodingProblemSummaryDTO> selectProblemsByDifficulty();
 
-
-
     // 문제 상세 조회
     CodingProblemDetailDTO selectProblemDetail(@Param("problemId") int problemId);
 

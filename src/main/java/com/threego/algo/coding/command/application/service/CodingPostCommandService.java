@@ -7,7 +7,7 @@ import com.threego.algo.coding.command.domain.aggregate.CodingPost;
 
 public interface CodingPostCommandService {
 
-    int createPost(CodingPostRequestDTO dto);
+    int createPost(int memberId, int problemId, CodingPostRequestDTO dto);
 
     int addImage(int postId, CodingPostImageRequestDTO dto);
 
@@ -21,5 +21,5 @@ public interface CodingPostCommandService {
 
     void softDeleteComment(int commentId);
 
-    void createCodingPostLikes(final int memberId, final int postId);
+    int createCodingPostLikes(final int memberId, final int postId);
 }

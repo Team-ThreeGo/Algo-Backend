@@ -38,7 +38,7 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /* 인증/인가 */
+    /* 설명. 인증/인가 */
     @Bean
     public GroupedOpenApi authApi() {
         return GroupedOpenApi.builder()
@@ -48,7 +48,7 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /* 알고리즘 */
+    /* 설명. 알고리즘 */
     @Bean
     public GroupedOpenApi algorithmApi() {
         return GroupedOpenApi.builder()
@@ -57,7 +57,7 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /* 코딩 (풀이 + 문제) */
+    /* 설명. 코딩 (풀이 + 문제) */
     @Bean
     public GroupedOpenApi codingApi() {
         return GroupedOpenApi.builder()
@@ -66,7 +66,7 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /* Career Info */
+    /* 설명. Career Info */
     @Bean
     public GroupedOpenApi careerInfoApi() {
         return GroupedOpenApi.builder()

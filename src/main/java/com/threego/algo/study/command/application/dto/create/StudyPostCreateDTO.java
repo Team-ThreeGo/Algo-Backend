@@ -11,7 +11,6 @@ public class StudyPostCreateDTO {
 
     public StudyPostCreateDTO() {}  // 필수!
 
-    // getter, setter 필수!
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getContent() { return content; }

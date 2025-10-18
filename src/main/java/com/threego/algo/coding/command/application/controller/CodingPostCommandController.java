@@ -1,5 +1,6 @@
 package com.threego.algo.coding.command.application.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.threego.algo.coding.command.application.dto.CodingCommentRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostImageRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostRequestDTO;
@@ -13,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @Tag(
         name = "Coding - Member Command",
         description = "회원용 코딩 게시물 API (Command)"
@@ -25,50 +24,69 @@ import java.util.List;
 public class CodingPostCommandController {
 
     private final CodingPostCommandService codingPostCommandService;
+    private final ObjectMapper objectMapper;
+    private CodingPostRequestDTO data;
 
-    // 게시물 등록
+    @Operation(
+            summary = "코딩풀이 게시물 등록 (회원)",
+            description = "회원이 코딩풀이 게시물을 등록합니다."
+    )
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Integer> createPost(
             @Parameter(description = "작성자 ID") @RequestParam Integer memberId,
             @Parameter(description = "문제 ID") @RequestParam Integer problemId,
-            @Parameter(description = "제목") @RequestParam String title,
-            @Parameter(description = "내용") @RequestParam String content,
-            @Parameter(description = "이미지 파일들")
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+            @Parameter(description = "풀이 제목, 코드내용") @RequestPart("data") String dataJson,
+            @Parameter(description = "이미지 파일")
+            @RequestPart(value = "images", required = false) MultipartFile images
+    ) throws Exception {
 
-        CodingPostRequestDTO request = new CodingPostRequestDTO();
-        request.setMemberId(memberId);
-        request.setProblemId(problemId);
-        request.setTitle(title);
-        request.setContent(content);
-        request.setImages(images);
+        // JSON 문자열 → DTO 변환
+        CodingPostRequestDTO dto = objectMapper.readValue(dataJson, CodingPostRequestDTO.class);
 
-        int id = codingPostCommandService.createPost(request);
+        // MultipartFile 이미지 설정
+        dto.setImages(images);
+
+        // Service 호출
+        int id = codingPostCommandService.createPost(memberId, problemId, dto);
+
         return ResponseEntity.ok(id);
     }
 
-    // 게시물 수정
+    @Operation(
+            summary = "코딩풀이 게시물 수정 (회원)",
+            description = "회원이 코딩풀이 게시물을 수정합니다."
+    )
     @PutMapping("/posts/{postId}")
     public ResponseEntity<String> updatePost(@PathVariable int postId, @RequestBody CodingPostRequestDTO request) {
         codingPostCommandService.updatePost(postId, request);
         return ResponseEntity.ok("수정 완료");
     }
 
-    // 게시물 삭제 (회원용 soft-delete)
+    @Operation(
+            summary = "코딩풀이 게시물 삭제 (회원)",
+            description = "회원이 코딩풀이 게시물을 삭제(soft-delete)합니다."
+    )
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable int postId) {
         codingPostCommandService.softDeletePost(postId);
         return ResponseEntity.ok("삭제 완료");
     }
 
-    // 게시물 이미지 등록
+    @Operation(
+            summary = "코딩풀이 게시물 이미지 등록 (회원)",
+            description = "회원이 코딩풀이 게시물을 등록합니다."
+    )
     @PostMapping("/posts/{postId}/images")
-    public ResponseEntity<Integer> addImage(@PathVariable int postId, @RequestBody CodingPostImageRequestDTO request) {
-        int id = codingPostCommandService.addImage(postId, request);
+    public ResponseEntity<Integer> addImage(@PathVariable int postId, @RequestPart("image") MultipartFile image) {
+        CodingPostImageRequestDTO dto = new CodingPostImageRequestDTO(image);
+        int id = codingPostCommandService.addImage(postId, dto);
         return ResponseEntity.ok(id);
     }
 
-    // 댓글 등록 (parentId가 있으면 대댓글)
+    @Operation(
+            summary = "코딩풀이 게시물 댓글 등록 (회원)",
+            description = "회원이 코딩풀이 게시물의 댓글을 등록합니다.(parentId가 있으면 대댓글 등록)"
+    )
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<Integer> createComment(
             @PathVariable int postId,
@@ -78,14 +96,20 @@ public class CodingPostCommandController {
         return ResponseEntity.ok(commentid);
     }
 
-    // 댓글 수정
+    @Operation(
+            summary = "코딩풀이 게시물 댓글 수정 (회원)",
+            description = "회원이 코딩풀이 게시물의 댓글을 수정합니다."
+    )
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<String> updateComment(@PathVariable int commentId, @RequestBody CodingCommentRequestDTO request) {
         codingPostCommandService.updateComment(commentId, request);
         return ResponseEntity.ok("수정 완료");
     }
 
-    // 댓글 삭제 (회원용 soft-delete)
+    @Operation(
+            summary = "코딩풀이 게시물 댓글 삭제 (회원)",
+            description = "회원이 코딩풀이 게시물의 댓글을 삭제합니다."
+    )
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable int commentId) {
         codingPostCommandService.softDeleteComment(commentId);

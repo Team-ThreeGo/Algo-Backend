@@ -9,9 +9,11 @@ import com.threego.algo.study.command.domain.aggregate.StudyMember;
 import com.threego.algo.study.command.domain.aggregate.enums.StudyRole;
 import com.threego.algo.study.command.domain.repository.StudyMemberRepository;
 import com.threego.algo.study.command.domain.repository.StudyRepository;
+import com.threego.algo.study.exception.StudyExceptions.*;
 import com.threego.algo.studyrecruit.command.application.service.StudyRecruitPostService;
 import com.threego.algo.studyrecruit.command.domain.aggregate.StudyRecruitPost;
 import com.threego.algo.studyrecruit.command.domain.repository.StudyRecruitPostRepository;
+import com.threego.algo.studyrecruit.exception.RecruitExceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -104,13 +104,12 @@ class StudyServiceImplTest {
 
         // when
         log.info("스터디 생성 서비스 호출...");
-        ResponseEntity<String> response = studyService.createStudyFromRecruit(authorId, postId, createDTO);
-        log.info("응답 상태 코드: {}", response.getStatusCode());
-        log.info("응답 메시지: {}", response.getBody());
+        Assertions.assertDoesNotThrow(() ->
+            studyService.createStudyFromRecruit(authorId, postId, createDTO)
+        );
+        log.info("스터디 생성 성공");
 
         // then
-        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertTrue(response.getBody().contains("스터디 그룹이 성공적으로 생성되었습니다"));
         log.info("=== 스터디 생성 성공 테스트 완료 ===\n");
     }
 
@@ -156,15 +155,12 @@ class StudyServiceImplTest {
         when(studyRecruitPostRepository.findByIdAndMemberIdAndVisibility(postId, authorId, "Y"))
                 .thenReturn(Optional.of(openPost));
 
-        // when
+        // when & then
         log.info("스터디 생성 시도...");
-        ResponseEntity<String> response = studyService.createStudyFromRecruit(authorId, postId, createDTO);
-        log.info("응답 상태 코드: {}", response.getStatusCode());
-        log.info("응답 메시지: {}", response.getBody());
-
-        // then
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assertions.assertEquals("모집이 마감되지 않은 게시물입니다.", response.getBody());
+        Assertions.assertThrows(RecruitPostNotClosedException.class, () ->
+            studyService.createStudyFromRecruit(authorId, postId, createDTO)
+        );
+        log.info("예상대로 RecruitPostNotClosedException 발생");
         log.info("=== 스터디 생성 실패 테스트 완료 ===\n");
     }
 
@@ -207,15 +203,12 @@ class StudyServiceImplTest {
                 .thenReturn(3L);
         log.info("활동 중인 멤버 수: 3명 (리더 1명 + 멤버 2명)");
 
-        // when
+        // when & then
         log.info("스터디 삭제 시도...");
-        ResponseEntity<String> response = studyService.deleteStudy(studyId, leaderId);
-        log.info("응답 상태 코드: {}", response.getStatusCode());
-        log.info("응답 메시지: {}", response.getBody());
-
-        // then
-        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        Assertions.assertTrue(response.getBody().contains("활동 중인 그룹원이 있는 상태"));
+        Assertions.assertThrows(StudyHasActiveMembersException.class, () ->
+            studyService.deleteStudy(studyId, leaderId)
+        );
+        log.info("예상대로 StudyHasActiveMembersException 발생");
         log.info("=== 스터디 삭제 실패 테스트 완료 ===\n");
     }
 
@@ -282,13 +275,12 @@ class StudyServiceImplTest {
 
         // when
         log.info("스터디 삭제 시도...");
-        ResponseEntity<String> response = studyService.deleteStudy(studyId, leaderId);
-        log.info("응답 상태 코드: {}", response.getStatusCode());
-        log.info("응답 메시지: {}", response.getBody());
+        Assertions.assertDoesNotThrow(() ->
+            studyService.deleteStudy(studyId, leaderId)
+        );
+        log.info("스터디 삭제 성공");
 
         // then
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals("스터디 그룹을 삭제했습니다.", response.getBody());
         log.info("=== 스터디 삭제 성공 테스트 완료 ===\n");
     }
 }
