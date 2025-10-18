@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface StudyRecruitCommentRepository extends JpaRepository<StudyRecruitComment, Integer> {
 
-    // 7. 댓글 삭제용 - 작성자 권한 확인 후 soft delete
+    // 댓글 삭제용 - 작성자 권한 확인 후 soft delete
     Optional<StudyRecruitComment> findByIdAndMemberIdAndVisibility(int id, int memberId, String visibility);
 
     @Modifying

@@ -24,7 +24,7 @@ public class StudyMilestone {
     private String description;
 
     @Column(name = "`order`", nullable = false)
-    private Integer order; // 마일스톤 순서
+    private Integer order;
 
 
     // 생성자

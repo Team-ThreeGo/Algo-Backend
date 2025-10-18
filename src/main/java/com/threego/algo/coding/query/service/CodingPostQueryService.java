@@ -11,8 +11,6 @@ public interface CodingPostQueryService {
     // 회원용: 전체 문제별 게시물 목록 조회
     List<CodingPostSummaryDTO> findPostList(String keyword);
 
-
-
     // 회원용: 게시물 상세 조회
     CodingPostDetailDTO findPostDetail(int postId);
 
