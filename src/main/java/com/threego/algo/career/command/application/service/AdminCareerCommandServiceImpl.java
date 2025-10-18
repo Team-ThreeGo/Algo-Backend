@@ -6,8 +6,7 @@ import com.threego.algo.career.command.domain.aggregate.enums.Status;
 import com.threego.algo.career.command.domain.repository.CareerCommentRepository;
 import com.threego.algo.career.command.domain.repository.CareerPostRepository;
 import com.threego.algo.member.aop.IncreasePoint;
-import com.threego.algo.member.command.domain.aggregate.Member;
-import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminCareerCommandServiceImpl implements AdminCareerCommandService{
     private final CareerPostRepository careerPostRepository;
     private final CareerCommentRepository careerCommentRepository;
-    private final MemberCommandRepository memberRepository;
 
     @Autowired
-    public AdminCareerCommandServiceImpl(CareerPostRepository careerPostRepository, CareerCommentRepository careerCommentRepository, MemberCommandRepository memberRepository) {
+    public AdminCareerCommandServiceImpl(CareerPostRepository careerPostRepository, CareerCommentRepository careerCommentRepository) {
         this.careerPostRepository = careerPostRepository;
         this.careerCommentRepository = careerCommentRepository;
-        this.memberRepository = memberRepository;
     }
 
 
