@@ -5,7 +5,7 @@ import com.threego.algo.studyrecruit.query.dto.*;
 import java.util.List;
 
 public interface StudyRecruitPostQueryService {
-    List<StudyRecruitPostDTO> findStudyRecruitList(StudyRecruitSearchDTO searchDto);
+    StudyRecruitPostListResponseDTO findStudyRecruitList(StudyRecruitSearchDTO searchDto);
 
     StudyRecruitDetailDTO findStudyRecruitDetail(int postId);
 

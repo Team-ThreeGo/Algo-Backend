@@ -27,4 +27,7 @@ public interface StudyRecruitPostMapper {
     /* 설명. 관리자: 숨김 처리된 게시물 상세 조회 */
     StudyRecruitDetailDTO selectStudyRecruitDetailIncludeHidden(int postId);
 
+    /* 설명. 스터디 모집글 전체 개수 조회 (검색 조건 포함) */
+    long countStudyRecruitList(StudyRecruitSearchDTO searchDto);
+
 }

@@ -222,4 +222,23 @@
                AND A.VISIBILITY = 'N'
          GROUP BY A.ID
     </select>
+
+    <!-- 스터디 모집글 전체 개수 조회 (검색 조건 포함) -->
+    <select id="countStudyRecruitList"
+            parameterType="com.threego.algo.studyrecruit.query.dto.StudyRecruitSearchDTO"
+            resultType="long">
+        SELECT COUNT(DISTINCT A.ID)
+          FROM STUDY_RECRUIT_POST A
+          JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        <where>
+            A.VISIBILITY = 'Y'
+            <if test="status != null and status != ''">
+                AND A.STATUS = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR A.CONTENT LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
 </mapper>

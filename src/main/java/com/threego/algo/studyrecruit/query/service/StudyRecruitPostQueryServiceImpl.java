@@ -18,8 +18,14 @@ public class StudyRecruitPostQueryServiceImpl implements StudyRecruitPostQuerySe
 
     /* 설명. 스터디 모집글 전체 목록 조회 */
     @Override
-    public List<StudyRecruitPostDTO> findStudyRecruitList(StudyRecruitSearchDTO searchDto) {
-        return studyRecruitPostMapper.selectStudyRecruitList(searchDto);
+    public StudyRecruitPostListResponseDTO findStudyRecruitList(StudyRecruitSearchDTO searchDto) {
+        List<StudyRecruitPostDTO> posts = studyRecruitPostMapper.selectStudyRecruitList(searchDto);
+        long totalCount = studyRecruitPostMapper.countStudyRecruitList(searchDto);
+
+        return StudyRecruitPostListResponseDTO.builder()
+                .posts(posts)
+                .totalCount(totalCount)
+                .build();
     }
 
     /* 설명. 스터디 모집글 상세 조회 */

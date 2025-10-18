@@ -22,10 +22,10 @@ public class StudyRecruitPostQueryController {
 
     @Operation(
             summary = "스터디 모집글 목록 조회",
-            description = "전체 스터디 모집글 리스트를 조회합니다.(페이징, 검색)"
+            description = "전체 스터디 모집글 리스트를 조회합니다.(페이징, 검색). 전체 게시물 수를 함께 반환합니다."
     )
     @GetMapping("/posts")
-    public ResponseEntity<List<StudyRecruitPostDTO>> findPosts(
+    public ResponseEntity<StudyRecruitPostListResponseDTO> findPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String status,
