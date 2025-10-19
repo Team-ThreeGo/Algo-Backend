@@ -18,5 +18,5 @@ public class StudyRoadmapCreateDTO {
     private String description;
 
     @Min(value = 1, message = "순서는 1 이상이어야 합니다.")
-    private Integer order;
+    private int order;
 }

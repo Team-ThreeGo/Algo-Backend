@@ -27,14 +27,14 @@ public class StudyRoadmap {
     @Column(length = 500)
     private String description;
 
-    @Column(name = "`order`", nullable = false)
-    private Integer order;
+    @Column(name = "`order`")
+    private int order;
 
     @Column(name = "created_at", nullable = false)
     private String createdAt;
 
     // 생성자
-    public StudyRoadmap(int studyId, int memberId, String title, String description, Integer order) {
+    public StudyRoadmap(int studyId, int memberId, String title, String description, int order) {
         this.studyId = studyId;
         this.memberId = memberId;
         this.title = title;
@@ -44,7 +44,7 @@ public class StudyRoadmap {
     }
 
     // 비즈니스 메소드
-    public void updateRoadmap(String title, String description, Integer order) {
+    public void updateRoadmap(String title, String description, int order) {
         this.title = title;
         this.description = description;
         this.order = order;

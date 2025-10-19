@@ -31,8 +31,10 @@ public class AdminCodingQueryController {
     @GetMapping("/posts")
     public List<CodingPostSummaryDTO> findPostListForAdmin(
             @RequestParam(value = "visibility", required = false) String visibility, // Y/N/ALL
-            @RequestParam(value = "keyword", required = false) String keyword ) {
-        return codingPostQueryService.findPostListForAdmin(visibility, keyword);
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return codingPostQueryService.findPostListForAdmin(visibility, keyword, page, size);
     }
 
     /* 설명. 관리자용 코딩풀이 게시물 상세 조회 */

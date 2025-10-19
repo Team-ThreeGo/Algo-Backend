@@ -48,7 +48,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         validAlgoRoadmapTitle(request.getTitle());
 
         final AlgoRoadmap algoRoadmap = new AlgoRoadmap(request.getTitle(), request.getDescription(),
-                request.getOrder() == null ? 1 : request.getOrder());
+                request.getOrder());
 
         return algoRoadmapCommandRepository.save(algoRoadmap);
     }
@@ -67,7 +67,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
                 || !algoRoadmap.getDescription().equals(request.getDescription())
                 || algoRoadmap.getOrder() != request.getOrder()) {
             algoRoadmap.updateAlgoRoadmap(request.getTitle(), request.getDescription(),
-                    request.getOrder() == null ? 1 : request.getOrder());
+                    request.getOrder());
         }
 
         return algoRoadmap;

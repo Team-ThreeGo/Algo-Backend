@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CareerQueryService {
 
-    List<PostSummaryResponseDto> findPostList(String visibility, Status status, String keyword);
+    List<PostSummaryResponseDto> findPostList(String visibility, Status status, String keyword, int page, int size);
     PostDetailResponseDto findPostForMember(int postId);
     PostDetailResponseDto findPostForAdmin(int postId);
     List<CommentResponseDto> findCommentsByPostId(int postId);

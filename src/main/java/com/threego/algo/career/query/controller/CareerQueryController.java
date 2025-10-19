@@ -33,9 +33,11 @@ public class CareerQueryController {
     )
     @GetMapping("/posts")
     public ResponseEntity<List<PostSummaryResponseDto>> findPostList(
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(careerQueryService.findPostList("Y", null, keyword));
+        return ResponseEntity.ok(careerQueryService.findPostList("Y", null, keyword, page, size));
     }
 
     @Operation(

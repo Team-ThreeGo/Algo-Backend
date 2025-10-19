@@ -29,9 +29,11 @@ public class CodingQueryController {
     )
     @GetMapping("/posts")
     public List<CodingPostSummaryDTO> findPostList(
-            @RequestParam(value = "keyword", required = false) String keyword)
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
     {
-        return codingPostQueryService.findPostList(keyword);
+        return codingPostQueryService.findPostList(keyword, page, size);
     }
 
     /* 설명. 회원용 코딩풀이 게시물 상세 조회 */

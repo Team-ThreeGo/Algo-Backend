@@ -36,11 +36,9 @@ public class StudyMilestoneServiceImpl implements StudyMilestoneService {
                         .body("마일스톤을 생성할 권한이 없습니다. (그룹장만 가능)");
             }
 
-            // 3. 순서 결정 (지정하지 않으면 기본값 1)
-            Integer order = request.getOrder();
-            if (order == null) {
-                order = 1; // 기본값으로 1 설정
-            }
+            // 3. 순서 결정
+            int order = request.getOrder();
+
 
             // 4. 마일스톤 생성
             StudyMilestone milestone = new StudyMilestone(roadmapId, request.getTitle(), request.getDescription(), order);

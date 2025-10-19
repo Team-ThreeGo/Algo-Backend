@@ -9,7 +9,7 @@ import java.util.List;
 public interface CodingPostQueryService {
 
     // 회원용: 전체 문제별 게시물 목록 조회
-    List<CodingPostSummaryDTO> findPostList(String keyword);
+    List<CodingPostSummaryDTO> findPostList(String keyword, int page, int size);
 
     // 회원용: 게시물 상세 조회
     CodingPostDetailDTO findPostDetail(int postId);
@@ -18,7 +18,7 @@ public interface CodingPostQueryService {
     List<CodingPostCommentDTO> findCommentsByPostId(int postId);
 
     // 관리자용: 문제별 전체 게시물 목록 조회
-    List<CodingPostSummaryDTO> findPostListForAdmin(String visibility, String keyword);
+    List<CodingPostSummaryDTO> findPostListForAdmin(String visibility, String keyword, int page, int size);
 
     // 관리자용: 게시물 상세 조회
     CodingPostDetailDTO findPostDetailForAdmin(int postId);
