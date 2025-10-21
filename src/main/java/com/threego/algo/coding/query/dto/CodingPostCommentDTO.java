@@ -22,6 +22,6 @@ public class CodingPostCommentDTO {
     private String updatedAt;
     private String visibility;
 
-    // ✅ 트리 구조
+    // 댓글, 대댓글 구분하기 위해 트리 구조
     private List<CodingPostCommentDTO> children = new ArrayList<>();
 }

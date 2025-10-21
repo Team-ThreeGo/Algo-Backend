@@ -23,12 +23,12 @@ public class StudyMilestone {
     @Column(length = 500)
     private String description;
 
-    @Column(name = "`order`", nullable = false)
-    private Integer order; // 마일스톤 순서
+    @Column(name = "`order`")
+    private int order;
 
 
     // 생성자
-    public StudyMilestone(int roadmapId, String title, String description, Integer order) {
+    public StudyMilestone(int roadmapId, String title, String description, int order) {
         this.roadmapId = roadmapId;
         this.title = title;
         this.description = description;
@@ -37,7 +37,7 @@ public class StudyMilestone {
     }
 
     // 비즈니스 메소드
-    public void updateMilestone(String title, String description, Integer order) {
+    public void updateMilestone(String title, String description, int order) {
         this.title = title;
         this.description = description;
         this.order = order;

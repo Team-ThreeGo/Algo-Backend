@@ -1,6 +1,7 @@
 package com.threego.algo.studyrecruit.command.application.controller;
 
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.studyrecruit.command.application.dto.create.StudyRecruitCommentCreateDTO;
 import com.threego.algo.studyrecruit.command.application.dto.update.StudyRecruitCommentUpdateDTO;
 import com.threego.algo.studyrecruit.command.application.service.StudyRecruitCommentService;
@@ -27,7 +28,7 @@ public class StudyRecruitCommentCommandController {
     @PostMapping("/{postId}/comments")
     public ResponseEntity<String> createComment(
             @PathVariable int postId,
-            @RequestHeader("Member-Id") int memberId,
+            @LoginMember int memberId,
             @Valid @RequestBody StudyRecruitCommentCreateDTO request) {
         return studyRecruitCommentService.createComment(postId, memberId, request);
     }
@@ -36,7 +37,7 @@ public class StudyRecruitCommentCommandController {
     @PutMapping("/{commentId}")
     public ResponseEntity<String> updateComment(
             @PathVariable int commentId,
-            @RequestHeader("Member-Id") int memberId,
+            @LoginMember int memberId,
             @Valid @RequestBody StudyRecruitCommentUpdateDTO request) {
         return studyRecruitCommentService.updateComment(commentId, memberId, request);
     }
@@ -45,7 +46,7 @@ public class StudyRecruitCommentCommandController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<String> deleteComment(
             @PathVariable int commentId,
-            @RequestHeader("Member-Id") int memberId) {
+            @LoginMember int memberId) {
         return studyRecruitCommentService.deleteComment(commentId, memberId);
     }
 

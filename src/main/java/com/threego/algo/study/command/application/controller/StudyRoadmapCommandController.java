@@ -1,5 +1,6 @@
 package com.threego.algo.study.command.application.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.command.application.dto.create.StudyRoadmapCreateDTO;
 import com.threego.algo.study.command.application.dto.update.StudyRoadmapUpdateDTO;
 import com.threego.algo.study.command.application.service.StudyRoadmapService;
@@ -36,8 +37,7 @@ public class StudyRoadmapCommandController {
     public ResponseEntity<String> createRoadmap(
             @Parameter(description = "스터디 ID", required = true)
             @PathVariable int studyId,
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId,
+            @Parameter(hidden = true) @LoginMember int leaderId,
             @Parameter(description = "로드맵 등록 정보", required = true)
             @Valid @RequestBody StudyRoadmapCreateDTO request) {
         return studyRoadmapService.createRoadmap(studyId, leaderId, request);
@@ -55,8 +55,7 @@ public class StudyRoadmapCommandController {
     public ResponseEntity<String> updateRoadmap(
             @Parameter(description = "로드맵 ID", required = true)
             @PathVariable int roadmapId,
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId,
+            @Parameter(hidden = true) @LoginMember int leaderId,
             @Parameter(description = "로드맵 수정 정보", required = true)
             @Valid @RequestBody StudyRoadmapUpdateDTO request) {
         return studyRoadmapService.updateRoadmap(roadmapId, leaderId, request);
@@ -74,8 +73,7 @@ public class StudyRoadmapCommandController {
     public ResponseEntity<String> deleteRoadmap(
             @Parameter(description = "로드맵 ID", required = true)
             @PathVariable int roadmapId,
-            @Parameter(description = "그룹장 ID", required = true)
-            @RequestHeader("Member-Id") int leaderId) {
+            @Parameter(hidden = true) @LoginMember int leaderId) {
         return studyRoadmapService.deleteRoadmap(roadmapId, leaderId);
     }
 }

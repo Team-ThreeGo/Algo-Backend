@@ -10,6 +10,7 @@ import com.threego.algo.algorithm.query.service.AlgoQueryService;
 import com.threego.algo.likes.command.application.service.LikesCommandService;
 import com.threego.algo.likes.command.domain.aggregate.enums.Type;
 import com.threego.algo.likes.query.service.LikesQueryService;
+import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         validAlgoRoadmapTitle(request.getTitle());
 
         final AlgoRoadmap algoRoadmap = new AlgoRoadmap(request.getTitle(), request.getDescription(),
-                request.getOrder() == null ? 1 : request.getOrder());
+                request.getOrder());
 
         return algoRoadmapCommandRepository.save(algoRoadmap);
     }
@@ -66,7 +67,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
                 || !algoRoadmap.getDescription().equals(request.getDescription())
                 || algoRoadmap.getOrder() != request.getOrder()) {
             algoRoadmap.updateAlgoRoadmap(request.getTitle(), request.getDescription(),
-                    request.getOrder() == null ? 1 : request.getOrder());
+                    request.getOrder());
         }
 
         return algoRoadmap;
@@ -195,6 +196,7 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
+    @IncreasePoint(amount = 2)
     public void createCorrectQuizHistory(int memberId, int questionId) throws Exception {
         final Member member = findMemberById(memberId);
 

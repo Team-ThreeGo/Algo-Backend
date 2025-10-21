@@ -10,5 +10,5 @@ import lombok.Setter;
 public class AlgoRoadmapRequestDTO {
     private String title;
     private String description;
-    private Integer order;
+    private int order;
 }

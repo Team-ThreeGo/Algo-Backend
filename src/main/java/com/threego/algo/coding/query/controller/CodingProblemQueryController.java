@@ -31,8 +31,10 @@ public class CodingProblemQueryController {
     )
     @GetMapping("/posts")
     public List<CodingProblemSummaryDTO> findProblemsList(
-            @RequestParam(value = "keyword", required = false) String keyword) {
-        return codingProblemQueryService.findProblemsList(keyword);
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return codingProblemQueryService.findProblemsList(keyword, page, size);
     }
 
     // 회원용 난이도/플랫폼 기준 정렬된 문제 목록 조회
@@ -54,8 +56,10 @@ public class CodingProblemQueryController {
     @GetMapping("/{problemId}/posts")
     public List<CodingPostSummaryDTO> findPostsByProblemId(
             @PathVariable int problemId,
-            @RequestParam(value = "keyword", required = false) String keyword) {
-        return codingProblemQueryService.findPostListByProblemId(problemId, keyword);
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return codingProblemQueryService.findPostListByProblemId(problemId, keyword, page, size);
     }
 
     // 회원용 알고리즘 게시물 상세 조회

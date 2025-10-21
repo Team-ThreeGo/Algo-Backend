@@ -34,10 +34,7 @@ public class StudyRoadmapServiceImpl implements  StudyRoadmapService {
             }
 
             // 2. 순서 결정 (지정하지 않으면 기본값 1)
-            Integer order = request.getOrder();
-            if (order == null) {
-                order = 1; // 기본값으로 1 설정
-            }
+            int order = request.getOrder();
 
             // 3. 로드맵 생성
             StudyRoadmap roadmap = new StudyRoadmap(studyId, leaderId,request.getTitle(), request.getDescription(), order);

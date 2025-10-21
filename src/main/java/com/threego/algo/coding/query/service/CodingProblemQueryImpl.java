@@ -18,9 +18,12 @@ public class CodingProblemQueryImpl implements CodingProblemQueryService {
     private final CodingPostMapper codingPostMapper;
 
     @Override
-    public List<CodingProblemSummaryDTO> findProblemsList(String keyword) {
-        CodingPostSearchConditionDTO condition = new CodingPostSearchConditionDTO();
-        condition.setKeyword(keyword);
+    public List<CodingProblemSummaryDTO> findProblemsList(String keyword, int page, int size) {
+        CodingPostSearchConditionDTO condition = CodingPostSearchConditionDTO.builder()
+                .keyword(keyword)
+                .page(page)
+                .size(size)
+                .build();
         return codingProblemMapper.selectProblemsList(condition);
     }
 
@@ -30,10 +33,13 @@ public class CodingProblemQueryImpl implements CodingProblemQueryService {
     }
 
     @Override
-    public List<CodingPostSummaryDTO> findPostListByProblemId(int problemId, String keyword) {
-        CodingPostSearchConditionDTO condition = new CodingPostSearchConditionDTO();
-        condition.setProblemId(problemId);
-        condition.setKeyword(keyword);
+    public List<CodingPostSummaryDTO> findPostListByProblemId(int problemId, String keyword, int page, int size) {
+        CodingPostSearchConditionDTO condition = CodingPostSearchConditionDTO.builder()
+                .problemId(problemId)
+                .keyword(keyword)
+                .page(page)
+                .size(size)
+                .build();
         return codingPostMapper.selectPostListByProblemId(condition);
     }
     
@@ -43,10 +49,13 @@ public class CodingProblemQueryImpl implements CodingProblemQueryService {
     }
 
     @Override
-    public List<CodingProblemSummaryDTO> findProblemsListForAdmin(String visibility, String keyword) {
-        CodingPostSearchConditionDTO condition = new CodingPostSearchConditionDTO();
-        condition.setVisibility(visibility);
-        condition.setKeyword(keyword);
+    public List<CodingProblemSummaryDTO> findProblemsListForAdmin(String visibility, String keyword, int page, int size) {
+        CodingPostSearchConditionDTO condition = CodingPostSearchConditionDTO.builder()
+                .visibility(visibility)
+                .keyword(keyword)
+                .page(page)
+                .size(size)
+                .build();
         return codingProblemMapper.selectAdminProblemsList(condition);
     }
 
