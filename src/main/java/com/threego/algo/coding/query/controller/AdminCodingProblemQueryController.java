@@ -30,8 +30,10 @@ public class AdminCodingProblemQueryController {
     @GetMapping("/posts")
     public List<CodingProblemSummaryDTO> findProblemsListForAdmin(
             @RequestParam(value = "visibility", required = false) String visibility, // Y/N/ALL
-            @RequestParam(value = "keyword", required = false) String keyword) {
-        return codingProblemQueryService.findProblemsListForAdmin(visibility, keyword);
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return codingProblemQueryService.findProblemsListForAdmin(visibility, keyword, page, size);
     }
 
     // 관리자용 알고리즘 문제 게시물 상세 조회

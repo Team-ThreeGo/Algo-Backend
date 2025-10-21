@@ -22,24 +22,21 @@ public class CodingQueryController {
 
     private final CodingPostQueryService codingPostQueryService;
 
-    /**
-     * 회원용 코딩풀이 게시물 목록 조회 (최신순)
-     */
+    /* 설명. 회원용 코딩풀이 게시물 목록 조회 (최신순) */
     @Operation(
             summary = "회원용 코딩풀이 게시물 목록 조회 (최신순)",
             description = "회원이 코딩풀이 게시물 목록 조회 (최신순)합니다."
     )
     @GetMapping("/posts")
     public List<CodingPostSummaryDTO> findPostList(
-            @RequestParam(value = "keyword", required = false) String keyword)
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
     {
-        return codingPostQueryService.findPostList(keyword);
+        return codingPostQueryService.findPostList(keyword, page, size);
     }
 
-    /**
-     * 회원용 코딩풀이 게시물 상세 조회
-     * GET /coding/posts/{postId}
-     */
+    /* 설명. 회원용 코딩풀이 게시물 상세 조회 */
     @Operation(
             summary = "회원용 코딩풀이 게시물 상세 조회",
             description = "회원이 코딩풀이 게시물 상세 조회합니다."
@@ -49,10 +46,7 @@ public class CodingQueryController {
         return codingPostQueryService.findPostDetail(postId);
     }
 
-    /**
-     * 회원용 코딩풀이 댓글 목록 조회
-     * GET /coding/posts/{postId}/comments
-     */
+    /* 설명. 회원용 코딩풀이 댓글 목록 조회 */
     @Operation(
             summary = "회원용 코딩풀이 댓글 목록 조회",
             description = "회원이 코딩풀이 댓글 목록 조회합니다."
@@ -63,4 +57,3 @@ public class CodingQueryController {
     }
 
 }
-

@@ -1,5 +1,6 @@
 package com.threego.algo.study.query.service;
 
+import com.threego.algo.study.exception.StudyExceptions.StudyPostNotFoundException;
 import com.threego.algo.study.query.dao.StudyPostMapper;
 import com.threego.algo.study.query.dto.StudyCommentDTO;
 import com.threego.algo.study.query.dto.StudyPostDTO;
@@ -25,11 +26,20 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
 
     @Override
     public StudyPostDetailDTO findStudyPostDetail(int postId) {
-        return studyPostMapper.selectStudyPostDetail(postId);
+        StudyPostDetailDTO result = studyPostMapper.selectStudyPostDetail(postId);
+        if (result == null) {
+            throw new StudyPostNotFoundException();
+        }
+        return result;
     }
 
     @Override
     public List<StudyCommentDTO> findStudyPostComments(int postId) {
+        // 게시물 존재 여부 확인
+        StudyPostDetailDTO post = studyPostMapper.selectStudyPostDetail(postId);
+        if (post == null) {
+            throw new StudyPostNotFoundException();
+        }
         return studyPostMapper.selectStudyPostComments(postId);
     }
 
@@ -40,7 +50,11 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
 
     @Override
     public StudyPostDetailDTO findHiddenStudyPostDetail(int postId) {
-        return studyPostMapper.selectHiddenStudyPostDetail(postId);
+        StudyPostDetailDTO result = studyPostMapper.selectHiddenStudyPostDetail(postId);
+        if (result == null) {
+            throw new StudyPostNotFoundException();
+        }
+        return result;
     }
 
     @Override

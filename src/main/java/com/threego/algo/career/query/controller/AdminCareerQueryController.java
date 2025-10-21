@@ -34,9 +34,11 @@ public class AdminCareerQueryController {
     public ResponseEntity<List<PostSummaryResponseDto>> findPostList(
             @RequestParam(required = false) String visibility,
             @RequestParam(required = false) Status status,
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(careerInfoService.findPostList(visibility, status, keyword));
+        return ResponseEntity.ok(careerInfoService.findPostList(visibility, status, keyword, page, size));
     }
 
     @Operation(

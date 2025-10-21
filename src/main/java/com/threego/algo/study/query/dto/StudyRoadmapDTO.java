@@ -15,6 +15,6 @@ public class StudyRoadmapDTO {
     private int memberId;
     private String title;
     private String description;
-    private Integer order;
+    private int order;
     private String createdAt;
 }

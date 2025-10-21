@@ -22,9 +22,12 @@ public class CodingPostQueryServiceImpl implements CodingPostQueryService {
     // ---------------- 회원용 ---------------- //
 
     @Override
-    public List<CodingPostSummaryDTO> findPostList(String keyword) {
-        CodingPostSearchConditionDTO condition = new CodingPostSearchConditionDTO();
-        condition.setKeyword(keyword);
+    public List<CodingPostSummaryDTO> findPostList(String keyword, int page, int size) {
+        CodingPostSearchConditionDTO condition = CodingPostSearchConditionDTO.builder()
+                .keyword(keyword)
+                .page(page)
+                .size(size)
+                .build();
         return codingPostMapper.selectPostList(condition);
     }
 
@@ -66,10 +69,13 @@ public class CodingPostQueryServiceImpl implements CodingPostQueryService {
     // ---------------- 관리자용 ---------------- //
 
     @Override
-    public List<CodingPostSummaryDTO> findPostListForAdmin(String visibility, String keyword) {
-        CodingPostSearchConditionDTO condition = new CodingPostSearchConditionDTO();
-        condition.setVisibility(visibility);
-        condition.setKeyword(keyword);
+    public List<CodingPostSummaryDTO> findPostListForAdmin(String visibility, String keyword, int page, int size) {
+        CodingPostSearchConditionDTO condition = CodingPostSearchConditionDTO.builder()
+                .visibility(visibility)
+                .keyword(keyword)
+                .page(page)
+                .size(size)
+                .build();
         return codingPostMapper.selectAdminPostList(condition);
     }
 

@@ -76,8 +76,6 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
                 .constraints(dto.getConstraints())
                 .build();
 
-        // 관리자 정보 세팅
-//        problem.setMemberId(admin);
         return problemRepository.save(problem);
     }
 

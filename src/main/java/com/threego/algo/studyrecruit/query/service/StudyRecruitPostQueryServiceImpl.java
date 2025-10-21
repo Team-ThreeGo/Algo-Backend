@@ -1,5 +1,6 @@
 package com.threego.algo.studyrecruit.query.service;
 
+import com.threego.algo.studyrecruit.exception.RecruitExceptions.RecruitPostNotFoundException;
 import com.threego.algo.studyrecruit.query.dao.StudyRecruitCommentMapper;
 import com.threego.algo.studyrecruit.query.dao.StudyRecruitPostMapper;
 import com.threego.algo.studyrecruit.query.dto.*;
@@ -25,12 +26,21 @@ public class StudyRecruitPostQueryServiceImpl implements StudyRecruitPostQuerySe
     /* 설명. 스터디 모집글 상세 조회 */
     @Override
     public StudyRecruitDetailDTO findStudyRecruitDetail(int postId) {
-        return studyRecruitPostMapper.selectStudyRecruitDetail(postId);
+        StudyRecruitDetailDTO result = studyRecruitPostMapper.selectStudyRecruitDetail(postId);
+        if (result == null) {
+            throw new RecruitPostNotFoundException();
+        }
+        return result;
     }
 
     /* 설명. 스터디 모집 게시물의 댓글 조회 */
     @Override
     public List<StudyRecruitCommentDTO> findStudyRecruitComments(int postId) {
+        // 게시물 존재 여부 확인
+        StudyRecruitDetailDTO post = studyRecruitPostMapper.selectStudyRecruitDetail(postId);
+        if (post == null) {
+            throw new RecruitPostNotFoundException();
+        }
         return studyRecruitCommentMapper.selectStudyRecruitComments(postId);
     }
 
@@ -49,7 +59,11 @@ public class StudyRecruitPostQueryServiceImpl implements StudyRecruitPostQuerySe
     /* 설명. 관리자: 숨김 처리된 게시물 상세 조회 */
     @Override
     public StudyRecruitDetailDTO findStudyRecruitDetailIncludeHidden(int postId) {
-        return studyRecruitPostMapper.selectStudyRecruitDetailIncludeHidden(postId);
+        StudyRecruitDetailDTO result = studyRecruitPostMapper.selectStudyRecruitDetailIncludeHidden(postId);
+        if (result == null) {
+            throw new RecruitPostNotFoundException();
+        }
+        return result;
     }
 
 
@@ -62,6 +76,11 @@ public class StudyRecruitPostQueryServiceImpl implements StudyRecruitPostQuerySe
     /* 설명. 관리자: 숨김 처리된 댓글 조회 */
     @Override
     public List<StudyRecruitCommentDTO> findStudyRecruitCommentsIncludeHidden(int postId) {
+        // 게시물 존재 여부 확인 (숨김 포함)
+        StudyRecruitDetailDTO post = studyRecruitPostMapper.selectStudyRecruitDetailIncludeHidden(postId);
+        if (post == null) {
+            throw new RecruitPostNotFoundException();
+        }
         return studyRecruitCommentMapper.selectStudyRecruitCommentsIncludeHidden(postId);
     }
 
