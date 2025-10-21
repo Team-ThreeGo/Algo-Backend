@@ -344,7 +344,6 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
 
     @Transactional
     @Override
-    @IncreasePoint(amount = 1, useArgumentMemberId = false)
     public void createAlgoPostLikes(final int memberId, final int postId) {
         final Member member = findMemberById(memberId);
         final AlgoPost algoPost = findAlgoPostById(postId);
