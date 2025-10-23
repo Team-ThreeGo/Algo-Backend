@@ -4,6 +4,7 @@ import com.threego.algo.career.command.application.dto.CareerCommentRequest;
 import com.threego.algo.career.command.application.dto.CareerPostCreateRequest;
 import com.threego.algo.career.command.application.service.CareerCommandService;
 import com.threego.algo.common.auth.LoginMember;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,7 @@ public class CareerCommandController {
     )
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Integer> createPost(
-            @LoginMember int memberId,
+            @Parameter(hidden = true) @LoginMember int memberId,
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "이미지 파일 (선택, 최대 5MB)")
@@ -55,7 +56,7 @@ public class CareerCommandController {
     )
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Void> deletePost(
-            @LoginMember int memberId,
+            @Parameter(hidden = true) @LoginMember int memberId,
             @PathVariable Integer postId
     ) {
         service.deletePost(postId, memberId);
@@ -68,7 +69,7 @@ public class CareerCommandController {
     )
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<Integer> createComment(
-            @LoginMember int memberId,
+            @Parameter(hidden = true) @LoginMember int memberId,
             @PathVariable Integer postId,
             @RequestParam(value = "parentId", required = false) Integer parentId,
             @RequestBody CareerCommentRequest request
@@ -83,7 +84,7 @@ public class CareerCommandController {
     )
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<Void> updateComment(
-            @LoginMember int memberId,
+            @Parameter(hidden = true) @LoginMember int memberId,
             @PathVariable Integer commentId,
             @RequestBody CareerCommentRequest request
     ) {
@@ -97,7 +98,7 @@ public class CareerCommandController {
     )
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(
-            @LoginMember int memberId,
+            @Parameter(hidden = true) @LoginMember int memberId,
             @PathVariable Integer commentId
     ) {
         service.deleteComment(commentId, memberId);
@@ -110,7 +111,7 @@ public class CareerCommandController {
     )
     @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<Void> createCareerPostLikes(
-            @LoginMember int memberId,
+            @Parameter(hidden = true) @LoginMember int memberId,
             @PathVariable("postId") final int postId
     ) {
         service.createCareerPostLikes(memberId, postId);
