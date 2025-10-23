@@ -59,7 +59,7 @@ public class CodingPostCommandController {
     )
     @PutMapping("/posts/{postId}")
     public ResponseEntity<String> updatePost(@PathVariable int postId, @RequestBody CodingPostRequestDTO request,
-                                             @LoginMember int memberId) throws Exception{
+                                             @LoginMember int memberId) {
         codingPostCommandService.updatePost(memberId, postId, request);
         return ResponseEntity.ok("수정 완료");
     }
@@ -70,7 +70,7 @@ public class CodingPostCommandController {
     )
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable int postId,
-                                             @LoginMember int memberId) throws Exception {
+                                             @LoginMember int memberId) {
         codingPostCommandService.softDeletePost(memberId, postId);
         return ResponseEntity.ok("삭제 완료");
     }
@@ -95,7 +95,7 @@ public class CodingPostCommandController {
             @PathVariable int postId,
             @RequestParam(value = "parentId", required = false) Integer parentId,
             @RequestBody CodingCommentRequestDTO request,
-            @LoginMember @Parameter(description = "작성자 ID") int memberId) throws Exception {
+            @LoginMember @Parameter(description = "작성자 ID") int memberId) {
         int commentid = codingPostCommandService.addComment(memberId, postId, parentId, request);
         return ResponseEntity.ok(commentid);
     }
@@ -106,7 +106,7 @@ public class CodingPostCommandController {
     )
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<String> updateComment(@PathVariable int commentId, @RequestBody CodingCommentRequestDTO request,
-                                                @LoginMember @Parameter(description = "작성자 ID") int memberId) throws Exception{
+                                                @LoginMember @Parameter(description = "작성자 ID") int memberId) {
         codingPostCommandService.updateComment(memberId, commentId, request);
         return ResponseEntity.ok("수정 완료");
     }
@@ -117,7 +117,7 @@ public class CodingPostCommandController {
     )
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable int commentId,
-                                                @LoginMember @Parameter(description = "작성자 ID") int memberId) throws Exception{
+                                                @LoginMember @Parameter(description = "작성자 ID") int memberId) {
         codingPostCommandService.softDeleteComment(memberId, commentId);
         return ResponseEntity.ok("삭제 완료");
     }
