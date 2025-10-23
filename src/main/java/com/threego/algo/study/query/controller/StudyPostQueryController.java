@@ -51,8 +51,10 @@ public class StudyPostQueryController {
             description = "스터디 게시물의 상세 정보와 이미지를 조회합니다."
     )
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<StudyPostDetailDTO> findPostDetail(@PathVariable int postId) {
-        StudyPostDetailDTO postDetail = studyPostQueryService.findStudyPostDetail(postId);
+    public ResponseEntity<StudyPostDetailDTO> findPostDetail(
+            @PathVariable int postId,
+            @Parameter(hidden = true) @LoginMember int memberId) {
+        StudyPostDetailDTO postDetail = studyPostQueryService.findStudyPostDetail(postId, memberId);
         return ResponseEntity.ok(postDetail);
     }
 

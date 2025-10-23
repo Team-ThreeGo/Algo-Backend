@@ -11,7 +11,7 @@ public interface StudyPostQueryService {
 
     List<StudyPostDTO> findAllStudyPosts(StudyPostSearchDTO searchDto, int memberId);
 
-    StudyPostDetailDTO findStudyPostDetail(int postId);
+    StudyPostDetailDTO findStudyPostDetail(int postId, int memberId);
 
     List<StudyCommentDTO> findStudyPostComments(int postId);
 
