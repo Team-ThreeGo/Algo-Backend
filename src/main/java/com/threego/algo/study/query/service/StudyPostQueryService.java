@@ -17,9 +17,9 @@ public interface StudyPostQueryService {
 
     // ========== 관리자용 메소드들 ==========
 
-    List<StudyPostDTO> findAllHiddenStudyPosts(StudyPostSearchDTO searchDto);
+    List<StudyPostDTO> findAllHiddenStudyPosts(StudyPostSearchDTO searchDto, int adminId);
 
-    StudyPostDetailDTO findHiddenStudyPostDetail(int postId);
+    StudyPostDetailDTO findHiddenStudyPostDetail(int postId, int adminId);
 
-    List<StudyCommentDTO> findAllHiddenStudyComments(StudyPostSearchDTO searchDto);
+    List<StudyCommentDTO> findAllHiddenStudyComments(StudyPostSearchDTO searchDto, int adminId);
 }

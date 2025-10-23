@@ -2,6 +2,7 @@ package com.threego.algo.study.query.service;
 
 import com.threego.algo.common.error.ErrorCode;
 import com.threego.algo.common.error.exception.BusinessException;
+import com.threego.algo.member.command.domain.repository.MemberRoleRepository;
 import com.threego.algo.study.command.domain.aggregate.StudyMember;
 import com.threego.algo.study.command.domain.repository.StudyMemberRepository;
 import com.threego.algo.study.exception.StudyExceptions.StudyPostNotFoundException;
@@ -23,6 +24,7 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
 
     private final StudyPostMapper studyPostMapper;
     private final StudyMemberRepository studyMemberRepository;
+    private final MemberRoleRepository memberRoleRepository;
 
     @Override
     public List<StudyPostDTO> findAllStudyPosts(StudyPostSearchDTO searchDto, int memberId) {
@@ -61,12 +63,20 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
     }
 
     @Override
-    public List<StudyPostDTO> findAllHiddenStudyPosts(StudyPostSearchDTO searchDto) {
+    public List<StudyPostDTO> findAllHiddenStudyPosts(StudyPostSearchDTO searchDto, int adminId) {
+        // 관리자 권한 검증
+        if (!isAdmin(adminId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
         return studyPostMapper.selectAllHiddenStudyPosts(searchDto);
     }
 
     @Override
-    public StudyPostDetailDTO findHiddenStudyPostDetail(int postId) {
+    public StudyPostDetailDTO findHiddenStudyPostDetail(int postId, int adminId) {
+        // 관리자 권한 검증
+        if (!isAdmin(adminId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
         StudyPostDetailDTO result = studyPostMapper.selectHiddenStudyPostDetail(postId);
         if (result == null) {
             throw new StudyPostNotFoundException();
@@ -75,7 +85,11 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
     }
 
     @Override
-    public List<StudyCommentDTO> findAllHiddenStudyComments(StudyPostSearchDTO searchDto) {
+    public List<StudyCommentDTO> findAllHiddenStudyComments(StudyPostSearchDTO searchDto, int adminId) {
+        // 관리자 권한 검증
+        if (!isAdmin(adminId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
         return studyPostMapper.selectAllHiddenStudyComments(searchDto);
     }
 
@@ -87,6 +101,15 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
 
         if (!studyMember.isActive()) {
             throw new BusinessException(ErrorCode.STUDY_ACCESS_DENIED);
+        }
+    }
+
+    private boolean isAdmin(int memberId) {
+        try {
+            int roleId = memberRoleRepository.getRoleIdByMemberId(memberId);
+            return roleId == 2;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

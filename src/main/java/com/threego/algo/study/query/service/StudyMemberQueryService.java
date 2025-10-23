@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface StudyMemberQueryService {
 
-    List<StudyMemberDTO> findAllStudyMember(int studyId);
+    List<StudyMemberDTO> findAllStudyMember(int studyId, int memberId);
 
 }
