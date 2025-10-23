@@ -117,7 +117,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
 
-        if (post.getMemberId().getId() != memberId) {
+        if (post.getMember().getId() != memberId) {
             throw new AccessDeniedException("본인 글만 수정할 수 있습니다.");
         }
 
@@ -135,7 +135,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
 
-        if (post.getMemberId().getId() != memberId) {
+        if (post.getMember().getId() != memberId) {
             throw new AccessDeniedException("본인 글만 삭제할 수 있습니다.");
         }
 
@@ -193,7 +193,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음: " + commentId));
 
-        if (comment.getMemberId().getId() != memberId) {
+        if (comment.getMember().getId() != memberId) {
             throw new AccessDeniedException("본인 댓글만 수정할 수 있습니다.");
         }
 
@@ -210,7 +210,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음: " + commentId));
 
-        if (comment.getMemberId().getId() != memberId) {
+        if (comment.getMember().getId() != memberId) {
             throw new AccessDeniedException("본인 댓글만 삭제할 수 있습니다.");
         }
 
@@ -237,7 +237,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         final CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException(memberId + "번 코딩 문제 풀이 게시물이 존재하지 않습니다."));
 
-        if (member == post.getMemberId()) {
+        if (member == post.getMember()) {
             throw new RuntimeException("자신이 작성한 글은 추천할 수 없습니다.");
         }
 
@@ -249,6 +249,6 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
         post.increaseLikeCount();
 
-        return post.getMemberId().getId();
+        return post.getMember().getId();
     }
 }
