@@ -5,6 +5,7 @@ import com.threego.algo.coding.command.application.dto.CodingCommentRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingProblemRequestDTO;
 import com.threego.algo.coding.command.application.service.AdminCodingPostCommandService;
 import com.threego.algo.coding.command.domain.aggregate.*;
+import com.threego.algo.common.auth.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,8 @@ public class AdminCodingController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity<CodingPost> updatePost(@PathVariable int postId,
                                                  @RequestBody CodingPostRequestDTO dto,
-                                                 @RequestParam int adminId) {
-        return ResponseEntity.ok(service.updatePost(postId, dto));
+                                                 @LoginMember int memberId) {
+        return ResponseEntity.ok(service.updatePost(memberId, postId, dto));
     }
 
     @Operation(
@@ -41,8 +42,8 @@ public class AdminCodingController {
     )
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable int postId,
-                                           @RequestParam int adminId) {
-        service.deletePost(postId);
+                                           @LoginMember int memberId) {
+        service.deletePost(memberId, postId);
         return ResponseEntity.noContent().build();
     }
 
@@ -53,8 +54,8 @@ public class AdminCodingController {
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<CodingComment> updateComment(@PathVariable int commentId,
                                                        @RequestBody CodingCommentRequestDTO dto,
-                                                       @RequestParam int adminId) {
-        return ResponseEntity.ok(service.updateComment(commentId, dto));
+                                                       @LoginMember int memberId) throws Exception {
+        return ResponseEntity.ok(service.updateComment(memberId, commentId, dto));
     }
 
     @Operation(
@@ -63,8 +64,8 @@ public class AdminCodingController {
     )
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable int commentId,
-                                              @RequestParam int adminId) {
-        service.deleteComment(commentId);
+                                              @LoginMember int memberId) {
+        service.deleteComment(memberId, commentId);
         return ResponseEntity.noContent().build();
     }
 
@@ -74,8 +75,8 @@ public class AdminCodingController {
     )
     @PostMapping("/coding-problem/posts")
     public ResponseEntity<CodingProblem> createProblem(@RequestBody CodingProblemRequestDTO dto,
-                                                       @RequestParam int adminId) {
-        CodingProblem problem = service.createProblem(dto);
+                                                       @LoginMember int memberId) {
+        CodingProblem problem = service.createProblem(memberId, dto);
         return ResponseEntity.ok(problem);
     }
 
@@ -86,8 +87,8 @@ public class AdminCodingController {
     @PutMapping("/coding-problem/{problemId}")
     public ResponseEntity<CodingProblem> updateProblem(@PathVariable int problemId,
                                                        @RequestBody CodingProblemRequestDTO dto,
-                                                       @RequestParam int adminId) {
-        return ResponseEntity.ok(service.updateProblem(problemId, dto));
+                                                       @LoginMember int memberId) {
+        return ResponseEntity.ok(service.updateProblem(memberId, problemId, dto));
     }
 
     @Operation(
@@ -96,8 +97,8 @@ public class AdminCodingController {
     )
     @DeleteMapping("/coding-problem/{problemId}")
     public ResponseEntity<Void> deleteProblem(@PathVariable int problemId,
-                                              @RequestParam int adminId) {
-        service.deleteProblem(problemId);
+                                              @LoginMember int memberId) {
+        service.deleteProblem(memberId, problemId);
         return ResponseEntity.noContent().build();
     }
 }

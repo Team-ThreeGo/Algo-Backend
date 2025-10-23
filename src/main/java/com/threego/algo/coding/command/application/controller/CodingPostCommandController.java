@@ -5,6 +5,7 @@ import com.threego.algo.coding.command.application.dto.CodingCommentRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostImageRequestDTO;
 import com.threego.algo.coding.command.application.dto.CodingPostRequestDTO;
 import com.threego.algo.coding.command.application.service.CodingPostCommandService;
+import com.threego.algo.common.auth.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,8 +34,8 @@ public class CodingPostCommandController {
     )
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Integer> createPost(
-            @Parameter(description = "작성자 ID") @RequestParam Integer memberId,
-            @Parameter(description = "문제 ID") @RequestParam Integer problemId,
+            @Parameter(description = "작성자 ID") @LoginMember int memberId,
+            @Parameter(description = "문제 ID") @RequestParam int problemId,
             @Parameter(description = "풀이 제목, 코드내용") @RequestPart("data") String dataJson,
             @Parameter(description = "이미지 파일")
             @RequestPart(value = "images", required = false) MultipartFile images
@@ -57,8 +58,9 @@ public class CodingPostCommandController {
             description = "회원이 코딩풀이 게시물을 수정합니다."
     )
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<String> updatePost(@PathVariable int postId, @RequestBody CodingPostRequestDTO request) {
-        codingPostCommandService.updatePost(postId, request);
+    public ResponseEntity<String> updatePost(@PathVariable int postId, @RequestBody CodingPostRequestDTO request,
+                                             @LoginMember int memberId) throws Exception{
+        codingPostCommandService.updatePost(memberId, postId, request);
         return ResponseEntity.ok("수정 완료");
     }
 
@@ -67,8 +69,9 @@ public class CodingPostCommandController {
             description = "회원이 코딩풀이 게시물을 삭제(soft-delete)합니다."
     )
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable int postId) {
-        codingPostCommandService.softDeletePost(postId);
+    public ResponseEntity<String> deletePost(@PathVariable int postId,
+                                             @LoginMember int memberId) throws Exception {
+        codingPostCommandService.softDeletePost(memberId, postId);
         return ResponseEntity.ok("삭제 완료");
     }
 
@@ -91,8 +94,9 @@ public class CodingPostCommandController {
     public ResponseEntity<Integer> createComment(
             @PathVariable int postId,
             @RequestParam(value = "parentId", required = false) Integer parentId,
-            @RequestBody CodingCommentRequestDTO request) {
-        Integer commentid = codingPostCommandService.addComment(postId, parentId, request);
+            @RequestBody CodingCommentRequestDTO request,
+            @LoginMember @Parameter(description = "작성자 ID") int memberId) throws Exception {
+        int commentid = codingPostCommandService.addComment(memberId, postId, parentId, request);
         return ResponseEntity.ok(commentid);
     }
 
@@ -101,8 +105,9 @@ public class CodingPostCommandController {
             description = "회원이 코딩풀이 게시물의 댓글을 수정합니다."
     )
     @PutMapping("/comments/{commentId}")
-    public ResponseEntity<String> updateComment(@PathVariable int commentId, @RequestBody CodingCommentRequestDTO request) {
-        codingPostCommandService.updateComment(commentId, request);
+    public ResponseEntity<String> updateComment(@PathVariable int commentId, @RequestBody CodingCommentRequestDTO request,
+                                                @LoginMember @Parameter(description = "작성자 ID") int memberId) throws Exception{
+        codingPostCommandService.updateComment(memberId, commentId, request);
         return ResponseEntity.ok("수정 완료");
     }
 
@@ -111,17 +116,19 @@ public class CodingPostCommandController {
             description = "회원이 코딩풀이 게시물의 댓글을 삭제합니다."
     )
     @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<String> deleteComment(@PathVariable int commentId) {
-        codingPostCommandService.softDeleteComment(commentId);
+    public ResponseEntity<String> deleteComment(@PathVariable int commentId,
+                                                @LoginMember @Parameter(description = "작성자 ID") int memberId) throws Exception{
+        codingPostCommandService.softDeleteComment(memberId, commentId);
         return ResponseEntity.ok("삭제 완료");
     }
 
     @Operation(summary = "코딩 문제 풀이 게시물 추천",
             description = "회원이 코딩 문제 풀이 게시물을 추천하는 API입니다.")
     @PostMapping("/posts/{postId}/likes")
-    public ResponseEntity<Void> createdCodingPostLikes(@PathVariable("postId") final int postId) {
-        // TODO. memberID는 Authentication에서 받아오도록 수정 필요
-        codingPostCommandService.createCodingPostLikes(1, postId);
+    public ResponseEntity<Void> createdCodingPostLikes(
+            @PathVariable("postId") int postId,
+            @LoginMember @Parameter(description = "작성자 ID") int memberId) {
+        codingPostCommandService.createCodingPostLikes(memberId, postId);
 
         return ResponseEntity.ok().build();
     }
