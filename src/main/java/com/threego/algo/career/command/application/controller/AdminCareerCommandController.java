@@ -1,5 +1,6 @@
 package com.threego.algo.career.command.application.controller;
 
+import com.threego.algo.career.command.application.dto.PostStatusUpdateRequest;
 import com.threego.algo.career.command.application.service.AdminCareerCommandService;
 import com.threego.algo.career.command.domain.aggregate.enums.Status;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,10 +31,9 @@ public class AdminCareerCommandController {
     @PutMapping("/posts/{postId}/status")
     public ResponseEntity<Void> updatePostStatus(
             @PathVariable int postId,
-            @RequestParam Status status,
-            @RequestParam(required = false) String rejectReason
+            @RequestBody PostStatusUpdateRequest request
     ) {
-        adminService.updatePostStatus(postId, status, rejectReason);
+        adminService.updatePostStatus(postId, request.getStatus(), request.getRejectReason());
         return ResponseEntity.ok().build();
     }
 
