@@ -18,9 +18,12 @@ public class CodingProblemQueryImpl implements CodingProblemQueryService {
     private final CodingPostMapper codingPostMapper;
 
     @Override
-    public List<CodingProblemSummaryDTO> findProblemsList(String keyword, int page, int size) {
+    public List<CodingProblemSummaryDTO> findProblemsList(String keyword, String platform, String difficulty, String sortBy, int page, int size) {
         CodingPostSearchConditionDTO condition = CodingPostSearchConditionDTO.builder()
                 .keyword(keyword)
+                .platform(platform)
+                .difficulty(difficulty)
+                .sortBy(sortBy)
                 .page(page)
                 .size(size)
                 .build();

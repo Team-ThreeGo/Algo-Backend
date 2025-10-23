@@ -26,13 +26,45 @@
             A.VISIBILITY = 'Y'
             <!-- keyword 조건 -->
             <if test="keyword != null and keyword != ''">
-                AND (
-                A.TITLE LIKE CONCAT('%', #{keyword}, '%')
-                OR B.NICKNAME LIKE CONCAT('%', #{keyword}, '%')
-                )
+                AND (A.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                OR B.NICKNAME LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+
+            <if test="platform != null and platform != ''">
+                AND A.PLATFORM = #{platform}
+            </if>
+
+            <if test="difficulty != null and difficulty != ''">
+                AND A.DIFFICULTY = #{difficulty}
             </if>
         </where>
-        ORDER BY A.ID ASC
+
+        <!-- 정렬 조건 -->
+        <choose>
+            <when test="sortBy == 'difficulty'">
+                ORDER BY
+                CASE A.PLATFORM
+                WHEN 'PGS' THEN 1
+                WHEN 'BOJ' THEN 2
+                WHEN 'ETC' THEN 3
+                ELSE 9
+                END,
+                A.DIFFICULTY ASC
+            </when>
+            <when test="sortBy == 'platform'">
+                ORDER BY
+                CASE A.PLATFORM
+                WHEN 'PGS' THEN 1
+                WHEN 'BOJ' THEN 2
+                WHEN 'ETC' THEN 3
+                ELSE 9
+                END,
+                A.CREATED_AT DESC
+            </when>
+            <otherwise>
+                ORDER BY A.ID ASC
+            </otherwise>
+        </choose>
 
         <!-- 페이징 적용 -->
         <include refid="com.threego.algo.common.mapper.CommonMapper.pagination"/>
