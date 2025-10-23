@@ -121,7 +121,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Override
     @Transactional
-    public CodingPost updatePost(int postId, CodingPostRequestDTO dto) {
+    public CodingPost updatePost(int memberId, int postId, CodingPostRequestDTO dto) {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
 
@@ -135,7 +135,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Override
     @Transactional
-    public void softDeletePost(int postId) {
+    public void softDeletePost(int memberId, int postId) {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
 
@@ -154,7 +154,8 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Override
     @Transactional
-    public int addComment(int postId,
+    public int addComment(int memberId,
+                          int postId,
                           Integer parentId,
                           CodingCommentRequestDTO dto) {
         // member, post 조회
@@ -188,7 +189,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Override
     @Transactional
-    public void updateComment(int commentId, CodingCommentRequestDTO dto) {
+    public void updateComment(int memberId, int commentId, CodingCommentRequestDTO dto) {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음: " + commentId));
 
@@ -201,7 +202,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
     @Override
     @Transactional
-    public void softDeleteComment(int commentId) {
+    public void softDeleteComment(int memberId, int commentId) {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음: " + commentId));
 
