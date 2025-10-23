@@ -19,21 +19,13 @@ import com.threego.algo.common.service.S3Service;
 import com.threego.algo.member.aop.IncreasePoint;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import com.threego.algo.member.command.domain.repository.MemberCommandRepository;
-import com.threego.algo.member.command.domain.repository.MemberRankRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.context.ApplicationEventPublisher;
-
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -125,6 +117,10 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
 
+        if (post.getMember().getId() != memberId) {
+            throw new AccessDeniedException("본인 글만 수정할 수 있습니다.");
+        }
+
         if ("N".equals(post.getVisibility())) {
             throw new IllegalStateException("삭제된 게시물은 수정할 수 없습니다.");
         }
@@ -138,6 +134,10 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
     public void softDeletePost(int memberId, int postId) {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음: " + postId));
+
+        if (post.getMember().getId() != memberId) {
+            throw new AccessDeniedException("본인 글만 삭제할 수 있습니다.");
+        }
 
         if ("N".equals(post.getVisibility())) {
             throw new IllegalStateException("이미 삭제된 게시물입니다.");
@@ -193,6 +193,10 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음: " + commentId));
 
+        if (comment.getMember().getId() != memberId) {
+            throw new AccessDeniedException("본인 댓글만 수정할 수 있습니다.");
+        }
+
         if ("N".equals(comment.getVisibility())) {
             throw new IllegalStateException("삭제된 댓글은 수정할 수 없습니다.");
         }
@@ -205,6 +209,10 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
     public void softDeleteComment(int memberId, int commentId) {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음: " + commentId));
+
+        if (comment.getMember().getId() != memberId) {
+            throw new AccessDeniedException("본인 댓글만 삭제할 수 있습니다.");
+        }
 
         if ("N".equals(comment.getVisibility())) {
             throw new IllegalStateException("이미 삭제된 댓글입니다.");
@@ -229,7 +237,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
         final CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException(memberId + "번 코딩 문제 풀이 게시물이 존재하지 않습니다."));
 
-        if (member == post.getMemberId()) {
+        if (member == post.getMember()) {
             throw new RuntimeException("자신이 작성한 글은 추천할 수 없습니다.");
         }
 
@@ -241,6 +249,6 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
 
         post.increaseLikeCount();
 
-        return post.getMemberId().getId();
+        return post.getMember().getId();
     }
 }

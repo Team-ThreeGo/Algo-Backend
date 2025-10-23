@@ -23,7 +23,7 @@ public class CodingProblem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member memberId;
+    private Member member;
 
     @Column(nullable = false, length = 255)
     private String title;
@@ -60,18 +60,11 @@ public class CodingProblem {
     @Column(name = "created_at", nullable = false, length = 20)
     private String createdAt;
 
-//    public CodingProblem(Platform platform, String title, String problemUrl) {
-//        this.platform = platform;
-//        this.title = title;
-//        this.problemUrl = problemUrl;
-//        this.createdAt = DateTimeUtils.nowDateTime();
-//    }
-
     @Builder
     public CodingProblem(Member member, Platform platform, String title, String problemUrl,
                          String difficulty, String content, String input,
                          String output, String constraints) {
-        this.memberId = member;
+        this.member = member;
         this.platform = platform;
         this.title = title;
         this.problemUrl = problemUrl;
