@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface StudyPostQueryService {
 
-    List<StudyPostDTO> findAllStudyPosts(StudyPostSearchDTO searchDto);
+    List<StudyPostDTO> findAllStudyPosts(StudyPostSearchDTO searchDto, int memberId);
 
     StudyPostDetailDTO findStudyPostDetail(int postId);
 

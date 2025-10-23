@@ -1,5 +1,9 @@
 package com.threego.algo.study.query.service;
 
+import com.threego.algo.common.error.ErrorCode;
+import com.threego.algo.common.error.exception.BusinessException;
+import com.threego.algo.study.command.domain.aggregate.StudyMember;
+import com.threego.algo.study.command.domain.repository.StudyMemberRepository;
 import com.threego.algo.study.exception.StudyExceptions.StudyPostNotFoundException;
 import com.threego.algo.study.query.dao.StudyPostMapper;
 import com.threego.algo.study.query.dto.StudyCommentDTO;
@@ -18,9 +22,13 @@ import java.util.List;
 public class StudyPostQueryServiceImpl implements StudyPostQueryService {
 
     private final StudyPostMapper studyPostMapper;
+    private final StudyMemberRepository studyMemberRepository;
 
     @Override
-    public List<StudyPostDTO> findAllStudyPosts(StudyPostSearchDTO searchDto) {
+    public List<StudyPostDTO> findAllStudyPosts(StudyPostSearchDTO searchDto, int memberId) {
+        // 스터디 멤버십 검증
+        validateStudyMemberAccess(searchDto.getStudyId(), memberId);
+
         return studyPostMapper.selectAllStudyPosts(searchDto);
     }
 
@@ -62,5 +70,14 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
         return studyPostMapper.selectAllHiddenStudyComments(searchDto);
     }
 
+    // ========== Helper Methods ==========
 
+    private void validateStudyMemberAccess(int studyId, int memberId) {
+        StudyMember studyMember = (StudyMember) studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_FOUND));
+
+        if (!studyMember.isActive()) {
+            throw new BusinessException(ErrorCode.STUDY_ACCESS_DENIED);
+        }
+    }
 }

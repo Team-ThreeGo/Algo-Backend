@@ -1,10 +1,12 @@
 package com.threego.algo.study.query.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.query.dto.*;
 import com.threego.algo.study.query.service.StudyMemberQueryService;
 import com.threego.algo.study.query.service.StudyPostQueryService;
 import com.threego.algo.study.query.service.StudyRoadmapQueryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,8 @@ public class StudyPostQueryController {
     public ResponseEntity<List<StudyPostDTO>> findPosts(
             @PathVariable int studyId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @Parameter(hidden = true) @LoginMember int memberId) {
 
         StudyPostSearchDTO searchDto = StudyPostSearchDTO.builder()
                 .studyId(studyId)
@@ -39,7 +42,7 @@ public class StudyPostQueryController {
                 .size(size)
                 .build();
 
-        List<StudyPostDTO> posts = studyPostQueryService.findAllStudyPosts(searchDto);
+        List<StudyPostDTO> posts = studyPostQueryService.findAllStudyPosts(searchDto, memberId);
         return ResponseEntity.ok(posts);
     }
 
