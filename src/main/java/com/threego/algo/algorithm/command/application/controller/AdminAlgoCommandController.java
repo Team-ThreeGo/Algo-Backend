@@ -55,7 +55,7 @@ public class AdminAlgoCommandController {
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "이미지 파일들 (최대 5MB, JPG/PNG/GIF 등)")
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @LoginMember int memberId) throws Exception {
+            @Parameter(hidden = true) @LoginMember int memberId) throws Exception {
 
         AlgoPostRequestDTO request = new AlgoPostRequestDTO();
         request.setTitle(title);

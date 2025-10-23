@@ -4,6 +4,7 @@ import com.threego.algo.algorithm.query.dto.*;
 import com.threego.algo.algorithm.query.service.AlgoQueryService;
 import com.threego.algo.common.auth.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class AlgoQueryController {
     @GetMapping("/roadmaps/{roadmapId}/posts")
     public ResponseEntity<List<AlgoPostSummaryResponseDTO>> findAlgoPostsByRoadmapId(@PathVariable("roadmapId") final int roadmapId,
                                                                                      @RequestParam(required = false) final String keyword,
-                                                                                     @LoginMember int memberId) {
+                                                                                     @Parameter(hidden = true) @LoginMember int memberId) {
         final List<AlgoPostSummaryResponseDTO> response = algoQueryService.findAlgoPostsByRoadmapId(memberId, roadmapId, keyword);
 
         return ResponseEntity.ok(response);
@@ -47,7 +48,7 @@ public class AlgoQueryController {
             description = "회원이 알고리즘 학습 로드맵의 게시물을 세부 조회할 수 있는 API입니다.")
     @GetMapping("/posts/{postId}")
     public ResponseEntity<AlgoPostDetailResponseDTO> findAlgoPostsByPostId(@PathVariable("postId") final int postId,
-                                                                           @LoginMember int memberId) {
+                                                                           @Parameter(hidden = true) @LoginMember int memberId) {
         final AlgoPostDetailResponseDTO response = algoQueryService.findAlgoPostByPostId(memberId, postId);
 
         return ResponseEntity.ok(response);
