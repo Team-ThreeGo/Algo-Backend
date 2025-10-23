@@ -89,7 +89,7 @@ public class CareerCommandServiceImpl implements CareerCommandService {
     @Override
     public Integer createComment(int postId,
                                  Integer parentId,
-                                 CareerCommentRequest request,
+                                 String content,
                                  int memberId
     ) {
         CareerInfoPost post = careerPostRepository.findById(postId)
@@ -108,7 +108,7 @@ public class CareerCommandServiceImpl implements CareerCommandService {
                 parent,
                 post,
                 member,
-                request.getContent()
+                content
         );
         careerCommentRepository.save(comment);
         post.increaseCommentCount();

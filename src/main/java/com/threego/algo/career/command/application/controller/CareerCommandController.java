@@ -71,10 +71,9 @@ public class CareerCommandController {
     public ResponseEntity<Integer> createComment(
             @Parameter(hidden = true) @LoginMember int memberId,
             @PathVariable Integer postId,
-            @RequestParam(value = "parentId", required = false) Integer parentId,
             @RequestBody CareerCommentRequest request
     ) {
-        Integer commentId = service.createComment(postId, parentId, request, memberId);
+        Integer commentId = service.createComment(postId, request.getParentId(), request.getContent(), memberId);
         return ResponseEntity.ok(commentId);
     }
 

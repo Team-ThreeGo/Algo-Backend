@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CareerCommentRequest {
     private String content;
+    private Integer parentId;
 }
