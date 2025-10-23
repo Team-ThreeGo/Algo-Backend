@@ -2,7 +2,9 @@ package com.threego.algo.algorithm.query.controller;
 
 import com.threego.algo.algorithm.query.dto.*;
 import com.threego.algo.algorithm.query.service.AlgoQueryService;
+import com.threego.algo.common.auth.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +37,9 @@ public class AlgoQueryController {
             description = "회원이 특정 알고리즘 학습 로드맵의 게시물 목록을 조회할 수 있는 API입니다.")
     @GetMapping("/roadmaps/{roadmapId}/posts")
     public ResponseEntity<List<AlgoPostSummaryResponseDTO>> findAlgoPostsByRoadmapId(@PathVariable("roadmapId") final int roadmapId,
-                                                                                     @RequestParam(required = false) final String keyword) {
-        // TODO. memberID는 Authentication에서 받아오도록 수정 필요
-        final List<AlgoPostSummaryResponseDTO> response = algoQueryService.findAlgoPostsByRoadmapId(1, roadmapId, keyword);
+                                                                                     @RequestParam(required = false) final String keyword,
+                                                                                     @Parameter(hidden = true) @LoginMember int memberId) {
+        final List<AlgoPostSummaryResponseDTO> response = algoQueryService.findAlgoPostsByRoadmapId(memberId, roadmapId, keyword);
 
         return ResponseEntity.ok(response);
     }
@@ -45,9 +47,9 @@ public class AlgoQueryController {
     @Operation(summary = "알고리즘 학습 로드맵의 게시물 세부 조회",
             description = "회원이 알고리즘 학습 로드맵의 게시물을 세부 조회할 수 있는 API입니다.")
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<AlgoPostDetailResponseDTO> findAlgoPostsByPostId(@PathVariable("postId") final int postId) {
-        // TODO. memberID는 Authentication에서 받아오도록 수정 필요
-        final AlgoPostDetailResponseDTO response = algoQueryService.findAlgoPostByPostId(1, postId);
+    public ResponseEntity<AlgoPostDetailResponseDTO> findAlgoPostsByPostId(@PathVariable("postId") final int postId,
+                                                                           @Parameter(hidden = true) @LoginMember int memberId) {
+        final AlgoPostDetailResponseDTO response = algoQueryService.findAlgoPostByPostId(memberId, postId);
 
         return ResponseEntity.ok(response);
     }

@@ -3,6 +3,7 @@ package com.threego.algo.algorithm.command.application.controller;
 import com.threego.algo.algorithm.command.application.dto.*;
 import com.threego.algo.algorithm.command.application.service.AlgoCommandService;
 import com.threego.algo.algorithm.command.domain.aggregate.AlgoRoadmap;
+import com.threego.algo.common.auth.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,15 +54,15 @@ public class AdminAlgoCommandController {
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
             @Parameter(description = "이미지 파일들 (최대 5MB, JPG/PNG/GIF 등)")
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws Exception {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @Parameter(hidden = true) @LoginMember int memberId) throws Exception {
 
         AlgoPostRequestDTO request = new AlgoPostRequestDTO();
         request.setTitle(title);
         request.setContent(content);
         request.setImages(images);
 
-        // TODO. memberID는 Authentication에서 받아오도록 수정 필요
-        final AlgoPostDetailResponseDTO response = algoCommandService.createAlgoPost(29, roadmapId, request);
+        final AlgoPostDetailResponseDTO response = algoCommandService.createAlgoPost(memberId, roadmapId, request);
 
         return ResponseEntity.ok(response);
     }
