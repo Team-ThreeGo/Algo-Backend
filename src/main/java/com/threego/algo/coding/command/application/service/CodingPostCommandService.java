@@ -11,15 +11,15 @@ public interface CodingPostCommandService {
 
     int addImage(int postId, CodingPostImageRequestDTO dto);
 
-    CodingPost updatePost(int postId, CodingPostRequestDTO dto);
+    CodingPost updatePost(int memberId, int postId, CodingPostRequestDTO dto);
 
-    void softDeletePost(int postId);
+    void softDeletePost(int memberId, int postId);
 
-    int addComment(int postId, Integer parentId, CodingCommentRequestDTO dto);
+    int addComment(int memberId, int postId, Integer parentId, CodingCommentRequestDTO dto);
 
-    void updateComment(int commentId, CodingCommentRequestDTO dto);
+    void updateComment(int memberId, int commentId, CodingCommentRequestDTO dto);
 
-    void softDeleteComment(int commentId);
+    void softDeleteComment(int memberId, int commentId);
 
     int createCodingPostLikes(final int memberId, final int postId);
 }

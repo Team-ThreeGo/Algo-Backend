@@ -18,7 +18,7 @@ public class CodingComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member memberId;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
@@ -26,7 +26,7 @@ public class CodingComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private CodingComment  parentId;
+    private CodingComment parent;
 
     @Column(nullable = false, length = 500)
     private String content;
@@ -40,19 +40,19 @@ public class CodingComment {
     @Column(nullable = false, length = 1)
     private String visibility = "Y";
 
-    public CodingComment(Member memberId, CodingPost post, String content, CodingComment parentId) {
-        this.memberId = memberId;
+    public CodingComment(Member member, CodingPost post, String content, CodingComment parent) {
+        this.member = member;
         this.post = post;
-        this.parentId = parentId;
+        this.parent = parent;
         this.content = content;
         this.createdAt = DateTimeUtils.nowDateTime();
     }
 
-    public static CodingComment create(Member memberId, CodingPost post, String content, CodingComment parentId) {
+    public static CodingComment create(Member member, CodingPost post, String content, CodingComment parent) {
         CodingComment comment = new CodingComment();
-        comment.memberId = memberId;
+        comment.member = member;
         comment.post = post;
-        comment.parentId = parentId;
+        comment.parent = parent;
         comment.content = content;
         comment.createdAt = DateTimeUtils.nowDateTime();
         return comment;

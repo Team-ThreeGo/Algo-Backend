@@ -9,17 +9,17 @@ import com.threego.algo.coding.command.domain.aggregate.CodingProblem;
 
 public interface AdminCodingPostCommandService {
 
-    CodingPost updatePost(int postId, CodingPostRequestDTO dto);
+    CodingPost updatePost(int memberId, int postId, CodingPostRequestDTO dto);
 
-    void deletePost(int postId);
+    void deletePost(int memberId, int postId);
 
-    CodingComment updateComment(int commentId, CodingCommentRequestDTO dto);
+    CodingComment updateComment(int memberId, int commentId, CodingCommentRequestDTO dto);
 
-    void deleteComment(int commentId);
+    void deleteComment(int memberId, int commentId);
 
-    CodingProblem createProblem(CodingProblemRequestDTO dto);
+    CodingProblem createProblem(int memberId, CodingProblemRequestDTO dto);
 
-    CodingProblem updateProblem(int problemId, CodingProblemRequestDTO dto);
+    CodingProblem updateProblem(int memberId, int problemId, CodingProblemRequestDTO dto);
 
-    void deleteProblem(int problemId);
+    void deleteProblem(int memberId, int problemId);
 }

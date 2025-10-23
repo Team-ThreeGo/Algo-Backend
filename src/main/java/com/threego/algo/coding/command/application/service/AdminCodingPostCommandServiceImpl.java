@@ -25,7 +25,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
 
     @Override
     @Transactional
-    public CodingPost updatePost(int postId, CodingPostRequestDTO dto) {
+    public CodingPost updatePost(int memberId, int postId, CodingPostRequestDTO dto) {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음"));
         post.update(dto.getTitle(), dto.getContent());
@@ -34,7 +34,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
 
     @Override
     @Transactional
-    public void deletePost(int postId) {
+    public void deletePost(int memberId, int postId) {
         CodingPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물 없음"));
         post.delete();
@@ -42,7 +42,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
 
     @Override
     @Transactional
-    public CodingComment updateComment(int commentId, CodingCommentRequestDTO dto) {
+    public CodingComment updateComment(int memberId, int commentId, CodingCommentRequestDTO dto) {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
         comment.update(dto.getContent());
@@ -51,7 +51,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
 
     @Override
     @Transactional
-    public void deleteComment(int commentId) {
+    public void deleteComment(int memberId, int commentId) {
         CodingComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
         comment.delete();
@@ -59,7 +59,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
 
     @Override
     @Transactional
-    public CodingProblem createProblem(CodingProblemRequestDTO dto) {
+    public CodingProblem createProblem(int memberId, CodingProblemRequestDTO dto) {
 //        Member admin = MemberCommandRepository.findById(adminMemberId)
         Member member = memberRepository.findById(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("관리자 계정을 찾을 수 없습니다."+ dto.getMemberId()));
@@ -81,7 +81,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
 
     @Override
     @Transactional
-    public CodingProblem updateProblem(int problemId, CodingProblemRequestDTO dto) {
+    public CodingProblem updateProblem(int memberId, int problemId, CodingProblemRequestDTO dto) {
         CodingProblem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제 없음"));
         problem.update(
@@ -98,7 +98,7 @@ public class AdminCodingPostCommandServiceImpl implements AdminCodingPostCommand
 
     @Override
     @Transactional
-    public void deleteProblem(int problemId) {
+    public void deleteProblem(int memberId, int problemId) {
         CodingProblem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제 없음"));
         problem.delete();
