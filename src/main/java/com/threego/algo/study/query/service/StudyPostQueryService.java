@@ -13,7 +13,7 @@ public interface StudyPostQueryService {
 
     StudyPostDetailDTO findStudyPostDetail(int postId, int memberId);
 
-    List<StudyCommentDTO> findStudyPostComments(int postId);
+    List<StudyCommentDTO> findStudyPostComments(int postId, int memberId);
 
     // ========== 관리자용 메소드들 ==========
 

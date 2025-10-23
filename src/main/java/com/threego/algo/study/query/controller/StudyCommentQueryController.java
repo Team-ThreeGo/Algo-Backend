@@ -1,10 +1,12 @@
 package com.threego.algo.study.query.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.query.dto.StudyCommentDTO;
 import com.threego.algo.study.query.service.StudyMemberQueryService;
 import com.threego.algo.study.query.service.StudyPostQueryService;
 import com.threego.algo.study.query.service.StudyRoadmapQueryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +33,10 @@ public class StudyCommentQueryController {
             description = "스터디 게시물의 댓글들을 조회합니다."
     )
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<List<StudyCommentDTO>> findPostComments(@PathVariable int postId) {
-        List<StudyCommentDTO> comments = studyPostQueryService.findStudyPostComments(postId);
+    public ResponseEntity<List<StudyCommentDTO>> findPostComments(
+            @PathVariable int postId,
+            @Parameter(hidden = true) @LoginMember int memberId) {
+        List<StudyCommentDTO> comments = studyPostQueryService.findStudyPostComments(postId, memberId);
         return ResponseEntity.ok(comments);
     }
 }

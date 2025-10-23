@@ -47,12 +47,16 @@ public class StudyPostQueryServiceImpl implements StudyPostQueryService {
     }
 
     @Override
-    public List<StudyCommentDTO> findStudyPostComments(int postId) {
+    public List<StudyCommentDTO> findStudyPostComments(int postId, int memberId) {
         // 게시물 존재 여부 확인
         StudyPostDetailDTO post = studyPostMapper.selectStudyPostDetail(postId);
         if (post == null) {
             throw new StudyPostNotFoundException();
         }
+
+        // 스터디 멤버십 검증 (postId로부터 studyId 획득)
+        validateStudyMemberAccess(post.getStudyId(), memberId);
+
         return studyPostMapper.selectStudyPostComments(postId);
     }
 
