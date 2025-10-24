@@ -54,7 +54,7 @@ public class AdminCodingController {
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<CodingComment> updateComment(@PathVariable int commentId,
                                                        @RequestBody CodingCommentRequestDTO dto,
-                                                       @LoginMember int memberId) throws Exception {
+                                                       @LoginMember int memberId) {
         return ResponseEntity.ok(service.updateComment(memberId, commentId, dto));
     }
 

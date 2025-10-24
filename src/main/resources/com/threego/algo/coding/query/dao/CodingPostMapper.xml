@@ -262,7 +262,7 @@
     </select>
 
     <!-- 게시물 이미지 목록 조회 -->
-    <select id="findImagesByPostId" parameterType="int" resultType="string">
+    <select id="findImagesByPostId" parameterType="_int" resultType="string">
         SELECT IMAGE_URL
         FROM CODING_POST_IMAGE
         WHERE POST_ID = #{postId}

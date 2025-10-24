@@ -126,7 +126,7 @@
     </select>
 
     <!-- 문제 상세 조회 (회원용) -->
-    <select id="selectProblemDetail" parameterType="int" resultType="com.threego.algo.coding.query.dto.CodingProblemDetailDTO">
+    <select id="selectProblemDetail" parameterType="_int" resultType="com.threego.algo.coding.query.dto.CodingProblemDetailDTO">
         SELECT
         A.ID          AS problemId,
         A.TITLE       AS problemTitle,
@@ -186,7 +186,7 @@
     </select>
 
     <!-- 관리자용 문제 상세 조회 -->
-    <select id="selectAdminProblemDetail" parameterType="int" resultType="com.threego.algo.coding.query.dto.CodingProblemDetailDTO">
+    <select id="selectAdminProblemDetail" parameterType="_int" resultType="com.threego.algo.coding.query.dto.CodingProblemDetailDTO">
         SELECT
         A.ID          AS problemId,
         A.TITLE       AS problemTitle,
