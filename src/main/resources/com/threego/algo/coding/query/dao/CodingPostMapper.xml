@@ -260,4 +260,11 @@
         CASE WHEN A.PARENT_ID IS NULL THEN A.ID ELSE A.PARENT_ID END ASC,
         A.ID ASC
     </select>
+
+    <!-- 게시물 이미지 목록 조회 -->
+    <select id="findImagesByPostId" parameterType="_int" resultType="string">
+        SELECT IMAGE_URL
+        FROM CODING_POST_IMAGE
+        WHERE POST_ID = #{postId}
+    </select>
 </mapper>

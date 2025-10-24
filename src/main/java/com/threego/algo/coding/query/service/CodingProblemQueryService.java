@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CodingProblemQueryService {
     // 문제 목록 조회 (전체)
-    List<CodingProblemSummaryDTO> findProblemsList(String keyword, int page, int size);
+    List<CodingProblemSummaryDTO> findProblemsList(String keyword, String platform, String difficulty, String sortBy, int page, int size);
 
     // 문제 목록 조회 (난이도/플랫폼 기준 정렬)
     List<CodingProblemSummaryDTO> findProblemsByDifficulty();

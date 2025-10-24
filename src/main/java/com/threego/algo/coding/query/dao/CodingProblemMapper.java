@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface CodingProblemMapper {
 
-    // 문제 목록 조회 (전체)
+    // 문제 목록 조회 (전체) + (조건 기반 조회)
     List<CodingProblemSummaryDTO> selectProblemsList(CodingPostSearchConditionDTO condition);
 
     // 문제 목록 조회 (난이도/플랫폼 기준 정렬)

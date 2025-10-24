@@ -32,9 +32,12 @@ public class CodingProblemQueryController {
     @GetMapping("/posts")
     public List<CodingProblemSummaryDTO> findProblemsList(
             @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "platform", required = false) String platform,
+            @RequestParam(value = "difficulty", required = false) String difficulty,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return codingProblemQueryService.findProblemsList(keyword, page, size);
+        return codingProblemQueryService.findProblemsList(keyword, platform, difficulty, sortBy, page, size);
     }
 
     // 회원용 난이도/플랫폼 기준 정렬된 문제 목록 조회
