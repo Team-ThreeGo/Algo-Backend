@@ -1,9 +1,11 @@
 package com.threego.algo.study.query.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.study.query.dto.StudyRoadmapDTO;
 import com.threego.algo.study.query.dto.StudyRoadmapDetailDTO;
 import com.threego.algo.study.query.service.StudyRoadmapQueryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +32,10 @@ public class StudyRoadmapQueryController {
             description = "스터디 그룹의 전체 로드맵 목록을 조회합니다."
     )
     @GetMapping("/{studyId}/roadmaps")
-    public ResponseEntity<List<StudyRoadmapDTO>> findRoadmaps(@PathVariable int studyId) {
-        List<StudyRoadmapDTO> roadmaps = studyRoadmapQueryService.findAllStudyRoadmap(studyId);
+    public ResponseEntity<List<StudyRoadmapDTO>> findRoadmaps(
+            @PathVariable int studyId,
+            @Parameter(hidden = true) @LoginMember int memberId) {
+        List<StudyRoadmapDTO> roadmaps = studyRoadmapQueryService.findAllStudyRoadmap(studyId, memberId);
         return ResponseEntity.ok(roadmaps);
     }
 
@@ -40,8 +44,10 @@ public class StudyRoadmapQueryController {
             description = "스터디 로드맵의 상세 정보와 마일스톤 목록을 조회합니다."
     )
     @GetMapping("/roadmaps/{roadmapId}")
-    public ResponseEntity<StudyRoadmapDetailDTO> findRoadmapDetail(@PathVariable int roadmapId) {
-        StudyRoadmapDetailDTO roadmapDetail = studyRoadmapQueryService.findStudyRoadmapDetail(roadmapId);
+    public ResponseEntity<StudyRoadmapDetailDTO> findRoadmapDetail(
+            @PathVariable int roadmapId,
+            @Parameter(hidden = true) @LoginMember int memberId) {
+        StudyRoadmapDetailDTO roadmapDetail = studyRoadmapQueryService.findStudyRoadmapDetail(roadmapId, memberId);
         return ResponseEntity.ok(roadmapDetail);
     }
 }
