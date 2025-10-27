@@ -23,7 +23,7 @@ public interface AlgoQueryService {
 
     AlgoPostDetailResponseDTO findAlgoPostByPostId(final int memberId, final int postId);
 
-    List<AlgoQuizResponseDTO> findQuizQuestionAndOptionByPostId(final int postId);
+    List<AlgoQuizResponseDTO> findQuizQuestionAndOptionByPostIdAndMemberId(final int postId, final Integer memberId);
 
     AlgoPostDetailResponseDTO findAlgoPostByPostIdForAdmin(final int postId);
 

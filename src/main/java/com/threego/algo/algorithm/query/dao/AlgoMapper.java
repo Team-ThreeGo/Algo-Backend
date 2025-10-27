@@ -26,7 +26,8 @@ public interface AlgoMapper {
 
     List<String> selectAlgoImagesByPostId(@Param("postId") Integer postId);
 
-    List<AlgoQuizResponseDTO> selectQuizQuestionAndOptionByPostId(@Param("postId") final Integer postId);
+    List<AlgoQuizResponseDTO> selectQuizQuestionAndOptionByPostIdAndMemberId(@Param("postId") final int postId,
+                                                                           @Param("memberId") final Integer memberId);
 
     int countMemberCorrectAnswersInRoadmap(@Param("memberId") final int memberId, @Param("roadmapId") final int roadmapId);
 }

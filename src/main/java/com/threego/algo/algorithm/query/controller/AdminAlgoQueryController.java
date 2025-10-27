@@ -74,7 +74,7 @@ public class AdminAlgoQueryController {
             description = "관리자가 알고리즘 학습 로드맵의 게시물 퀴즈(문제 및 보기)목록을 조회할 수 있는 API입니다.")
     @GetMapping("/posts/{postId}/quizzes")
     public ResponseEntity<List<AlgoQuizResponseDTO>> findQuizQuestionAndOptionByPostId(@PathVariable("postId") final int postId) {
-        final List<AlgoQuizResponseDTO> response = algoQueryService.findQuizQuestionAndOptionByPostId(postId);
+        final List<AlgoQuizResponseDTO> response = algoQueryService.findQuizQuestionAndOptionByPostIdAndMemberId(postId, null);
 
         return ResponseEntity.ok(response);
     }
