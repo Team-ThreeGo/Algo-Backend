@@ -50,6 +50,12 @@ public class StudyRecruitPostQueryServiceImpl implements StudyRecruitPostQuerySe
         return studyRecruitPostMapper.selectStudyRecruitMembers(postId);
     }
 
+    /* 설명. 내가 가입한 스터디 목록 조회 */
+    @Override
+    public List<MyStudyDTO> findMyApprovedStudies(int memberId) {
+        return studyRecruitPostMapper.selectMyApprovedStudies(memberId);
+    }
+
     /* 설명. 관리자: 숨김 처리된 게시물 목록 조회 */
     @Override
     public List<StudyRecruitPostDTO> findStudyRecruitListIncludeHidden(StudyRecruitSearchDTO searchDto) {

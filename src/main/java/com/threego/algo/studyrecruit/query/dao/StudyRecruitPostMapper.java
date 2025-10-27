@@ -1,9 +1,6 @@
 package com.threego.algo.studyrecruit.query.dao;
 
-import com.threego.algo.studyrecruit.query.dto.StudyRecruitDetailDTO;
-import com.threego.algo.studyrecruit.query.dto.StudyRecruitMemberDTO;
-import com.threego.algo.studyrecruit.query.dto.StudyRecruitPostDTO;
-import com.threego.algo.studyrecruit.query.dto.StudyRecruitSearchDTO;
+import com.threego.algo.studyrecruit.query.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,6 +17,9 @@ public interface StudyRecruitPostMapper {
 
     /* 설명. 스터디 모집 신청자 리스트 조회 */
     List<StudyRecruitMemberDTO> selectStudyRecruitMembers(int postId);
+
+    /* 설명. 내가 가입한 스터디 목록 조회 */
+    List<MyStudyDTO> selectMyApprovedStudies(int memberId);
 
     /* 설명. 관리자: 숨김 처리된 게시물 리스트 조회 */
     List<StudyRecruitPostDTO> selectStudyRecruitListIncludeHidden(StudyRecruitSearchDTO searchDto);
