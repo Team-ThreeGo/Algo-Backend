@@ -80,9 +80,9 @@ public class AlgoQueryServiceImpl implements AlgoQueryService {
     }
 
     @Override
-    public List<AlgoQuizResponseDTO> findQuizQuestionAndOptionByPostId(final int postId) {
+    public List<AlgoQuizResponseDTO> findQuizQuestionAndOptionByPostIdAndMemberId(final int postId, final Integer memberId) {
         // TODO 게시글 삭제된 상태라면 예외 처리 필요
-        return algoMapper.selectQuizQuestionAndOptionByPostId(postId);
+        return algoMapper.selectQuizQuestionAndOptionByPostIdAndMemberId(postId, memberId);
     }
 
     @Override

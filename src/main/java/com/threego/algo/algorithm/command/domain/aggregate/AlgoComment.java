@@ -15,10 +15,13 @@ public class AlgoComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private String content;
 
+    @Column(name = "created_at", nullable = false)
     private String createdAt;
 
+    @Column(name = "updated_at")
     private String updatedAt;
 
     @Column(nullable = false, length = 1)
