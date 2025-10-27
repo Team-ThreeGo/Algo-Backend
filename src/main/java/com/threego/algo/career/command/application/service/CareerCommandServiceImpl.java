@@ -4,6 +4,8 @@ import com.threego.algo.career.command.application.dto.CareerCommentRequest;
 import com.threego.algo.career.command.application.dto.CareerPostCreateRequest;
 import com.threego.algo.career.command.domain.aggregate.CareerInfoComment;
 import com.threego.algo.career.command.domain.aggregate.CareerInfoPost;
+import com.threego.algo.career.command.domain.aggregate.enums.Company;
+import com.threego.algo.career.command.domain.aggregate.enums.Year;
 import com.threego.algo.career.command.domain.repository.CareerCommentRepository;
 import com.threego.algo.career.command.domain.repository.CareerPostRepository;
 import com.threego.algo.likes.command.application.service.LikesCommandService;
@@ -58,10 +60,27 @@ public class CareerCommandServiceImpl implements CareerCommandService {
             imageUrl = s3Service.uploadFile(request.getImage(), "career-posts");
         }
 
+        Company companyEnum;
+        Year yearEnum;
+
+        try {
+            companyEnum = Company.valueOf(request.getCompany());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 기업명입니다: " + request.getCompany());
+        }
+
+        try {
+            yearEnum = Year.valueOf("_" + request.getYear());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 연도입니다: " + request.getYear());
+        }
+
         CareerInfoPost post = CareerInfoPost.create(
                 member,
                 request.getTitle(),
                 request.getContent(),
+                companyEnum,
+                yearEnum,
                 imageUrl
         );
 

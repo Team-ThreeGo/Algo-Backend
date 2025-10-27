@@ -38,12 +38,16 @@ public class CareerCommandController {
             @Parameter(hidden = true) @LoginMember int memberId,
             @Parameter(description = "제목") @RequestParam String title,
             @Parameter(description = "내용") @RequestParam String content,
+            @Parameter(description = "기업명 (예: 삼성전자, 카카오, 네이버, LG전자)") @RequestParam String company,
+            @Parameter(description = "연도 (예: 2022, 2023, 2024)") @RequestParam String year,
             @Parameter(description = "이미지 파일 (선택, 최대 5MB)")
             @RequestPart(value = "image", required = false) MultipartFile image) {
 
         CareerPostCreateRequest request = new CareerPostCreateRequest();
         request.setTitle(title);
         request.setContent(content);
+        request.setCompany(company);
+        request.setYear(year);
         request.setImage(image);
 
         Integer postId = service.createPost(request, memberId);
