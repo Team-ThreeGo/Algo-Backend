@@ -47,8 +47,9 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
     public AlgoRoadmap createAlgoRoadmap(final AlgoRoadmapRequestDTO request) {
         validAlgoRoadmapTitle(request.getTitle());
 
-        final AlgoRoadmap algoRoadmap = new AlgoRoadmap(request.getTitle(), request.getDescription(),
-                request.getOrder());
+        final int order = (request.getOrder() == null) ? getNextOrder() : request.getOrder();
+
+        final AlgoRoadmap algoRoadmap = new AlgoRoadmap(request.getTitle(), request.getDescription(), order);
 
         return algoRoadmapCommandRepository.save(algoRoadmap);
     }
@@ -413,5 +414,11 @@ public class AlgoCommandServiceImpl implements AlgoCommandService {
         return algoPostCommandRepository.findById(postId).orElseThrow(() -> {
             throw new RuntimeException("알고리즘 학습 게시물(ID: " + postId + ") 을(를) 찾을 수 없습니다.");
         });
+    }
+
+    private int getNextOrder() {
+        final Integer maxOrder = algoRoadmapCommandRepository.findMaxOrder();
+
+        return maxOrder == null ? 1 : maxOrder + 1;
     }
 }
