@@ -44,6 +44,7 @@
         <result property="commentCount" column="COMMENT_COUNT"/>
         <result property="visibility" column="VISIBILITY"/>
         <result property="isLiked" column="IS_LIKED"/>
+        <result property="roadmapTitle" column="ROADMAP_TITLE"/>
 
         <collection property="quizIds" ofType="java.lang.Integer">
             <id column="ALGO_QUIZ_QUESTION_ID"/>
@@ -128,6 +129,7 @@
              , A.LIKE_COUNT
              , A.COMMENT_COUNT
              , A.VISIBILITY
+             , D.TITLE AS ROADMAP_TITLE
         <if test="memberId != null">
              , EXISTS (SELECT 1
                          FROM LIKES B
@@ -141,7 +143,12 @@
            ON A.MEMBER_ID = B.ID
          LEFT JOIN ALGO_QUIZ_QUESTION C
            ON C.ALGO_POST_ID = A.ID
+         JOIN ALGO_ROADMAP D
+           ON D.ID = A.ROADMAP_ID
         WHERE A.ID = #{postId}
+        <if test="memberId != null">
+            AND A.VISIBILITY = 'Y'
+        </if>
         ORDER BY A.ID ASC;
     </select>
 
