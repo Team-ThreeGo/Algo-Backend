@@ -1,5 +1,7 @@
 package com.threego.algo.study.command.application.service;
 
+import com.threego.algo.common.error.ErrorCode;
+import com.threego.algo.common.error.exception.BusinessException;
 import com.threego.algo.member.command.domain.aggregate.MemberRole;
 import com.threego.algo.member.command.domain.repository.MemberRoleRepository;
 import com.threego.algo.study.command.application.dto.create.StudyCommentCreateDTO;
@@ -147,7 +149,7 @@ public class StudyCommentServiceImpl implements StudyCommentService {
         StudyMember studyMember = getStudyMember(studyId, memberId);
 
         if (!studyMember.isActive()) {
-            throw new IllegalArgumentException("스터디 접근 권한이 없습니다.");
+            throw new BusinessException(ErrorCode.STUDY_ACCESS_DENIED);
         }
     }
 
@@ -162,7 +164,7 @@ public class StudyCommentServiceImpl implements StudyCommentService {
 
     private StudyMember getStudyMember(int studyId, int memberId) {
         return (StudyMember) studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
-                .orElseThrow(() -> new IllegalArgumentException("스터디 멤버가 아닙니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_FOUND));
     }
 
 }
