@@ -29,14 +29,16 @@ public class StudyRecruitMember {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
+    @Column(length = 500, nullable = false)
+    private String applicant;
 
 
     // 생성자
-    public StudyRecruitMember(StudyRecruitPost studyRecruitPost, Member member) {
+    public StudyRecruitMember(StudyRecruitPost studyRecruitPost, Member member, String applicant) {
         this.studyRecruitPost = studyRecruitPost;
         this.member = member;
         this.status = ApplicationStatus.PENDING;
-
+        this.applicant = applicant;
     }
 
     // 비즈니스 메소드

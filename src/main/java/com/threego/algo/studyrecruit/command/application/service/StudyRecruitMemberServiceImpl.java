@@ -25,7 +25,7 @@ public class StudyRecruitMemberServiceImpl implements StudyRecruitMemberService 
     private final MemberRepository memberRepository;
 
     @Override
-    public ResponseEntity<String> applyToStudy(int postId, int memberId) {
+    public ResponseEntity<String> applyToStudy(int postId, int memberId, com.threego.algo.studyrecruit.command.application.dto.create.StudyRecruitMemberCreateDTO request) {
         try {
             log.info("스터디 참가신청 시작 - postId: {}, memberId: {}", postId, memberId);
             // 1. 회원 존재 여부 확인
@@ -51,7 +51,7 @@ public class StudyRecruitMemberServiceImpl implements StudyRecruitMemberService 
             }
 
             // 5. Entity 생성 및 저장
-            StudyRecruitMember application = new StudyRecruitMember(studyRecruitPost, member);
+            StudyRecruitMember application = new StudyRecruitMember(studyRecruitPost, member, request.getApplicant());
 
             studyRecruitMemberRepository.save(application);
 

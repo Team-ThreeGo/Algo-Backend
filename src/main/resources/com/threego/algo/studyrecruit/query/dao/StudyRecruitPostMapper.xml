@@ -45,6 +45,7 @@
         <result property="memberNickname" column="MEMBER_NICKNAME"/>
         <result property="rankName" column="RANK_NAME"/>
         <result property="status" column="MEMBER_STATUS"/>
+        <result property="applicant" column="APPLICANT"/>
         <result property="appliedAt" column="APPLIED_AT"/>
     </resultMap>
 
@@ -130,6 +131,7 @@
              , B.NICKNAME AS MEMBER_NICKNAME
              , C.NAME AS RANK_NAME
              , A.STATUS AS MEMBER_STATUS
+             , A.APPLICANT AS APPLICANT
           FROM STUDY_RECRUIT_MEMBER A
           JOIN MEMBER B ON A.MEMBER_ID = B.ID
           JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
