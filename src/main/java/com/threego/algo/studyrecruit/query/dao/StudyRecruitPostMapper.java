@@ -27,4 +27,7 @@ public interface StudyRecruitPostMapper {
     /* 설명. 관리자: 숨김 처리된 게시물 상세 조회 */
     StudyRecruitDetailDTO selectStudyRecruitDetailIncludeHidden(int postId);
 
+    /* 설명. 특정 회원의 신청 상태 조회 */
+    String selectApplicantStatus(@Param("postId") int postId, @Param("memberId") int memberId);
+
 }

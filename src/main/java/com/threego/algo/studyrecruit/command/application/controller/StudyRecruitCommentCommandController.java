@@ -25,7 +25,7 @@ public class StudyRecruitCommentCommandController {
     private final StudyRecruitCommentService studyRecruitCommentService;
 
     @Operation(summary = "댓글 등록", description = "모집글에 댓글을 등록합니다.")
-    @PostMapping("/{postId}/comments")
+    @PostMapping("/{postId}")
     public ResponseEntity<String> createComment(
             @PathVariable int postId,
             @LoginMember int memberId,

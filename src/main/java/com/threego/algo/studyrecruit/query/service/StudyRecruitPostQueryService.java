@@ -22,4 +22,6 @@ public interface StudyRecruitPostQueryService {
     List<StudyRecruitCommentDTO> findAllStudyRecruitCommentsIncludeHidden(StudyRecruitSearchDTO searchDto);
 
     List<StudyRecruitCommentDTO> findStudyRecruitCommentsIncludeHidden(int postId);
+
+    ApplicantStatusDTO findApplicantStatus(int postId, int memberId);
 }

@@ -35,22 +35,17 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        // 2. Entity 생성
+        // 2. Entity 생성 (expiresAt과 visibility는 Entity에서 자동 설정)
         StudyRecruitPost studyRecruitPost = new StudyRecruitPost(
                 member,
                 request.getTitle(),
                 request.getContent(),
                 request.getStartDate(),
                 request.getEndDate(),
-                request.getExpiresAt(),
-                request.getCapacity(),
-                DateTimeUtils.nowDateTime()
+                request.getCapacity()
         );
 
-        // 3. 공개여부 설정
-        studyRecruitPost.setVisibility(request.getVisibility());
-
-        // 4. 저장
+        // 3. 저장
         studyRecruitPostRepository.save(studyRecruitPost);
     }
 
@@ -61,16 +56,14 @@ public class StudyRecruitPostServiceImpl implements StudyRecruitPostService {
                 .findByIdAndMemberIdAndVisibility(postId, memberId, "Y")
                 .orElseThrow(RecruitPostNotAuthorizedException::new);
 
-        // 2. Entity 업데이트 (DateTimeUtils 사용)
-        studyRecruitPost.setTitle(request.getTitle());
-        studyRecruitPost.setContent(request.getContent());
-        studyRecruitPost.setStartDate(request.getStartDate());
-        studyRecruitPost.setEndDate(request.getEndDate());
-        studyRecruitPost.setExpiresAt(request.getExpiresAt());
-        studyRecruitPost.setCapacity(request.getCapacity());
-        studyRecruitPost.setVisibility(request.getVisibility());
-        studyRecruitPost.setUpdatedAt(DateTimeUtils.nowDateTime());
-
+        // 2. Entity 업데이트 (expiresAt은 Entity에서 자동 설정)
+        studyRecruitPost.updatePost(
+                request.getTitle(),
+                request.getContent(),
+                request.getStartDate(),
+                request.getEndDate(),
+                request.getCapacity()
+        );
     }
 
     @Override

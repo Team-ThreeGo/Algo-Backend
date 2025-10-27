@@ -68,17 +68,18 @@ public class StudyRecruitPost {
 
     // 생성자
     public StudyRecruitPost(Member member, String title, String content, String startDate,
-                            String endDate, String expiresAt, int capacity, String createdAt) {
+                            String endDate, int capacity) {
         this.member = member;
         this.title = title;
         this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.expiresAt = expiresAt;
+        this.expiresAt = startDate; // 시작일을 기본 마감일로 설정
         this.capacity = capacity;
         this.status = RecruitStatus.OPEN;
         this.commentCount = 0;
-        this.createdAt = createdAt;
+        this.visibility = "Y"; // 기본값: 공개
+        this.createdAt = DateTimeUtils.nowDateTime();
     }
 
     // 비즈니스 메소드
@@ -107,15 +108,13 @@ public class StudyRecruitPost {
 
 
     /* 설명. 모집글 수정 시 업데이트 시간 갱신 */
-    public void updatePost(String title, String content, String startDate, String endDate,
-                           String expiresAt, int capacity, String visibility) {
+    public void updatePost(String title, String content, String startDate, String endDate, int capacity) {
         this.title = title;
         this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.expiresAt = expiresAt;
+        this.expiresAt = startDate; // 시작일을 마감일로 설정
         this.capacity = capacity;
-        this.visibility = visibility;
         this.updatedAt = DateTimeUtils.nowDateTime();
     }
 
