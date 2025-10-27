@@ -45,7 +45,18 @@
         <result property="memberNickname" column="MEMBER_NICKNAME"/>
         <result property="rankName" column="RANK_NAME"/>
         <result property="status" column="MEMBER_STATUS"/>
+        <result property="applicant" column="APPLICANT"/>
         <result property="appliedAt" column="APPLIED_AT"/>
+    </resultMap>
+
+    <!-- 내가 가입한 스터디 목록 조회용 결과 매핑 -->
+    <resultMap id="MyStudyMap" type="com.threego.algo.studyrecruit.query.dto.MyStudyDTO">
+        <id property="studyId" column="STUDY_ID"/>
+        <result property="studyName" column="STUDY_NAME"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="memberCount" column="MEMBER_COUNT"/>
+        <result property="leaderName" column="LEADER_NAME"/>
     </resultMap>
 
 
@@ -130,6 +141,7 @@
              , B.NICKNAME AS MEMBER_NICKNAME
              , C.NAME AS RANK_NAME
              , A.STATUS AS MEMBER_STATUS
+             , A.APPLICANT AS APPLICANT
           FROM STUDY_RECRUIT_MEMBER A
           JOIN MEMBER B ON A.MEMBER_ID = B.ID
           JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
@@ -141,6 +153,26 @@
                WHEN 'REJECTED' THEN 3
                END,
                    A.ID ASC
+    </select>
+
+    <!-- 내가 가입한 스터디 목록 조회 (마이페이지용) -->
+    <select id="selectMyApprovedStudies"
+            parameterType="integer"
+            resultMap="MyStudyMap">
+        SELECT
+               S.ID AS STUDY_ID
+             , S.NAME AS STUDY_NAME
+             , S.START_DATE AS START_DATE
+             , S.END_DATE AS END_DATE
+             , COUNT(SM.ID) AS MEMBER_COUNT
+             , LEADER.NICKNAME AS LEADER_NAME
+          FROM STUDY_MEMBER SM
+          JOIN STUDY S ON SM.STUDY_ID = S.ID
+          LEFT JOIN STUDY_MEMBER LEADER_SM ON S.ID = LEADER_SM.STUDY_ID AND LEADER_SM.ROLE = 'LEADER'
+          LEFT JOIN MEMBER LEADER ON LEADER_SM.MEMBER_ID = LEADER.ID
+         WHERE SM.MEMBER_ID = #{memberId}
+         GROUP BY S.ID, S.NAME, S.START_DATE, S.END_DATE, LEADER.NICKNAME
+         ORDER BY S.ID DESC
     </select>
 
     <!-- 관리자용 - 숨김 처리 스터디 모집글 목록 조회 -->

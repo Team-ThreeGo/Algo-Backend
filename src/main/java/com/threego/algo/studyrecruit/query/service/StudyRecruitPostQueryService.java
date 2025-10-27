@@ -13,6 +13,8 @@ public interface StudyRecruitPostQueryService {
 
     List<StudyRecruitMemberDTO> findStudyRecruitMembers(int postId);
 
+    List<MyStudyDTO> findMyApprovedStudies(int memberId);
+
     List<StudyRecruitPostDTO> findStudyRecruitListIncludeHidden(StudyRecruitSearchDTO searchDto);
 
     StudyRecruitDetailDTO findStudyRecruitDetailIncludeHidden(int postId);

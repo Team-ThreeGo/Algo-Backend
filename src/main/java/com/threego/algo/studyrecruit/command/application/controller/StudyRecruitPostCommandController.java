@@ -1,6 +1,7 @@
 package com.threego.algo.studyrecruit.command.application.controller;
 
 import com.threego.algo.common.auth.LoginMember;
+import com.threego.algo.studyrecruit.command.application.dto.create.StudyRecruitMemberCreateDTO;
 import com.threego.algo.studyrecruit.command.application.dto.create.StudyRecruitPostCreateDTO;
 import com.threego.algo.studyrecruit.command.application.dto.update.StudyRecruitPostUpdateDTO;
 import com.threego.algo.studyrecruit.command.application.service.StudyRecruitMemberService;
@@ -67,8 +68,9 @@ public class StudyRecruitPostCommandController {
     @PostMapping("/{postId}/applicants")
     public ResponseEntity<String> applyToStudy(
             @PathVariable int postId,
-            @LoginMember int memberId) {
-        return studyRecruitMemberService.applyToStudy(postId, memberId);
+            @LoginMember int memberId,
+            @Valid @RequestBody StudyRecruitMemberCreateDTO request) {
+        return studyRecruitMemberService.applyToStudy(postId, memberId, request);
     }
 
 }

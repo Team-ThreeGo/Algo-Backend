@@ -1,5 +1,6 @@
 package com.threego.algo.studyrecruit.query.controller;
 
+import com.threego.algo.common.auth.LoginMember;
 import com.threego.algo.studyrecruit.query.dto.*;
 import com.threego.algo.studyrecruit.query.service.StudyRecruitPostQueryServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +60,15 @@ public class StudyRecruitPostQueryController {
     @GetMapping("/posts/{postId}/members")
     public ResponseEntity<List<StudyRecruitMemberDTO>> findPostMembers(@PathVariable int postId) {
         return ResponseEntity.ok(studyRecruitPostServiceImpl.findStudyRecruitMembers(postId));
+    }
+
+    @Operation(
+            summary = "내가 가입한 스터디 목록 조회",
+            description = "현재 로그인한 회원이 가입한 스터디 목록을 조회합니다. (스터디 이름, 진행기간, 참여 멤버 수, 스터디장 이름)"
+    )
+    @GetMapping("/my-studies")
+    public ResponseEntity<List<MyStudyDTO>> findMyApprovedStudies(@LoginMember int memberId) {
+        return ResponseEntity.ok(studyRecruitPostServiceImpl.findMyApprovedStudies(memberId));
     }
 
 

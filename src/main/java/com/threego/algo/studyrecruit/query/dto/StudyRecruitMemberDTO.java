@@ -12,6 +12,7 @@ public class StudyRecruitMemberDTO {
     private String memberNickname;      // 신청자 닉네임
     private String rankName;            // 신청자 등급명
     private String status;              // 신청 상태 (PENDING, APPROVED, REJECTED)
+    private String applicant;           // 지원동기
     private String appliedAt;           // 신청일 (created_at 사용)
 
     /* 설명. 승인 여부 확인 */

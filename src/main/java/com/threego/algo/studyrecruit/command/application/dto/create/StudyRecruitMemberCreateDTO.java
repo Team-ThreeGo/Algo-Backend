@@ -15,5 +15,5 @@ public class StudyRecruitMemberCreateDTO {
 
     @NotBlank(message = "신청 메시지는 필수입니다.")
     @Size(max = 500, message = "신청 메시지는 500자 이하여야 합니다.")
-    private String message;
+    private String applicant;
 }
