@@ -17,10 +17,9 @@ public class AlgoRoadmap {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String description;
 
-    @Column(name = "`order`")
+    @Column(name = "`order`", nullable = false)
     private int order;
 
     @Column(name = "created_at", nullable = false)

@@ -16,7 +16,7 @@ public class AlgoQuizOption {
     @Column(name = "option_text", nullable = false)
     private String optionText;
 
-    @Column(name = "is_correct")
+    @Column(name = "is_correct", nullable = false)
     private boolean isCorrect;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -15,10 +15,11 @@ public class AlgoPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private String title;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String content;
 
     @Column(name = "created_at", nullable = false)
