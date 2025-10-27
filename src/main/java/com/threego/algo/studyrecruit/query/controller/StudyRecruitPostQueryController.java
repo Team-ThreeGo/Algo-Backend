@@ -71,5 +71,20 @@ public class StudyRecruitPostQueryController {
         return ResponseEntity.ok(studyRecruitPostServiceImpl.findMyApprovedStudies(memberId));
     }
 
+    @Operation(
+            summary = "나의 신청 상태 조회",
+            description = "특정 스터디 모집글에 대한 현재 로그인한 회원의 신청 상태를 조회합니다. 신청 내역이 없으면 404를 반환합니다."
+    )
+    @GetMapping("/posts/{postId}/applicants/me")
+    public ResponseEntity<ApplicantStatusDTO> findMyApplicantStatus(
+            @PathVariable int postId,
+            @LoginMember int memberId) {
+        ApplicantStatusDTO status = studyRecruitPostServiceImpl.findApplicantStatus(postId, memberId);
+        if (status == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(status);
+    }
+
 
 }

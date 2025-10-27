@@ -90,4 +90,16 @@ public class StudyRecruitPostQueryServiceImpl implements StudyRecruitPostQuerySe
         return studyRecruitCommentMapper.selectStudyRecruitCommentsIncludeHidden(postId);
     }
 
+    /* 설명. 특정 회원의 신청 상태 조회 */
+    @Override
+    public ApplicantStatusDTO findApplicantStatus(int postId, int memberId) {
+        String status = studyRecruitPostMapper.selectApplicantStatus(postId, memberId);
+        if (status == null) {
+            return null; // 신청 내역이 없는 경우
+        }
+        return ApplicantStatusDTO.builder()
+                .status(status)
+                .build();
+    }
+
 }

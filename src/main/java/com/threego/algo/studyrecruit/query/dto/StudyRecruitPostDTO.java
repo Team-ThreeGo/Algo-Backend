@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class StudyRecruitPostDTO {
     private int id;                    // 모집글 ID
     private String title;               // 제목
+    private int memberId;               // 작성자 ID
     private String memberNickname;      // 작성자 닉네임
     private String rankName;            // 작성자 등급명
     private Status status;              // 모집 상태 (OPEN, CLOSED, CANCELLED)

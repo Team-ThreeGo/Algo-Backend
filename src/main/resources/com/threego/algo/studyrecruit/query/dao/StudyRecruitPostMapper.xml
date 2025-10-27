@@ -7,6 +7,7 @@
     <resultMap id="StudyRecruitListMap" type="com.threego.algo.studyrecruit.query.dto.StudyRecruitPostDTO">
         <id property="id" column="POST_ID"/>
         <result property="title" column="POST_TITLE"/>
+        <result property="memberId" column="MEMBER_ID"/>
         <result property="memberNickname" column="MEMBER_NICKNAME"/>
         <result property="rankName" column="RANK_NAME"/>
         <result property="status" column="STATUS"/>
@@ -25,6 +26,7 @@
         <id property="id" column="POST_ID"/>
         <result property="title" column="POST_TITLE"/>
         <result property="content" column="POST_CONTENT"/>
+        <result property="memberId" column="MEMBER_ID"/>
         <result property="memberNickname" column="MEMBER_NICKNAME"/>
         <result property="rankName" column="RANK_NAME"/>
         <result property="status" column="STATUS"/>
@@ -246,5 +248,13 @@
          WHERE A.ID = #{postId}
                AND A.VISIBILITY = 'N'
          GROUP BY A.ID
+    </select>
+
+    <!-- 특정 회원의 신청 상태 조회 -->
+    <select id="selectApplicantStatus" resultType="string">
+        SELECT STATUS
+          FROM STUDY_RECRUIT_MEMBER
+         WHERE POST_ID = #{postId}
+           AND MEMBER_ID = #{memberId}
     </select>
 </mapper>
