@@ -7,12 +7,14 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,11 +33,11 @@ public class S3Service {
     @Value("${cloud.aws.region.static}")
     private String region; // region을 직접 주입받기
 
-    public String uploadFile(MultipartFile file, String folder) {
+    public String uploadFile(final MultipartFile file, final String folder) {
         try {
-            String fileName = createFileName(file.getOriginalFilename(), folder);
+            final String fileName = generateKey(file, folder);
 
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+            final PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(fileName)
                     .contentType(file.getContentType())
@@ -46,14 +48,10 @@ public class S3Service {
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
             return getFileUrl(fileName);
-
-        } catch (IOException e) {
+        } catch (IOException | S3Exception e) {
             throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
         }
     }
-
-
-
 
     public void deleteFile(String fileUrl) {
         try {
@@ -87,7 +85,7 @@ public class S3Service {
     }
 
     // 수정된 getFileUrl 메서드
-    private String getFileUrl(String fileName) {
+    private String getFileUrl(final String fileName) {
         return String.format("https://%s.s3.%s.amazonaws.com/%s",
                 bucketName,
                 region,  // 직접 주입받은 region 사용
@@ -146,8 +144,10 @@ public class S3Service {
         }
     }
 
-    private String createFileName(String originalFileName, String folder) {
-        return folder + "/" + UUID.randomUUID().toString() + "_" + originalFileName;
+    private String generateKey(final MultipartFile file, final String folder) {
+        final String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+
+        return folder + "/" + UUID.randomUUID() + "." + extension;
     }
 
     private String extractFileNameFromUrl(String fileUrl) {
