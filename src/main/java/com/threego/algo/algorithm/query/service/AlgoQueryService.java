@@ -1,10 +1,7 @@
 package com.threego.algo.algorithm.query.service;
 
 import com.threego.algo.algorithm.command.domain.aggregate.AlgoRoadmap;
-import com.threego.algo.algorithm.query.dto.AlgoPostCommentDTO;
-import com.threego.algo.algorithm.query.dto.AlgoPostDetailResponseDTO;
-import com.threego.algo.algorithm.query.dto.AlgoPostSummaryResponseDTO;
-import com.threego.algo.algorithm.query.dto.AlgoQuizResponseDTO;
+import com.threego.algo.algorithm.query.dto.*;
 
 import java.util.List;
 
@@ -28,4 +25,7 @@ public interface AlgoQueryService {
     AlgoPostDetailResponseDTO findAlgoPostByPostIdForAdmin(final int postId);
 
     int countMemberCorrectAnswersInRoadmap(final int memberId, final int roadmapId);
+
+    /* 설명. 알고리즘 로드맵 진행도 조회 */
+    AlgoRoadmapProgressDTO findAlgoRoadmapProgress(int memberId);
 }

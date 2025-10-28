@@ -117,4 +117,9 @@ public class AlgoQueryServiceImpl implements AlgoQueryService {
             }
         });
     }
+
+    @Override
+    public AlgoRoadmapProgressDTO findAlgoRoadmapProgress(int memberId) {
+        return algoMapper.selectAlgoRoadmapProgress(memberId);
+    }
 }
