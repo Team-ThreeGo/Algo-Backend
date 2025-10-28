@@ -85,4 +85,9 @@ public class CareerQueryServiceImpl implements CareerQueryService {
         return careerInfoMapper.selectPostsByMember(memberId);
     }
 
+    @Override
+    public List<PostSummaryResponseDto> findRecentPostsByCompany(String company) {
+        return careerInfoMapper.selectRecentPostsByCompany(company);
+    }
+
 }
