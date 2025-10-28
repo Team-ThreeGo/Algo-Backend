@@ -9,6 +9,8 @@ import lombok.*;
 public class PostSummaryResponseDto {
     private int id;
     private String title;
+    private String company;
+    private String year;
     private int memberId;
     private String nickname;
     private String rankName;

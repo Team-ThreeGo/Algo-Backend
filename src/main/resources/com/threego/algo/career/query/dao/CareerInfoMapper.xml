@@ -15,6 +15,8 @@
         SELECT
         A.ID AS id
         , A.TITLE AS title
+        , A.COMPANY AS company
+        , A.YEAR AS year
         , A.MEMBER_ID AS memberId
         , B.NICKNAME AS nickname
         , C.NAME AS rankName
@@ -45,6 +47,8 @@
         A.ID            AS id
         , A.TITLE         AS title
         , A.CONTENT       AS content
+        , A.COMPANY AS company
+        , A.YEAR AS year
         , A.IMAGE_URL     AS imageUrl
         , A.MEMBER_ID     AS memberId
         , B.NICKNAME      AS nickname
@@ -116,6 +120,8 @@
         SELECT
         A.ID AS id
         , A.TITLE AS title
+        , A.COMPANY AS company
+        , A.YEAR AS year
         , A.MEMBER_ID AS memberId
         , B.NICKNAME AS nickname
         , C.NAME AS rankName
@@ -139,6 +145,8 @@
         SELECT
         A.ID AS id
         , A.TITLE AS title
+        , A.COMPANY AS company
+        , A.YEAR AS year
         , A.MEMBER_ID AS memberId
         , B.NICKNAME AS nickname
         , C.NAME AS rankName
@@ -152,6 +160,31 @@
         WHERE A.MEMBER_ID = #{memberId}
         ORDER BY A.ID DESC
         <include refid="com.threego.algo.common.mapper.CommonMapper.pagination"/>
+    </select>
+
+    <!-- 특정 기업의 최근 3개 게시물 조회 -->
+    <select id="selectRecentPostsByCompany"
+            parameterType="string"
+            resultType="com.threego.algo.career.query.dto.PostSummaryResponseDto">
+        SELECT
+        A.ID AS id,
+        A.TITLE AS title,
+        A.COMPANY AS company,
+        A.YEAR AS year,
+        A.MEMBER_ID AS memberId,
+        B.NICKNAME AS nickname,
+        C.NAME AS rankName,
+        A.CREATED_AT AS createdAt,
+        A.STATUS AS status,
+        A.LIKE_COUNT AS likeCount,
+        A.COMMENT_COUNT AS commentCount
+        FROM CAREER_INFO_POST A
+        JOIN MEMBER B ON A.MEMBER_ID = B.ID
+        JOIN MEMBER_RANK C ON B.RANK_ID = C.ID
+        WHERE A.VISIBILITY = 'Y'
+        AND A.COMPANY = #{company}
+        ORDER BY A.CREATED_AT DESC
+        LIMIT 3
     </select>
 
 </mapper>

@@ -35,7 +35,7 @@ public class CareerQueryController {
     public ResponseEntity<List<PostSummaryResponseDto>> findPostList(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "50") int size
     ) {
         return ResponseEntity.ok(careerQueryService.findPostList("Y", null, keyword, page, size));
     }
@@ -69,4 +69,17 @@ public class CareerQueryController {
         List<PostSummaryResponseDto> posts = careerQueryService.findPostsByMember(memberId);
         return ResponseEntity.ok(posts);
     }
+
+    @Operation(
+            summary = "특정 기업의 최신 게시물 3개 조회",
+            description = "입력된 기업(company)의 최신 게시물 3개를 반환합니다. 공개된 게시물만 포함합니다."
+    )
+    @GetMapping("/posts/recent")
+    public ResponseEntity<List<PostSummaryResponseDto>> findRecentPostsByCompany(
+            @RequestParam String company
+    ) {
+        List<PostSummaryResponseDto> posts = careerQueryService.findRecentPostsByCompany(company);
+        return ResponseEntity.ok(posts);
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.threego.algo.career.command.domain.aggregate;
 
+import com.threego.algo.career.command.domain.aggregate.enums.Company;
 import com.threego.algo.career.command.domain.aggregate.enums.Status;
+import com.threego.algo.career.command.domain.aggregate.enums.Year;
 import com.threego.algo.common.util.DateTimeUtils;
 import com.threego.algo.member.command.domain.aggregate.Member;
 import jakarta.persistence.*;
@@ -24,6 +26,15 @@ public class CareerInfoPost {
 
     @Column(nullable = false, length = 255)
     private String title;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private Company company;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 4)
+    private Year year;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -57,8 +68,10 @@ public class CareerInfoPost {
         this.createdAt = DateTimeUtils.nowDateTime();
     }
 
-    public static CareerInfoPost create(Member member, String title, String content, String imageUrl) {
+    public static CareerInfoPost create(Member member, String title, String content, Company company, Year year, String imageUrl) {
         CareerInfoPost post = new CareerInfoPost(member, title, content);
+        post.company = company;
+        post.year = year;
 
         if (imageUrl != null && !imageUrl.isBlank()) {
             post.imageUrl = imageUrl;

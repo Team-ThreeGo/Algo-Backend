@@ -11,6 +11,8 @@ public class PostDetailResponseDto {
     private int id;
     private String title;
     private String content;
+    private String company;
+    private String year;
 
     @Setter
     @JsonInclude(JsonInclude.Include.NON_NULL)

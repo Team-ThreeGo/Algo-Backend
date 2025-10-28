@@ -33,4 +33,6 @@ public interface CareerInfoMapper {
             @Param("memberId") int memberId,
             @Param("searchDTO") CareerPostSearchDTO searchDTO
     );
+
+    List<PostSummaryResponseDto> selectRecentPostsByCompany(String company);
 }
