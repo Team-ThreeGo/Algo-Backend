@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Year {
     _2022("2022"),
     _2023("2023"),
-    _2024("2024");
+    _2024("2024"),
+    _2025("2025");
 
     private final String value;
 
