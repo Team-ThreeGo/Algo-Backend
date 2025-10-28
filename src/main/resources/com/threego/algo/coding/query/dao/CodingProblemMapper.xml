@@ -18,6 +18,7 @@
         A.PLATFORM    AS platform,
         A.DIFFICULTY  AS difficulty,
         A.POST_COUNT  AS postCount,
+        A.PROBLEM_URL AS problemUrl,
         A.CREATED_AT  AS createdAt,
         A.VISIBILITY  AS visibility
         FROM CODING_PROBLEM A
@@ -41,17 +42,28 @@
 
         <!-- 정렬 조건 -->
         <choose>
-            <when test="sortBy == 'difficulty'">
-                ORDER BY
-                CASE A.PLATFORM
-                WHEN 'PGS' THEN 1
-                WHEN 'BOJ' THEN 2
-                WHEN 'ETC' THEN 3
-                ELSE 9
-                END,
-                A.DIFFICULTY ASC
+            <!-- 난이도 낮은 순 -->
+            <when test="sortBy == 'difficultyAsc'">
+                ORDER BY A.DIFFICULTY ASC
             </when>
-            <when test="sortBy == 'platform'">
+
+            <!-- 난이도 높은 순 -->
+            <when test="sortBy == 'difficultyDesc'">
+                ORDER BY A.DIFFICULTY DESC
+            </when>
+
+            <!-- 최신순 -->
+            <when test="sortBy == 'createdAt'">
+                ORDER BY A.CREATED_AT DESC
+            </when>
+
+            <!-- 게시글 많은 순 -->
+            <when test="sortBy == 'postCount'">
+                ORDER BY A.POST_COUNT DESC
+            </when>
+
+            <!-- 플랫폼순 (기본순) -->
+            <otherwise>
                 ORDER BY
                 CASE A.PLATFORM
                 WHEN 'PGS' THEN 1
@@ -60,9 +72,6 @@
                 ELSE 9
                 END,
                 A.CREATED_AT DESC
-            </when>
-            <otherwise>
-                ORDER BY A.ID ASC
             </otherwise>
         </choose>
 
