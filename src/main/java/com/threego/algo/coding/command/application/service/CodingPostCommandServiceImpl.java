@@ -159,7 +159,7 @@ public class CodingPostCommandServiceImpl implements CodingPostCommandService {
                           Integer parentId,
                           CodingCommentRequestDTO dto) {
         // member, post 조회
-        Member member = memberRepository.findById(1)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("작성자(Member) 없음: "));
 
         CodingPost post = postRepository.findById(postId)
