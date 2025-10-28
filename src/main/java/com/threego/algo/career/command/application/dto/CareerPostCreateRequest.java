@@ -11,5 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CareerPostCreateRequest {
     private String title;
     private String content;
+    private String company;
+    private String year;
     private MultipartFile image; // 단일 파일
 }
