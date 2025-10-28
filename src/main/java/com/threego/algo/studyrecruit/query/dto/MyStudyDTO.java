@@ -16,4 +16,5 @@ public class MyStudyDTO {
     private String endDate;            // 스터디 종료일
     private int memberCount;           // 참여 멤버 수
     private String leaderName;         // 스터디장 이름
+    private String leaderRank;         // 스터디장 랭크
 }

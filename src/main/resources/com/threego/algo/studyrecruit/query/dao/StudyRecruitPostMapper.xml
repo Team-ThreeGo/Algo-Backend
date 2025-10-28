@@ -59,6 +59,7 @@
         <result property="endDate" column="END_DATE"/>
         <result property="memberCount" column="MEMBER_COUNT"/>
         <result property="leaderName" column="LEADER_NAME"/>
+        <result property="leaderRank" column="LEADER_RANK"/>
     </resultMap>
 
 
@@ -166,16 +167,20 @@
              , S.NAME AS STUDY_NAME
              , S.START_DATE AS START_DATE
              , S.END_DATE AS END_DATE
-             , COUNT(SM.ID) AS MEMBER_COUNT
+             , COUNT(SM2.ID) AS MEMBER_COUNT
              , LEADER.NICKNAME AS LEADER_NAME
+             , LEADER_RANK.NAME AS LEADER_RANK
           FROM STUDY_MEMBER SM
           JOIN STUDY S ON SM.STUDY_ID = S.ID
+          LEFT JOIN STUDY_MEMBER SM2 ON S.ID = SM2.STUDY_ID
           LEFT JOIN STUDY_MEMBER LEADER_SM ON S.ID = LEADER_SM.STUDY_ID AND LEADER_SM.ROLE = 'LEADER'
           LEFT JOIN MEMBER LEADER ON LEADER_SM.MEMBER_ID = LEADER.ID
+          LEFT JOIN MEMBER_RANK LEADER_RANK ON LEADER.RANK_ID = LEADER_RANK.ID
          WHERE SM.MEMBER_ID = #{memberId}
-         GROUP BY S.ID, S.NAME, S.START_DATE, S.END_DATE, LEADER.NICKNAME
+         GROUP BY S.ID, S.NAME, S.START_DATE, S.END_DATE, LEADER.NICKNAME, LEADER_RANK.NAME
          ORDER BY S.ID DESC
     </select>
+
 
     <!-- 관리자용 - 숨김 처리 스터디 모집글 목록 조회 -->
     <select id="selectStudyRecruitListIncludeHidden"
