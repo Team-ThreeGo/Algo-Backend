@@ -18,6 +18,7 @@ public class CodingProblemSummaryDTO {
     private String platform;
     private String difficulty;
     private int postCount;
+    private String problemUrl;
     private String createdAt;
     private String visibility;
 }

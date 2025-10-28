@@ -22,6 +22,7 @@ public class CodingProblemDetailDTO {
     private String input;
     private String output;
     private String problemUrl;
+    private String constraints;
     private String createdAt;
     private String visibility;
 }

@@ -45,7 +45,7 @@ public class CodingProblemQueryImpl implements CodingProblemQueryService {
                 .build();
         return codingPostMapper.selectPostListByProblemId(condition);
     }
-    
+
     @Override
     public CodingProblemDetailDTO findProblemDetail(int problemId) {
         return codingProblemMapper.selectProblemDetail(problemId);
@@ -66,10 +66,4 @@ public class CodingProblemQueryImpl implements CodingProblemQueryService {
     public CodingProblemDetailDTO findProblemDetailForAdmin(int problemId) {
         return codingProblemMapper.selectAdminProblemDetail(problemId);
     }
-
-//    @Override
-//    @Transactional
-//    public void syncPostCount() {
-//        codingProblemMapper.syncPostCount();
-//    }
 }
