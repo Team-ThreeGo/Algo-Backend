@@ -35,7 +35,7 @@ public class CareerQueryController {
     public ResponseEntity<List<PostSummaryResponseDto>> findPostList(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "50") int size
     ) {
         return ResponseEntity.ok(careerQueryService.findPostList("Y", null, keyword, page, size));
     }
