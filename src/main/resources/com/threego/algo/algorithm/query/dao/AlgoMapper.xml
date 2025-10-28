@@ -250,4 +250,17 @@
            AND C.VISIBILITY = 'Y'
            AND C.ROADMAP_ID = #{roadmapId}
     </select>
+
+    <!-- 알고리즘 로드맵 진행도 조회 -->
+    <select id="selectAlgoRoadmapProgress" resultType="com.threego.algo.algorithm.query.dto.AlgoRoadmapProgressDTO">
+        SELECT
+               (SELECT COUNT(*) FROM ALGO_QUIZ_QUESTION) AS totalQuestions
+             , (SELECT COUNT(DISTINCT ALGO_QUIZ_QUESTION_ID)
+                  FROM MEMBER_ALGO_CORRECT_QUIZ_HISTORY
+                 WHERE MEMBER_ID = #{memberId}) AS solvedQuestions
+             , CAST((SELECT COUNT(DISTINCT ALGO_QUIZ_QUESTION_ID)
+                       FROM MEMBER_ALGO_CORRECT_QUIZ_HISTORY
+                      WHERE MEMBER_ID = #{memberId}) AS DOUBLE) /
+               CAST((SELECT COUNT(*) FROM ALGO_QUIZ_QUESTION) AS DOUBLE) AS progressRate
+    </select>
 </mapper>

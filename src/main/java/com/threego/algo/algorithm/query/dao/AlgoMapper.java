@@ -30,4 +30,7 @@ public interface AlgoMapper {
                                                                            @Param("memberId") final Integer memberId);
 
     int countMemberCorrectAnswersInRoadmap(@Param("memberId") final int memberId, @Param("roadmapId") final int roadmapId);
+
+    /* 설명. 알고리즘 로드맵 진행도 조회 */
+    AlgoRoadmapProgressDTO selectAlgoRoadmapProgress(@Param("memberId") int memberId);
 }

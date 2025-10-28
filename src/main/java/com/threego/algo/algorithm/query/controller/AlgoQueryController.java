@@ -72,4 +72,12 @@ public class AlgoQueryController {
 
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "알고리즘 로드맵 진행도 조회",
+            description = "마이페이지에서 회원의 알고리즘 로드맵 진행도를 조회합니다. (전체 문제 수, 해결한 문제 수, 진행률)")
+    @GetMapping("/progress")
+    public ResponseEntity<AlgoRoadmapProgressDTO> findAlgoRoadmapProgress(@Parameter(hidden = true) @LoginMember int memberId) {
+        AlgoRoadmapProgressDTO response = algoQueryService.findAlgoRoadmapProgress(memberId);
+        return ResponseEntity.ok(response);
+    }
 }
